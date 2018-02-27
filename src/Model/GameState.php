@@ -2,9 +2,6 @@
 
 namespace App\Model;
 
-use App\Model\BoardObject\Enemy;
-use App\Model\BoardObject\Hero;
-
 class GameState
 {
     /**
@@ -27,20 +24,9 @@ class GameState
      */
     private $board;
 
-    /**
-     * @var Hero
-     */
-    private $hero;
-
-    /**
-     * @var array|Enemy[]
-     */
-    private $enemies;
-
     public function __construct(array $initialState)
     {
-        $board = $initialState['game']['board'];
-        $this->board = new Board($board['size'], $board['tiles'], $initialState['hero']['id']);
+        $this->board = new Board($initialState);
 
         $this->loadInitialState($initialState);
     }
@@ -50,41 +36,13 @@ class GameState
         $this->playUrl = $state['playUrl'];
         $this->viewUrl = $state['viewUrl'];
 
-        var_dump($state['hero']);
-
-        $this->hero = new Hero($state['hero']);
-
-        $this->enemies = [];
-
-        foreach ($state['game']['heroes'] as $enemy) {
-            $enemyId = $enemy['id'];
-            if ($enemyId === $this->hero->getId()) {
-                continue;
-            }
-
-            $this->enemies[$enemyId] = new Enemy($enemy);
-        }
-
         $this->refresh($state);
     }
 
     public function refresh(array $state)
     {
         $this->finished = $state['game']['finished'];
-        $this->board->refreshBoardObjects($state['game']['board']['tiles']);
-
-        $this->hero->refresh($state['hero']);
-
-        foreach ($state['game']['heroes'] as $enemy) {
-            $enemyId = $enemy['id'];
-            if ($enemyId === $this->hero->getId()) {
-                continue;
-            }
-
-            $this->enemies[$enemyId]->refresh($enemy);
-        }
-
-        $this->board->refreshCharacters($this->hero, $this->enemies);
+        $this->board->refresh($state);
     }
 
     public function isFinished(): bool
@@ -107,8 +65,8 @@ class GameState
         return $this->board;
     }
 
-    public function getHero(): Hero
+    public function getHero(): Movable
     {
-        return $this->hero;
+        return $this->board->getHero();
     }
 }

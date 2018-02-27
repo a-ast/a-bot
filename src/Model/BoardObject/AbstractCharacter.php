@@ -3,10 +3,10 @@
 namespace App\Model\BoardObject;
 
 use App\Model\AbstractLocation;
+use App\Model\Movable;
 
-abstract class Character extends AbstractLocation
+abstract class AbstractCharacter extends AbstractLocation implements Movable
 {
-
     /**
      * @var string
      */

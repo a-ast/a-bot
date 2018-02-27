@@ -2,7 +2,7 @@
 
 namespace App\Model\BoardObject;
 
-class Hero extends Character
+class Hero extends AbstractCharacter
 {
 
 }
