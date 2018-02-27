@@ -1,0 +1,15 @@
+httplug:
+    plugins:
+        redirect:
+            preserve_header: true
+
+    discovery:
+        client: 'auto'
+
+    clients:
+        app:
+            http_methods_client: true
+            plugins:
+                - add_host:
+                    host: "http://159.65.169.154:9000"
+                - httplug.plugin.error
