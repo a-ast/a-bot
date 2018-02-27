@@ -33,11 +33,6 @@ class PrimitiveStrategy
         $availableLocations = $this->moveChooser->getAvailableLocations($gameState);
         print '  Possible directions: ' . join(', ', array_keys($availableLocations)) . PHP_EOL;
 
-        $minDistance = 10000;
-
-        $preferableDirection = Directions::getNoDirection()->getTitle();
-
-
         $possibleDirections = [];
 
         foreach ($availableLocations as $direction => $availableLocation) {

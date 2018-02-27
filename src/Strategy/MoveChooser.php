@@ -8,7 +8,6 @@ use App\Model\BoardObject\Road;
 use App\Model\Direction\Directions;
 use App\Model\GameState;
 use App\Model\Locatable;
-use App\Model\Location;
 
 class MoveChooser
 {
