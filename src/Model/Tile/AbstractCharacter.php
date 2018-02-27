@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\BoardObject;
+namespace App\Model\Tile;
 
 use App\Model\AbstractLocation;
 use App\Model\Movable;

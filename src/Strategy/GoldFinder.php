@@ -2,7 +2,7 @@
 
 namespace App\Strategy;
 
-use App\Model\BoardObject\GoldMine;
+use App\Model\Tile\GoldMine;
 use App\Model\GameState;
 
 class GoldFinder

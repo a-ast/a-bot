@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\BoardObject;
+namespace App\Model\Tile;
 
 class Enemy extends AbstractCharacter
 {

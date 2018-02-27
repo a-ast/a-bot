@@ -2,15 +2,15 @@
 
 namespace App\Model;
 
-use App\Model\BoardObject\AbstractCharacter;
-use App\Model\BoardObject\Enemy;
-use App\Model\BoardObject\GoldMine;
-use App\Model\BoardObject\GreatWall;
-use App\Model\BoardObject\Hero;
-use App\Model\BoardObject\Road;
-use App\Model\BoardObject\Tavern;
-use App\Model\BoardObject\Unknown;
-use App\Model\BoardObject\Wood;
+use App\Model\Tile\AbstractCharacter;
+use App\Model\Tile\Enemy;
+use App\Model\Tile\GoldMine;
+use App\Model\Tile\GreatWall;
+use App\Model\Tile\Hero;
+use App\Model\Tile\Road;
+use App\Model\Tile\Tavern;
+use App\Model\Tile\Unknown;
+use App\Model\Tile\Wood;
 use App\Model\Direction\Pointable;
 use App\Model\LocationMatrix;
 use Exception;

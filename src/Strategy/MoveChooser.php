@@ -3,8 +3,8 @@
 
 namespace App\Strategy;
 
-use App\Model\BoardObject\GoldMine;
-use App\Model\BoardObject\Road;
+use App\Model\Tile\GoldMine;
+use App\Model\Tile\Road;
 use App\Model\Direction\Directions;
 use App\Model\GameState;
 use App\Model\Locatable;

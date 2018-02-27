@@ -2,10 +2,10 @@
 
 namespace App\Model;
 
-use App\Model\BoardObject\GoldMine;
-use App\Model\BoardObject\Road;
-use App\Model\BoardObject\Tavern;
-use App\Model\BoardObject\Wood;
+use App\Model\Tile\GoldMine;
+use App\Model\Tile\Road;
+use App\Model\Tile\Tavern;
+use App\Model\Tile\Wood;
 
 class LocationFactory
 {
