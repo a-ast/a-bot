@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Model\Direction;
-
 
 class NorthDirection implements Pointable
 {
-
     public function getTitle()
     {
         return 'North';

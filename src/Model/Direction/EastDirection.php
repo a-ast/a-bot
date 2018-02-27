@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Model\Direction;
-
 
 class EastDirection implements Pointable
 {

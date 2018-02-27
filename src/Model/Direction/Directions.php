@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Model\Direction;
-
 
 class Directions
 {
-
     private static $movableDirections;
 
     /**
