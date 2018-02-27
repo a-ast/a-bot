@@ -12,15 +12,15 @@ use App\Model\BoardObject\Tavern;
 use App\Model\BoardObject\Unknown;
 use App\Model\BoardObject\Wood;
 use App\Model\Direction\Pointable;
-use App\Model\TransponedMatrix;
+use App\Model\LocationMatrix;
 use Exception;
 
 class Board
 {
     /**
-     * @var TransponedMatrix
+     * @var LocationMatrix
      */
-    private $boardMatrix;
+    private $tiles;
 
     /**
      * @var array|GoldMine[]
@@ -34,7 +34,7 @@ class Board
 
     public function __construct(int $boardSize, string $boardData, int $heroId)
     {
-        $this->boardMatrix = new TransponedMatrix($boardSize, $boardSize);
+        $this->tiles = new LocationMatrix($boardSize, $boardSize);
         $this->heroId = $heroId;
 
         $this->loadInitialState($boardData);
@@ -42,7 +42,7 @@ class Board
 
     private function loadInitialState(string $boardData)
     {
-        $mapLines = str_split($boardData, 2*$this->boardMatrix->getWidth());
+        $mapLines = str_split($boardData, 2*$this->tiles->getWidth());
 
         print join(PHP_EOL, $mapLines);
 
@@ -54,7 +54,7 @@ class Board
             foreach ($items as $y => $item) {
                 $boardObject = $this->createBoardObject($item, $x, $y);
 
-                $this->boardMatrix->setItemByXY($x, $y, $boardObject);
+                $this->tiles->setItemByXY($x, $y, $boardObject);
 
                 if ($boardObject instanceof GoldMine) {
                     $this->goldMines[] = $boardObject;
@@ -65,7 +65,7 @@ class Board
 
     public function refreshBoardObjects(string $boardData)
     {
-        $mapLines = str_split($boardData, 2*$this->boardMatrix->getWidth());
+        $mapLines = str_split($boardData, 2*$this->tiles->getWidth());
 
         foreach ($mapLines as $x => $mapLine) {
             $items = str_split($mapLine, 2);
@@ -76,7 +76,7 @@ class Board
                     $belongsMe = $item[1] == $this->heroId;
 
                     /** @var GoldMine $goldMine */
-                    $goldMine = $this->boardMatrix->getItemByXY($x, $y);
+                    $goldMine = $this->tiles->getItemByXY($x, $y);
                     $goldMine->setBelongsMe($belongsMe);
                 }
             }
@@ -126,27 +126,22 @@ class Board
         return $this->goldMines;
     }
 
-    public function getObjectByXY(int $x, int $y)
+    private function getLocationByXY(int $x, int $y): Locatable
     {
         if (isset($this->characters[$x][$y])) {
             return $this->characters[$x][$y];
         }
 
-        return $this->boardMatrix->getItemByXY($x, $y);
+        return $this->tiles->getItemByXY($x, $y);
     }
 
-    public function getObjectByLocation(Locatable $location)
-    {
-        return $this->getObjectByXY($location->getX(), $location->getY());
-    }
-
-    public function getObjectInDirection(Locatable $location, Pointable $direction)
+    public function getLocationInDirection(Locatable $location, Pointable $direction): Locatable
     {
         $newX = $location->getX() + $direction->getShiftX();
         $newY = $location->getY() + $direction->getShiftY();
 
         try {
-            return $this->getObjectByXY($newX, $newY);
+            return $this->getLocationByXY($newX, $newY);
         } catch (Exception $e) {
             return new GreatWall(0, 0);
         }

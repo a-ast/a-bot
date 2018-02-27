@@ -22,13 +22,11 @@ class MoveChooser
         $locations = [];
 
         foreach (Directions::getMovableDirections() as $direction) {
-            $location = $board->getObjectInDirection($hero, $direction);
-
-            $object = $gameState->getBoard()->getObjectByLocation($location);
+            $object = $board->getLocationInDirection($hero, $direction);
 
             if ($object instanceof Road ||
                 ($object instanceof GoldMine && false === $object->belongsMe())) {
-                $locations[$direction->getTitle()] = $location;
+                $locations[$direction->getTitle()] = $object;
             }
         }
 

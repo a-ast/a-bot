@@ -3,7 +3,7 @@
 
 namespace App\Model;
 
-interface Locatable extends Existable
+interface Locatable
 {
     public function getX(): int;
 

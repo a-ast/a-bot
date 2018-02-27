@@ -2,14 +2,13 @@
 
 namespace App\Model;
 
-use App\Model\Existable;
 use App\Model\Locatable;
 
-class TransponedMatrix
+class LocationMatrix
 {
 
     /**
-     * @var array|Existable[][]
+     * @var array|Locatable[][]
      */
     private $matrix;
 
@@ -38,22 +37,22 @@ class TransponedMatrix
         }
     }
 
-    public function getItemByXY(int $x, int $y): Existable
+    public function getItemByXY(int $x, int $y): Locatable
     {
         return $this->matrix[$x][$y];
     }
 
-    public function setItemByXY(int $x, int $y, Existable $value)
+    public function setItemByXY(int $x, int $y, Locatable $value)
     {
         $this->matrix[$x][$y] = $value;
     }
 
-    public function getItemByLocation(Locatable $location): Existable
+    public function getItemByLocation(Locatable $location): Locatable
     {
         return $this->matrix[$location->getX()][$location->getY()];
     }
 
-    public function setItemByLocation(Locatable $location, Existable $value)
+    public function setItemByLocation(Locatable $location, Locatable $value)
     {
         $this->matrix[$location->getX()][$location->getY()] = $value;
     }
