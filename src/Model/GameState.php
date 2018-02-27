@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-class GameState
+class GameState implements GameStateInterface
 {
     /**
      * @var bool
@@ -60,7 +60,7 @@ class GameState
         return $this->viewUrl;
     }
 
-    public function getBoard(): Board
+    public function getBoard(): BoardInterface
     {
         return $this->board;
     }

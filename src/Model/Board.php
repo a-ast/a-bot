@@ -15,7 +15,7 @@ use App\Model\Direction\Pointable;
 use App\Model\LocationMatrix;
 use Exception;
 
-class Board
+class Board implements BoardInterface
 {
     /**
      * @var Hero

@@ -3,10 +3,10 @@
 
 namespace App\Strategy;
 
+use App\Model\GameStateInterface;
 use App\Model\Tile\GoldMine;
 use App\Model\Tile\Road;
 use App\Model\Direction\Directions;
-use App\Model\GameState;
 use App\Model\Locatable;
 
 class MoveChooser
@@ -14,7 +14,7 @@ class MoveChooser
     /**
      * @return array|Locatable[]
      */
-    public function getAvailableLocations(GameState $gameState): array
+    public function getAvailableLocations(GameStateInterface $gameState): array
     {
         $hero = $gameState->getHero();
         $board = $gameState->getBoard();

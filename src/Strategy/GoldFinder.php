@@ -2,12 +2,12 @@
 
 namespace App\Strategy;
 
+use App\Model\GameStateInterface;
 use App\Model\Tile\GoldMine;
-use App\Model\GameState;
 
 class GoldFinder
 {
-    public function getClosestGoldMine(GameState $gameState): GoldMine
+    public function getClosestGoldMine(GameStateInterface $gameState): GoldMine
     {
         $minDistance = 10000;
 

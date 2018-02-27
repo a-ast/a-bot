@@ -2,8 +2,7 @@
 
 namespace App\Strategy;
 
-use App\Model\Direction\Directions;
-use App\Model\GameState;
+use App\Model\GameStateInterface;
 
 class PrimitiveStrategy
 {
@@ -23,7 +22,7 @@ class PrimitiveStrategy
         $this->moveChooser = $moveChooser;
     }
 
-    public function getDirection(GameState $gameState): string
+    public function getDirection(GameStateInterface $gameState): string
     {
         $gold = $this->goldFinder->getClosestGoldMine($gameState);
 
