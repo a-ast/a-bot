@@ -32,4 +32,9 @@ class GoldMine extends AbstractTile
     {
         return $this->getHeroId() === $hero->getId();
     }
+
+    public function isWalkable()
+    {
+        return false;
+    }
 }

@@ -68,6 +68,11 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
         return $this->goldPoints;
     }
 
+    public function isWalkable()
+    {
+        return false;
+    }
+
     public function __toString()
     {
         return sprintf('%s [x: %d, y: %d]', static::class, $this->getX(), $this->getY());

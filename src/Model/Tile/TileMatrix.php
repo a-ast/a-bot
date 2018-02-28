@@ -14,6 +14,10 @@ class TileMatrix
 
     public function getTile(int $x, int $y): TileInterface
     {
+        if (!$this->tileExists($x, $y)) {
+            return new Unknown(-1, -1);
+        }
+
         return $this->matrix[$x][$y];
     }
 
@@ -31,10 +35,6 @@ class TileMatrix
     {
         $newX = $tile->getX() + $direction->getShiftX();
         $newY = $tile->getY() + $direction->getShiftY();
-
-        if (!$this->tileExists($newX, $newY)) {
-            return new Unknown(-1, -1);
-        }
 
         return $this->getTile($newX, $newY);
     }
