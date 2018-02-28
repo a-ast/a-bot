@@ -2,8 +2,6 @@
 
 namespace App\Model;
 
-use App\Model\Tile\AbstractCharacter;
-
 interface GameInterface
 {
     public function isFinished(): bool;
@@ -14,5 +12,5 @@ interface GameInterface
 
     public function getBoard(): BoardInterface;
 
-    public function getHero(): AbstractCharacter;
+    public function getHero(): HeroInterface;
 }

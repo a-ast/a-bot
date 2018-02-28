@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace App\Model\Tile;
 
-use App\Model\Tile\GoldMine;
-use App\Model\Tile\Road;
-use App\Model\Tile\Tavern;
-use App\Model\Tile\Wood;
+use App\Model\TileInterface;
 
 class TileFactory
 {

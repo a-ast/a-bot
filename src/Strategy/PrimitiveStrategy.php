@@ -26,7 +26,7 @@ class PrimitiveStrategy
     {
         $gold = $this->goldFinder->getClosestGoldMine($game);
 
-        print $game->getHero() .PHP_EOL;
+        print (string)$game->getHero() .PHP_EOL;
         print sprintf('Found gold at %d:%d Hero: ', $gold->getX(), $gold->getY(), $gold->getHeroId()) . PHP_EOL;
 
         $availableLocations = $this->moveChooser->getAvailableLocations($game);

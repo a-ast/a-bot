@@ -1,12 +1,8 @@
 <?php
 
-
 namespace App\Model\Tile;
 
-
-use App\Model\AbstractLocation;
-
-class Unknown extends AbstractLocation
+class Unknown extends AbstractTile
 {
 
 }

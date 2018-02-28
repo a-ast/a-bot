@@ -2,7 +2,7 @@
 
 namespace App\Model\Tile;
 
-class Enemy extends AbstractCharacter
+class Enemy extends AbstractHero
 {
 
 }

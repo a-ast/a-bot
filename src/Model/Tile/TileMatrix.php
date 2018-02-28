@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Model;
+namespace App\Model\Tile;
 
 use App\Model\Direction\Pointable;
-use App\Model\Tile\Unknown;
+use App\Model\TileInterface;
 
 class TileMatrix
 {
@@ -33,7 +33,7 @@ class TileMatrix
         $newY = $tile->getY() + $direction->getShiftY();
 
         if (!$this->tileExists($newX, $newY)) {
-            new Unknown(-1, -1);
+            return new Unknown(-1, -1);
         }
 
         return $this->getTile($newX, $newY);

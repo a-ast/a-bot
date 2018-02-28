@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Model;
+namespace App\Model\Tile;
 
-abstract class AbstractLocation implements TileInterface
+use App\Model\TileInterface;
+
+abstract class AbstractTile implements TileInterface
 {
     /**
      * @var int

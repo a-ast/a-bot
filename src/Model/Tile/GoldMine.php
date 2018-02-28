@@ -2,9 +2,9 @@
 
 namespace App\Model\Tile;
 
-use App\Model\AbstractLocation;
+use App\Model\HeroInterface;
 
-class GoldMine extends AbstractLocation
+class GoldMine extends AbstractTile
 {
     /**
      * @var int
@@ -28,7 +28,7 @@ class GoldMine extends AbstractLocation
         $this->heroId = $heroId;
     }
 
-    public function belongsTo(AbstractCharacter $hero)
+    public function belongsTo(HeroInterface $hero)
     {
         return $this->getHeroId() === $hero->getId();
     }

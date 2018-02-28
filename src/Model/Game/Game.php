@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Model;
+namespace App\Model\Game;
 
 use App\Model\Direction\Pointable;
-use App\Model\TileMatrix;
-use App\Model\Tile\AbstractCharacter;
+use App\Model\GameInterface;
+use App\Model\BoardInterface;
+use App\Model\HeroInterface;
 use App\Model\Tile\Enemy;
 use App\Model\Tile\Hero;
+use App\Model\Tile\TileMatrix;
+use App\Model\TileInterface;
 
 class Game implements GameInterface
 {
     /**
-     * @var Hero
+     * @var HeroInterface
      */
     private $hero;
 
@@ -21,7 +24,7 @@ class Game implements GameInterface
     private $enemies;
 
     /**
-     * @var \App\Model\TileMatrix
+     * @var TileMatrix
      */
     private $enemyMatrix = [];
 
@@ -102,7 +105,7 @@ class Game implements GameInterface
         return $this->board;
     }
 
-    public function getHero(): AbstractCharacter
+    public function getHero(): HeroInterface
     {
         return $this->hero;
     }

@@ -3,7 +3,7 @@
 namespace App\Game;
 
 use App\Api\VindiniumApiClient;
-use App\Model\Game;
+use App\Model\Game\Game;
 use App\Strategy\PrimitiveStrategy;
 use App\Progress\ProgressNotifier;
 

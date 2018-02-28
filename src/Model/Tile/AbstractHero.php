@@ -2,10 +2,9 @@
 
 namespace App\Model\Tile;
 
-use App\Model\AbstractLocation;
-use App\Model\Movable;
+use App\Model\HeroInterface;
 
-abstract class AbstractCharacter extends AbstractLocation implements Movable
+abstract class AbstractHero extends AbstractTile implements HeroInterface
 {
     /**
      * @var string
