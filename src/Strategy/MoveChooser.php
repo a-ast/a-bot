@@ -21,7 +21,7 @@ class MoveChooser
 
         $tiles = [];
 
-        foreach (Directions::getMovableDirections() as $direction) {
+        foreach (Directions::getWalkableDirections() as $direction) {
             $object = $board->getTileInDirection($hero, $direction);
 
             if ($object instanceof Road ||

@@ -2,7 +2,7 @@
 
 namespace App\Model\Tile;
 
-use App\Model\Direction\Pointable;
+use App\Model\Direction\DirectionInterface;
 use App\Model\TileInterface;
 
 class TileMatrix
@@ -27,7 +27,7 @@ class TileMatrix
         $this->matrix = [];
     }
 
-    public function getTileInDirection(TileInterface $tile, Pointable $direction): TileInterface
+    public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface
     {
         $newX = $tile->getX() + $direction->getShiftX();
         $newY = $tile->getY() + $direction->getShiftY();

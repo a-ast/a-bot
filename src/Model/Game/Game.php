@@ -2,7 +2,7 @@
 
 namespace App\Model\Game;
 
-use App\Model\Direction\Pointable;
+use App\Model\Direction\DirectionInterface;
 use App\Model\GameInterface;
 use App\Model\BoardInterface;
 use App\Model\HeroInterface;
@@ -74,7 +74,7 @@ class Game implements GameInterface
         $this->board->refresh($state['game']['board']['tiles']);
     }
 
-    public function getTileInDirection(TileInterface $tile, Pointable $direction): TileInterface
+    public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface
     {
         $newTile = $this->enemyMatrix->getTileInDirection($tile, $direction);
 

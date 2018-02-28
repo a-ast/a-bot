@@ -2,7 +2,7 @@
 
 namespace App\Model\Direction;
 
-class WestDirection implements Pointable
+class WestDirection implements DirectionInterface
 {
     public function getTitle()
     {

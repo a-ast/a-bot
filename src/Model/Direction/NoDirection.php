@@ -2,7 +2,7 @@
 
 namespace App\Model\Direction;
 
-class NoDirection implements Pointable
+class NoDirection implements DirectionInterface
 {
     public function getTitle()
     {

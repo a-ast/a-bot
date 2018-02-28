@@ -2,7 +2,7 @@
 
 namespace App\Model\Direction;
 
-interface Pointable
+interface DirectionInterface
 {
     public function getTitle();
 

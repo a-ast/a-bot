@@ -3,7 +3,7 @@
 namespace App\Model\Game;
 
 use App\Model\BoardInterface;
-use App\Model\Direction\Pointable;
+use App\Model\Direction\DirectionInterface;
 use App\Model\Tile\TileFactory;
 use App\Model\Tile\TileMatrix;
 use App\Model\TileInterface;
@@ -34,7 +34,7 @@ class Board implements BoardInterface
         return $this->boardSize;
     }
 
-    public function getTileInDirection(TileInterface $tile, Pointable $direction): TileInterface
+    public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface
     {
         return $this->tiles->getTileInDirection($tile, $direction);
     }

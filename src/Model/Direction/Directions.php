@@ -7,9 +7,9 @@ class Directions
     private static $movableDirections;
 
     /**
-     * @return array|\App\Model\Direction\Pointable[]
+     * @return array|\App\Model\Direction\DirectionInterface[]
      */
-    public static function getMovableDirections(): array
+    public static function getWalkableDirections(): array
     {
         if (null === static::$movableDirections) {
             static::$movableDirections = [
@@ -23,7 +23,7 @@ class Directions
         return static::$movableDirections;
     }
 
-    public static function getNoDirection(): Pointable
+    public static function getNoDirection(): DirectionInterface
     {
         return new NoDirection();
     }
