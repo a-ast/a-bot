@@ -4,15 +4,15 @@ namespace App\Model\Direction;
 
 class Directions
 {
-    private static $movableDirections;
+    private static $walkableDirections;
 
     /**
      * @return array|\App\Model\Direction\DirectionInterface[]
      */
     public static function getWalkableDirections(): array
     {
-        if (null === static::$movableDirections) {
-            static::$movableDirections = [
+        if (null === static::$walkableDirections) {
+            static::$walkableDirections = [
                 new NorthDirection(),
                 new WestDirection(),
                 new SouthDirection(),
@@ -20,7 +20,7 @@ class Directions
             ];
         }
 
-        return static::$movableDirections;
+        return static::$walkableDirections;
     }
 
     public static function getNoDirection(): DirectionInterface

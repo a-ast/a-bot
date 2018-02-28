@@ -10,4 +10,6 @@ interface TileInterface
     public function getY(): int;
 
     public function getDirectDistanceTo(TileInterface $tile): int;
+
+    public function isWalkable();
 }
