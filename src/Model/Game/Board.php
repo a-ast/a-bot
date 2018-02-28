@@ -3,69 +3,61 @@
 namespace App\Model\Game;
 
 use App\Model\BoardInterface;
-use App\Model\Tile\GoldMine;
-use App\Model\Tile\Tavern;
+use App\Model\Direction\Pointable;
+use App\Model\Tile\TileFactory;
+use App\Model\Tile\TileMatrix;
 use App\Model\TileInterface;
 
-class Board extends SimpleBoard implements BoardInterface
+class Board implements BoardInterface
 {
     /**
-     * @var array|GoldMine[]
+     * @var TileMatrix
      */
-    private $goldMines = [];
+    protected $tiles;
 
     /**
-     * @var array|Tavern[]
+     * @var int
      */
-    private $taverns = [];
+    private $boardSize;
 
     public function __construct(int $boardWidth, string $tileData)
     {
-        parent::__construct($boardWidth, $tileData);
+        $this->tiles = new TileMatrix();
 
-        $this->refresh($tileData);
+        $this->boardSize = $boardWidth;
+
+        $this->loadInitialTiles($tileData);
     }
 
-    public function refresh(string $tileData)
+    public function getWidth(): int
     {
-        $this->refreshTiles($tileData);
+        return $this->boardSize;
     }
 
-    /**
-     * @return GoldMine[]|array
-     */
-    public function getGoldMines()
+    public function getTileInDirection(TileInterface $tile, Pointable $direction): TileInterface
     {
-        return $this->goldMines;
+        return $this->tiles->getTileInDirection($tile, $direction);
     }
 
-    protected function onLoadTile(TileInterface $tile)
+    private function loadInitialTiles(string $tilesData)
     {
-        if ($tile instanceof GoldMine) {
-            $this->goldMines[] = $tile;
-        }
+        $mapLines = str_split($tilesData, 2*$this->boardSize);
 
-        if ($tile instanceof Tavern) {
-            $this->taverns[] = $tile;
-        }
-    }
-
-    private function refreshTiles(string $tilesData)
-    {
-        $mapLines = str_split($tilesData, 2*$this->getWidth());
+        print join(PHP_EOL, $mapLines);
 
         foreach ($mapLines as $x => $mapLine) {
             $items = str_split($mapLine, 2);
 
             foreach ($items as $y => $item) {
-                if ('$' === $item[0]) {
-                    /** @var GoldMine $goldMine */
-                    $goldMine = $this->tiles->getTile($x, $y);
+                $tile = TileFactory::createTile($item, $x, $y);
 
-                    $heroId = ('0' === $item[1]) ? 0 : (int)$item[1];
-                    $goldMine->setHeroId($heroId);
-                }
+                $this->tiles->addTile($tile);
+                $this->onLoadTile($tile);
             }
         }
+    }
+
+    protected function onLoadTile(TileInterface $tile)
+    {
     }
 }

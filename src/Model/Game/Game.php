@@ -44,7 +44,7 @@ class Game implements GameInterface
     private $viewUrl;
 
     /**
-     * @var Board
+     * @var TreasureBoard
      */
     private $board;
 
@@ -57,7 +57,7 @@ class Game implements GameInterface
         $this->createEnemies($initialState['game']['heroes']);
 
         $boardSize = $initialState['game']['board']['size'];
-        $this->board = new Board($boardSize, $initialState['game']['board']['tiles']);
+        $this->board = new TreasureBoard($boardSize, $initialState['game']['board']['tiles']);
 
         $this->refresh($initialState);
     }
