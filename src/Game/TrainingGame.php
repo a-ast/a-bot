@@ -3,7 +3,7 @@
 namespace App\Game;
 
 use App\Api\VindiniumApiClient;
-use App\Model\GameState;
+use App\Model\Game;
 use App\Strategy\PrimitiveStrategy;
 use App\Progress\ProgressNotifier;
 
@@ -40,7 +40,7 @@ class TrainingGame
     public function execute(string $apiKey, int $turnCount = null, $mapName = null)
     {
         $initialStateData = $this->apiClient->createTraining($apiKey, $turnCount, $mapName);
-        $state = new GameState($initialStateData);
+        $state = new Game($initialStateData);
 
         $this->progressNotifier->openUrl($state->getViewUrl());
 

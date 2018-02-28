@@ -12,7 +12,5 @@ interface BoardInterface
      */
     public function getGoldMines();
 
-    public function getLocationInDirection(Locatable $location, Pointable $direction): Locatable;
-
-    public function getHero(): Movable;
+    public function getTileInDirection(TileInterface $tile, Pointable $direction): TileInterface;
 }

@@ -3,33 +3,33 @@
 
 namespace App\Strategy;
 
-use App\Model\GameStateInterface;
+use App\Model\GameInterface;
 use App\Model\Tile\GoldMine;
 use App\Model\Tile\Road;
 use App\Model\Direction\Directions;
-use App\Model\Locatable;
+use App\Model\TileInterface;
 
 class MoveChooser
 {
     /**
-     * @return array|Locatable[]
+     * @return array|TileInterface[]
      */
-    public function getAvailableLocations(GameStateInterface $gameState): array
+    public function getAvailableLocations(GameInterface $game): array
     {
-        $hero = $gameState->getHero();
-        $board = $gameState->getBoard();
+        $hero = $game->getHero();
+        $board = $game->getBoard();
 
-        $locations = [];
+        $tiles = [];
 
         foreach (Directions::getMovableDirections() as $direction) {
-            $object = $board->getLocationInDirection($hero, $direction);
+            $object = $board->getTileInDirection($hero, $direction);
 
             if ($object instanceof Road ||
-                ($object instanceof GoldMine && false === $object->belongsMe())) {
-                $locations[$direction->getTitle()] = $object;
+                ($object instanceof GoldMine && !$object->belongsTo($hero))) {
+                $tiles[$direction->getTitle()] = $object;
             }
         }
 
-        return $locations;
+        return $tiles;
     }
 }

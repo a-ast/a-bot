@@ -2,12 +2,12 @@
 
 namespace App\Strategy;
 
-use App\Model\GameStateInterface;
+use App\Model\GameInterface;
 use App\Model\Tile\GoldMine;
 
 class GoldFinder
 {
-    public function getClosestGoldMine(GameStateInterface $gameState): GoldMine
+    public function getClosestGoldMine(GameInterface $gameState): GoldMine
     {
         $minDistance = 10000;
 
@@ -18,7 +18,7 @@ class GoldFinder
 
         foreach ($gameState->getBoard()->getGoldMines() as $goldMine) {
 
-            if ($goldMine->belongsMe()) {
+            if ($goldMine->belongsTo($gameState->getHero())) {
                 continue;
             }
 

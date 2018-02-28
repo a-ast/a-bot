@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-abstract class AbstractLocation implements Locatable
+abstract class AbstractLocation implements TileInterface
 {
     /**
      * @var int
@@ -30,9 +30,9 @@ abstract class AbstractLocation implements Locatable
         return $this->y;
     }
 
-    public function getDirectDistanceTo(Locatable $location): int
+    public function getDirectDistanceTo(TileInterface $tile): int
     {
-        return abs($this->getX() - $location->getX()) +
-            abs($this->getY() - $location->getY());
+        return abs($this->getX() - $tile->getX()) +
+            abs($this->getY() - $tile->getY());
     }
 }

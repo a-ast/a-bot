@@ -7,24 +7,29 @@ use App\Model\AbstractLocation;
 class GoldMine extends AbstractLocation
 {
     /**
-     * @var bool
+     * @var int
      */
-    private $belongsMe;
+    private $heroId;
 
-    public function __construct(int $x, int $posY, bool $belongsMe)
+    public function __construct(int $x, int $posY, int $heroId)
     {
         parent::__construct($x, $posY);
 
-        $this->belongsMe = $belongsMe;
+        $this->heroId = $heroId;
     }
 
-    public function belongsMe(): bool
+    public function getHeroId(): int
     {
-        return $this->belongsMe;
+        return $this->heroId;
     }
 
-    public function setBelongsMe(bool $belongsMe): void
+    public function setHeroId(int $heroId): void
     {
-        $this->belongsMe = $belongsMe;
+        $this->heroId = $heroId;
+    }
+
+    public function belongsTo(AbstractCharacter $hero)
+    {
+        return $this->getHeroId() === $hero->getId();
     }
 }

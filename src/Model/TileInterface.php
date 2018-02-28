@@ -3,11 +3,11 @@
 
 namespace App\Model;
 
-interface Locatable
+interface TileInterface
 {
     public function getX(): int;
 
     public function getY(): int;
 
-    public function getDirectDistanceTo(Locatable $location): int;
+    public function getDirectDistanceTo(TileInterface $tile): int;
 }

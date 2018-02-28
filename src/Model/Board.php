@@ -2,33 +2,13 @@
 
 namespace App\Model;
 
-use App\Model\Tile\AbstractCharacter;
-use App\Model\Tile\Enemy;
 use App\Model\Tile\GoldMine;
-use App\Model\Tile\GreatWall;
-use App\Model\Tile\Hero;
-use App\Model\Tile\Road;
-use App\Model\Tile\Tavern;
-use App\Model\Tile\Unknown;
-use App\Model\Tile\Wood;
 use App\Model\Direction\Pointable;
-use App\Model\LocationMatrix;
-use Exception;
 
 class Board implements BoardInterface
 {
     /**
-     * @var Hero
-     */
-    private $hero;
-
-    /**
-     * @var array|Enemy[]
-     */
-    private $enemies;
-
-    /**
-     * @var LocationMatrix
+     * @var TileMatrix
      */
     private $tiles;
 
@@ -38,110 +18,23 @@ class Board implements BoardInterface
     private $goldMines;
 
     /**
-     * @var AbstractCharacter[]
+     * @var int
      */
-    private $characters;
+    private $boardSize;
 
-    public function __construct(array $initialState)
+    public function __construct(int $boardWidth, string $tileData)
     {
-        $this->hero = new Hero($initialState['hero']);
-        $this->createEnemies($initialState['game']['heroes']);
+        $this->tiles = new TileMatrix();
 
-        $boardSize = $initialState['game']['board']['size'];
-        $this->tiles = new LocationMatrix($boardSize, $boardSize);
-        $this->loadInitialTiles($initialState['game']['board']['tiles']);
+        $this->boardSize = $boardWidth;
 
-        $this->refresh($initialState);
+        $this->loadInitialTiles($tileData);
+        $this->refresh($tileData);
     }
 
-    public function refresh(array $state)
+    public function refresh(string $tileData)
     {
-        $this->refreshTiles($state['game']['board']['tiles']);
-        $this->hero->refresh($state['hero']);
-        $this->refreshEnemies($state['game']['heroes']);
-        $this->putCharactersOnBoard();
-    }
-
-    private function createEnemies(array $heroesData)
-    {
-        $this->enemies = [];
-
-        foreach ($heroesData as $enemy) {
-            $enemyId = $enemy['id'];
-            if ($enemyId === $this->hero->getId()) {
-                continue;
-            }
-
-            $this->enemies[$enemyId] = new Enemy($enemy);
-        }
-    }
-
-    private function refreshEnemies(array $heroesData)
-    {
-        foreach ($heroesData as $enemy) {
-            $enemyId = $enemy['id'];
-            if ($enemyId === $this->hero->getId()) {
-                continue;
-            }
-
-            $this->enemies[$enemyId]->refresh($enemy);
-        }
-    }
-
-    private function loadInitialTiles(string $tilesData)
-    {
-        $mapLines = str_split($tilesData, 2*$this->tiles->getWidth());
-
-        print join(PHP_EOL, $mapLines);
-
-        $this->goldMines = [];
-
-        foreach ($mapLines as $x => $mapLine) {
-            $items = str_split($mapLine, 2);
-
-            foreach ($items as $y => $item) {
-                $location = LocationFactory::createLocation($item, $x, $y);
-
-                $this->tiles->setItemByXY($x, $y, $location);
-
-                if ($location instanceof GoldMine) {
-                    $this->goldMines[] = $location;
-                }
-
-                // @todo: manage list of taverns
-            }
-        }
-    }
-
-    private function refreshTiles(string $tilesData)
-    {
-        $mapLines = str_split($tilesData, 2*$this->tiles->getWidth());
-
-        foreach ($mapLines as $x => $mapLine) {
-            $items = str_split($mapLine, 2);
-
-            foreach ($items as $y => $item) {
-                if ('$' === $item[0]) {
-
-                    $belongsMe = $item[1] == $this->hero->getId();
-
-                    /** @var GoldMine $goldMine */
-                    $goldMine = $this->tiles->getItemByXY($x, $y);
-                    $goldMine->setBelongsMe($belongsMe);
-                }
-            }
-        }
-    }
-
-    private function putCharactersOnBoard()
-    {
-        $this->characters = [];
-
-        // @todo: set hero?
-
-        foreach ($this->enemies as $enemy) {
-            $this->characters[$enemy->getX()][$enemy->getY()] = $enemy;
-        }
+        $this->refreshTiles($tileData);
     }
 
     /**
@@ -152,29 +45,52 @@ class Board implements BoardInterface
         return $this->goldMines;
     }
 
-    private function getLocationByXY(int $x, int $y): Locatable
+    public function getTileInDirection(TileInterface $tile, Pointable $direction): TileInterface
     {
-        if (isset($this->characters[$x][$y])) {
-            return $this->characters[$x][$y];
-        }
-
-        return $this->tiles->getItemByXY($x, $y);
+        return $this->tiles->getTileInDirection($tile, $direction);
     }
 
-    public function getLocationInDirection(Locatable $location, Pointable $direction): Locatable
+    private function loadInitialTiles(string $tilesData)
     {
-        $newX = $location->getX() + $direction->getShiftX();
-        $newY = $location->getY() + $direction->getShiftY();
+        $mapLines = str_split($tilesData, 2*$this->boardSize);
 
-        try {
-            return $this->getLocationByXY($newX, $newY);
-        } catch (Exception $e) {
-            return new GreatWall(0, 0);
+        print join(PHP_EOL, $mapLines);
+
+        $this->goldMines = [];
+
+        foreach ($mapLines as $x => $mapLine) {
+            $items = str_split($mapLine, 2);
+
+            foreach ($items as $y => $item) {
+                $tile = TileFactory::createTile($item, $x, $y);
+
+                $this->tiles->addTile($tile);
+
+                if ($tile instanceof GoldMine) {
+                    $this->goldMines[] = $tile;
+                }
+
+                // @todo: manage list of taverns
+            }
         }
     }
 
-    public function getHero(): Movable
+    private function refreshTiles(string $tilesData)
     {
-        return $this->hero;
+        $mapLines = str_split($tilesData, 2*$this->boardSize);
+
+        foreach ($mapLines as $x => $mapLine) {
+            $items = str_split($mapLine, 2);
+
+            foreach ($items as $y => $item) {
+                if ('$' === $item[0]) {
+                    /** @var GoldMine $goldMine */
+                    $goldMine = $this->tiles->getTile($x, $y);
+
+                    $heroId = ('0' === $item[1]) ? 0 : (int)$item[1];
+                    $goldMine->setHeroId($heroId);
+                }
+            }
+        }
     }
 }

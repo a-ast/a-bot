@@ -7,9 +7,9 @@ use App\Model\Tile\Road;
 use App\Model\Tile\Tavern;
 use App\Model\Tile\Wood;
 
-class LocationFactory
+class TileFactory
 {
-    public static function createLocation(string $item, int $x, int $y): Locatable
+    public static function createTile(string $item, int $x, int $y): TileInterface
     {
         switch ($item) {
             case '##':

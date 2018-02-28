@@ -2,7 +2,7 @@
 
 namespace App\Strategy;
 
-use App\Model\GameStateInterface;
+use App\Model\GameInterface;
 
 class PrimitiveStrategy
 {
@@ -22,14 +22,14 @@ class PrimitiveStrategy
         $this->moveChooser = $moveChooser;
     }
 
-    public function getDirection(GameStateInterface $gameState): string
+    public function getDirection(GameInterface $game): string
     {
-        $gold = $this->goldFinder->getClosestGoldMine($gameState);
+        $gold = $this->goldFinder->getClosestGoldMine($game);
 
-        print $gameState->getHero() .PHP_EOL;
-        print sprintf('Found gold at %d:%d My: ', $gold->getX(), $gold->getY(), (int)$gold->belongsMe()) . PHP_EOL;
+        print $game->getHero() .PHP_EOL;
+        print sprintf('Found gold at %d:%d Hero: ', $gold->getX(), $gold->getY(), $gold->getHeroId()) . PHP_EOL;
 
-        $availableLocations = $this->moveChooser->getAvailableLocations($gameState);
+        $availableLocations = $this->moveChooser->getAvailableLocations($game);
         print '  Possible directions: ' . join(', ', array_keys($availableLocations)) . PHP_EOL;
 
         $possibleDirections = [];

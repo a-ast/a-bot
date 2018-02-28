@@ -3,7 +3,7 @@
 
 namespace App\Model;
 
-interface Movable extends Locatable
+interface Movable extends TileInterface
 {
 
 }
