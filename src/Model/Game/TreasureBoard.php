@@ -39,6 +39,11 @@ class TreasureBoard extends Board implements TreasureBoardInterface
         return $this->goldMines;
     }
 
+    public function getTaverns()
+    {
+        return $this->taverns;
+    }
+
     protected function onLoadTile(TileInterface $tile)
     {
         if ($tile instanceof GoldMine) {

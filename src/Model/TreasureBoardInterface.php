@@ -2,8 +2,8 @@
 
 namespace App\Model;
 
-use App\Model\Direction\DirectionInterface;
 use App\Model\Tile\GoldMine;
+use App\Model\Tile\Tavern;
 
 interface TreasureBoardInterface extends BoardInterface
 {
@@ -11,4 +11,9 @@ interface TreasureBoardInterface extends BoardInterface
      * @return GoldMine[]|array
      */
     public function getGoldMines();
+
+    /**
+     * @return Tavern[]|array
+     */
+    public function getTaverns();
 }

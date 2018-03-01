@@ -46,7 +46,7 @@ class Board implements BoardInterface
         return $this->tiles->getTileInDirection($tile, $direction);
     }
 
-    public function getWalkableNearTiles(TileInterface $tile, TileInterface $includedGoal): array
+    public function getWalkableNearTiles(TileInterface $tile): array
     {
         $tiles = [];
 
@@ -54,7 +54,7 @@ class Board implements BoardInterface
 
             $nearTile = $this->getTileInDirection($tile, $direction);
 
-            if ($nearTile->isWalkable() || $nearTile === $includedGoal) {
+            if ($nearTile->isWalkable()) {
                 $tiles[] = $this->getTileInDirection($tile, $direction);
             }
         }
@@ -65,6 +65,7 @@ class Board implements BoardInterface
     private function loadInitialTiles(string $tilesData)
     {
         $mapLines = str_split($tilesData, 2*$this->boardSize);
+        print join(PHP_EOL, $mapLines) . PHP_EOL;
 
         foreach ($mapLines as $x => $mapLine) {
             $items = str_split($mapLine, 2);

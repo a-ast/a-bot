@@ -8,36 +8,38 @@ use SplObjectStorage;
 
 class LeeAlgorythm
 {
-    public function getPath(BoardInterface $board, TileInterface $fromTile, TileInterface $toTile)
+    /**
+     * @var BoardInterface
+     */
+    private $board;
+
+    /**
+     * @var SplObjectStorage
+     */
+    private $waves;
+
+    public function initialize(BoardInterface $board, array $goals)
     {
-        $visited = $this->expandWave($board, $fromTile, $toTile);
+        $this->board = $board;
 
-        $pathTile = $fromTile;
+        $this->waves = new SplObjectStorage();
 
-        $path = [];
-
-        while ($pathTile !== $toTile) {
-
-            $distance = $visited[$pathTile];
-
-            $nearTiles = $board->getWalkableNearTiles($pathTile, $toTile);
-            foreach ($nearTiles as $nearTile) {
-                $newDistance = $visited[$nearTile];
-
-                if ($newDistance < $distance) {
-                    $path[] = $nearTile;
-                    $pathTile = $nearTile;
-
-                    break;
-                }
-            }
+        foreach ($goals as $goal) {
+            $this->waves->attach($goal, $this->expandWave($goal));
         }
-
-        var_dump($visited->count());
-        var_dump(count($path));
     }
 
-    private function expandWave(BoardInterface $board, TileInterface $fromTile, TileInterface $toTile): SplObjectStorage
+    /**
+     * @return array|TileInterface[]
+     */
+    public function getPath(TileInterface $fromTile, TileInterface $toTile)
+    {
+        $visited = $this->expandWave($toTile);
+
+        return $this->findPath($visited, $toTile, $fromTile);
+    }
+
+    private function expandWave(TileInterface $toTile): SplObjectStorage
     {
         $visited = new SplObjectStorage();
         $frontier = new SplObjectStorage();
@@ -54,11 +56,11 @@ class LeeAlgorythm
 
                 $newDistance = $visited[$frontierTile] + 1;
 
-                $nearTiles = $board->getWalkableNearTiles($frontierTile, $fromTile);
+                $nearTiles = $this->board->getWalkableNearTiles($frontierTile);
 
                 foreach ($nearTiles as $nearTile) {
 
-                    // add new tile
+                    // add new tile if not visited
                     if (!isset($visited[$nearTile])) {
                         $tempFrontier->attach($nearTile);
                         $visited->attach($nearTile, $newDistance);
@@ -82,5 +84,36 @@ class LeeAlgorythm
         return $visited;
     }
 
+    private function findPath($waveMap, TileInterface $toTile, TileInterface $fromTile): array
+    {
+        $pathTile = $fromTile;
+
+        $path = [];
+
+        while ($pathTile !== $toTile) {
+
+            $distance = $waveMap[$pathTile];
+
+            // we found it
+            if ($pathTile->isNear($toTile)) {
+
+                break;
+            }
+
+            $nearTiles = $this->board->getWalkableNearTiles($pathTile);
+            foreach ($nearTiles as $nearTile) {
+                $newDistance = $waveMap[$nearTile];
+
+                if ($newDistance < $distance) {
+                    $path[] = $nearTile;
+                    $pathTile = $nearTile;
+
+                    break;
+                }
+            }
+        }
+
+        return $path;
+    }
 
 }

@@ -11,5 +11,5 @@ interface BoardInterface
 
     public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface;
 
-    public function getWalkableNearTiles(TileInterface $tile, TileInterface $includedGoal): array;
+    public function getWalkableNearTiles(TileInterface $tile): array;
 }
