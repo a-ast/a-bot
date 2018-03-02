@@ -10,7 +10,7 @@ interface GameInterface
 
     public function getViewUrl(): string;
 
-    public function getBoard(): BoardInterface;
+    public function getBoard(): TreasureBoardInterface;
 
     public function getHero(): HeroInterface;
 }

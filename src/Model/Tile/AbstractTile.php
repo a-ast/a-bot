@@ -37,9 +37,19 @@ abstract class AbstractTile implements TileInterface
         return 1 === $this->getDirectDistanceTo($tile);
     }
 
+    public function isOn(TileInterface $tile): bool
+    {
+        return 0 === $this->getDirectDistanceTo($tile);
+    }
+
     public function getDirectDistanceTo(TileInterface $tile): int
     {
         return abs($this->getX() - $tile->getX()) +
             abs($this->getY() - $tile->getY());
+    }
+
+    public function __toString()
+    {
+        return $this->getX().':'.$this->getY();
     }
 }

@@ -4,7 +4,7 @@ namespace App\Model\Game;
 
 use App\Model\Direction\DirectionInterface;
 use App\Model\GameInterface;
-use App\Model\BoardInterface;
+use App\Model\TreasureBoardInterface;
 use App\Model\HeroInterface;
 use App\Model\Tile\Enemy;
 use App\Model\Tile\Hero;
@@ -100,7 +100,7 @@ class Game implements GameInterface
         return $this->viewUrl;
     }
 
-    public function getBoard(): BoardInterface
+    public function getBoard(): TreasureBoardInterface
     {
         return $this->board;
     }

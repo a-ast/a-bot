@@ -2,6 +2,7 @@
 
 namespace App\Model\Game;
 
+use App\Model\HeroInterface;
 use App\Model\Tile\GoldMine;
 use App\Model\Tile\Tavern;
 use App\Model\TileInterface;
@@ -34,9 +35,16 @@ class TreasureBoard extends Board implements TreasureBoardInterface
     /**
      * @return GoldMine[]|array
      */
-    public function getGoldMines()
+    public function getGoldMines(HeroInterface $exceptHero = null)
     {
-        return $this->goldMines;
+        if (null === $exceptHero) {
+            return $this->goldMines;
+        }
+
+        return array_filter($this->goldMines,
+            function(GoldMine $goldMine) use ($exceptHero) {
+                return $goldMine->getHeroId() !== $exceptHero->getId();
+            } );
     }
 
     public function getTaverns()

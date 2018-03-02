@@ -92,7 +92,7 @@ class LeeAlgorythm
 
         while ($pathTile !== $toTile) {
 
-            $distance = $waveMap[$pathTile];
+            $distance = $waveMap[$pathTile] ?? 100000;
 
             // we found it
             if ($pathTile->isNear($toTile)) {

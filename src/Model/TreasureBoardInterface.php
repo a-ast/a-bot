@@ -10,7 +10,7 @@ interface TreasureBoardInterface extends BoardInterface
     /**
      * @return GoldMine[]|array
      */
-    public function getGoldMines();
+    public function getGoldMines(HeroInterface $exceptHero = null);
 
     /**
      * @return Tavern[]|array

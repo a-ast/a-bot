@@ -3,9 +3,10 @@
 namespace App\Game;
 
 use App\Api\VindiniumApiClient;
+use App\Model\Direction\Compass;
 use App\Model\Game\Game;
-use App\Strategy\PrimitiveStrategy;
 use App\Progress\ProgressNotifier;
+use App\Strategy\StrategyInterface;
 
 class TrainingGame
 {
@@ -15,19 +16,19 @@ class TrainingGame
     private $apiClient;
 
     /**
+     * @var StrategyInterface
+     */
+    private $strategy;
+
+    /**
      * @var ProgressNotifier
      */
     private $progressNotifier;
 
-    /**
-     * @var PrimitiveStrategy
-     */
-    private $strategy;
-
     public function __construct(
         VindiniumApiClient $apiClient,
-        ProgressNotifier $progressNotifier,
-        PrimitiveStrategy $strategy)
+        StrategyInterface $strategy,
+        ProgressNotifier $progressNotifier)
     {
         $this->apiClient = $apiClient;
         $this->progressNotifier = $progressNotifier;
@@ -36,23 +37,29 @@ class TrainingGame
 
     /**
      * @throws \App\Exceptions\GameException
+     * @throws \Exception
      */
     public function execute(string $apiKey, int $turnCount = null, $mapName = null)
     {
         $initialStateData = $this->apiClient->createTraining($apiKey, $turnCount, $mapName);
-        $state = new Game($initialStateData);
+        $game = new Game($initialStateData);
 
-        $this->progressNotifier->openUrl($state->getViewUrl());
+        $compass = new Compass();
 
-        $playUrl = $state->getPlayUrl();
+        $playUrl = $game->getPlayUrl();
+        $this->progressNotifier->openUrl($game->getViewUrl());
 
-        while (false === $state->isFinished()) {
-            $direction = $this->strategy->getDirection($state);
+        $this->strategy->initialize($game);
 
+        while (false === $game->isFinished()) {
+            $nextTile = $this->strategy->getNextTile();
+            $direction = $compass->getDirectionTo($game->getHero(), $nextTile);
+
+            print $game->getHero() . ' -> '. $nextTile .PHP_EOL;
             print $direction .PHP_EOL;
 
             $newState = $this->apiClient->playMove($apiKey, $playUrl, $direction);
-            $state->refresh($newState);
+            $game->refresh($newState);
         }
     }
 }
