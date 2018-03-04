@@ -16,5 +16,5 @@ interface GameInterface
 
     public function getHeroes(): array;
 
-    public function getNearHero(TileInterface $tile): TileInterface;
+    public function getHeroOn(TileInterface $tile): HeroInterface;
 }

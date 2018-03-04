@@ -5,19 +5,19 @@ namespace App\Command;
 use App\Model\Game\Game;
 use App\Model\Tile\Road;
 use App\Strategy\StatefulStrategy;
+use App\Strategy\StrategyInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TestGameCommand extends Command
 {
-
     /**
-     * @var \App\Strategy\StatefulStrategy
+     * @var StrategyInterface
      */
     private $strategy;
 
-    public function __construct(StatefulStrategy $strategy)
+    public function __construct(StrategyInterface $strategy)
     {
         parent::__construct();
 
@@ -51,7 +51,8 @@ class TestGameCommand extends Command
                 'life' => 100,
                 'gold' => 0,
                 'crashed' => false,
-                'pos' => ['x' => 0, 'y' => 0],
+                'pos' => ['x' => 4, 'y' => 5],
+                'spawnPos' => ['x' => 0, 'y' => 0],
             ],
             'game' => [
                 'finished' => false,

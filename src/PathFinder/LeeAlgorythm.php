@@ -101,16 +101,32 @@ class LeeAlgorythm
             }
 
             $nearTiles = $this->board->getNearTiles($pathTile);
+
+
+            // find min path from near tiles
+
+            $minDistance = 10000;
             foreach ($nearTiles as $nearTile) {
                 $newDistance = $waveMap[$nearTile];
 
-                if ($newDistance < $distance) {
+                if ($newDistance < $distance && $newDistance < $minDistance) {
+                    $minDistance = $newDistance;
+                }
+            }
+
+            // find min path
+            foreach ($nearTiles as $nearTile) {
+                $newDistance = $waveMap[$nearTile];
+
+                if ($newDistance <= $minDistance) {
                     $path[] = $nearTile;
                     $pathTile = $nearTile;
 
                     break;
                 }
             }
+
+
         }
 
         return $path;
