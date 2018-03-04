@@ -8,7 +8,7 @@ use App\Model\Game\Game;
 use App\Progress\ProgressNotifier;
 use App\Strategy\StrategyInterface;
 
-class TrainingGame
+class TournamentGame
 {
     /**
      * @var VindiniumApiClient
@@ -39,11 +39,34 @@ class TrainingGame
      * @throws \App\Exceptions\GameException
      * @throws \Exception
      */
-    public function execute(string $apiKey, int $turnCount = null, $mapName = null)
+    public function executeTraining(string $apiKey, int $turnCount = null, $mapName = null)
     {
         $initialStateData = $this->apiClient->createTraining($apiKey, $turnCount, $mapName);
-        $game = new Game($initialStateData);
 
+        $this->execute($apiKey, $initialStateData);
+    }
+
+    /**
+     * @throws \App\Exceptions\GameException
+     * @throws \Exception
+     */
+    public function executeArena(string $apiKey)
+    {
+        $initialStateData = $this->apiClient->createArena($apiKey);
+
+        $this->execute($apiKey, $initialStateData);
+    }
+
+    /**
+     * @param string $apiKey
+     * @param $initialStateData
+     *
+     * @throws \App\Exceptions\GameException
+     * @throws \Exception
+     */
+    private function execute(string $apiKey, $initialStateData): void
+    {
+        $game = new Game($initialStateData);
         $compass = new Compass();
 
         $playUrl = $game->getPlayUrl();
@@ -53,16 +76,13 @@ class TrainingGame
 
         while (false === $game->isFinished()) {
 
-
-
-
             $nextTile = $this->strategy->getNextTile();
 
-            print $game->getHero() . ' -> '. $nextTile .PHP_EOL;
+            print $game->getHero().' -> '.$nextTile.PHP_EOL;
 
             $direction = $compass->getDirectionTo($game->getHero(), $nextTile);
 
-            print $direction .PHP_EOL.PHP_EOL;
+            print $direction.PHP_EOL.PHP_EOL;
 
             $newState = $this->apiClient->playMove($apiKey, $playUrl, $direction);
             $game->refresh($newState);

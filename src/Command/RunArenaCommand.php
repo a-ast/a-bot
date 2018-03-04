@@ -1,24 +1,22 @@
 <?php
 
-
 namespace App\Command;
 
-
-use App\Game\TrainingGame;
+use App\Game\TournamentGame;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RunCommand extends Command
+class RunArenaCommand extends Command
 {
     /**
-     * @var TrainingGame
+     * @var TournamentGame
      */
     private $game;
 
-    public function __construct(TrainingGame $game)
+    public function __construct(TournamentGame $game)
     {
         parent::__construct();
 
@@ -28,21 +26,15 @@ class RunCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('a-bot:train')
+            ->setName('a-bot:arena')
             ->addArgument('bot-api-key', InputArgument::REQUIRED)
-            ->addArgument('turn-count', InputArgument::OPTIONAL, '', null)
-            ->addArgument('map', InputArgument::OPTIONAL, '', null)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->game->execute(
-              $input->getArgument('bot-api-key'),
-              $input->getArgument('turn-count'),
-              $input->getArgument('map')
-            );
+            $this->game->executeArena($input->getArgument('bot-api-key'));
         } catch (Exception $exception) {
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
 

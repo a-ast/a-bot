@@ -4,7 +4,7 @@
 namespace App\Command;
 
 
-use App\Game\TrainingGame;
+use App\Game\TournamentGame;
 use App\Model\Game\Board;
 use App\PathFinder\LeeAlgorythm;
 use Exception;

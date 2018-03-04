@@ -42,6 +42,16 @@ class VindiniumApiClient
     /**
      * @throws GameException
      */
+    public function createArena(string $key): array
+    {
+        $parameters = ['key' => $key];
+
+        return $this->send('/api/arena', $parameters);
+    }
+
+    /**
+     * @throws GameException
+     */
     public function playMove(string $key, string $url, string $direction): array
     {
         $parameters = ['key' => $key, 'dir' => $direction];
