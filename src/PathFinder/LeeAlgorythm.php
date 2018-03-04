@@ -56,7 +56,7 @@ class LeeAlgorythm
 
                 $newDistance = $visited[$frontierTile] + 1;
 
-                $nearTiles = $this->board->getWalkableNearTiles($frontierTile);
+                $nearTiles = $this->board->getNearTiles($frontierTile);
 
                 foreach ($nearTiles as $nearTile) {
 
@@ -100,7 +100,7 @@ class LeeAlgorythm
                 break;
             }
 
-            $nearTiles = $this->board->getWalkableNearTiles($pathTile);
+            $nearTiles = $this->board->getNearTiles($pathTile);
             foreach ($nearTiles as $nearTile) {
                 $newDistance = $waveMap[$nearTile];
 

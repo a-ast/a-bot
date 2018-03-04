@@ -2,7 +2,7 @@
 
 namespace App\Model\Tile;
 
-class Unknown extends AbstractTile
+class NoTile extends AbstractTile
 {
     public function isWalkable()
     {

@@ -4,6 +4,7 @@ namespace App\Model\Game;
 
 use App\Model\Direction\DirectionInterface;
 use App\Model\GameInterface;
+use App\Model\Tile\NoTile;
 use App\Model\TreasureBoardInterface;
 use App\Model\HeroInterface;
 use App\Model\Tile\Enemy;
@@ -74,15 +75,17 @@ class Game implements GameInterface
         $this->board->refresh($state['game']['board']['tiles']);
     }
 
-    public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface
+    public function getNearHero(TileInterface $tile): TileInterface
     {
-        $newTile = $this->enemyMatrix->getTileInDirection($tile, $direction);
+        $tiles = $this->board->getNearTiles($tile, false);
 
-        if ($newTile instanceof Enemy) {
-            return $newTile;
+        foreach ($tiles as $nearTile) {
+            if ($this->enemyMatrix->tileExists($nearTile->getX(), $nearTile->getY())) {
+                return $nearTile;
+            }
         }
 
-        return $this->board->getTileInDirection($tile, $direction);
+        return new NoTile(-1, -1);
     }
 
     public function isFinished(): bool
@@ -109,6 +112,12 @@ class Game implements GameInterface
     {
         return $this->hero;
     }
+
+    public function getHeroes(): array
+    {
+        return $this->enemies;
+    }
+
 
     private function createEnemies(array $heroesData)
     {

@@ -26,9 +26,32 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
      */
     private $goldPoints;
 
+    /**
+     * @var bool
+     */
+    private $isCrashed;
+
+    /**
+     * @var int
+     */
+    private $spawnPosX;
+
+    /**
+     * @var int
+     */
+    private $spawnPosY;
+
+    /**
+     * @var bool
+     */
+    private $isRespawned;
+
     public function __construct(array $data)
     {
         parent::__construct($data['pos']['x'], $data['pos']['y']);
+
+        $this->spawnPosX = $data['spawnPos']['x'];
+        $this->spawnPosY = $data['spawnPos']['y'];
 
         $this->name = $data['name'];
         $this->id = $data['id'];
@@ -39,13 +62,18 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
     {
         $this->lifePoints = $data['life'];
         $this->goldPoints = $data['gold'];
-        $this->setPos($data['pos']);
-    }
+        $this->isCrashed = $data['crashed'];
 
-    private function setPos(array $pos): void
-    {
-        $this->x = $pos['x'];
-        $this->y = $pos['y'];
+        $newX = $data['pos']['x'];
+        $newY = $data['pos']['y'];
+
+        $this->isRespawned =
+            $this->getDirectDistance($newX, $newY) > 1 &&
+            ($newX === $this->spawnPosX) &&
+            ($newX === $this->spawnPosX);
+
+        $this->x = $newX;
+        $this->y = $newY;
     }
 
     public function getName(): string
@@ -73,8 +101,37 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
         return false;
     }
 
+    public function isCrashed(): bool
+    {
+        return $this->isCrashed;
+    }
+
+    public function isOnSpawnTile(): bool
+    {
+        return
+            $this->getX() === $this->spawnPosX &&
+            $this->getY() === $this->spawnPosY;
+    }
+
+    public function isRespawned(): bool
+    {
+        return $this->isRespawned;
+    }
+
     public function __toString()
     {
-        return sprintf('%s [x: %d, y: %d]', static::class, $this->getX(), $this->getY());
+        return sprintf('Hero [%d: %d] Gold: %d, LP: %d',
+            $this->getX(), $this->getY(), $this->getGoldPoints(), $this->getLifePoints());
+    }
+
+    /**
+     * @param $newX
+     * @param $newY
+     *
+     * @return float|int
+     */
+    private function getDirectDistance($newX, $newY)
+    {
+        return abs($newX - $this->getX()) + abs($newY - $this->getY());
     }
 }

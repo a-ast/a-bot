@@ -15,7 +15,7 @@ class TileMatrix
     public function getTile(int $x, int $y): TileInterface
     {
         if (!$this->tileExists($x, $y)) {
-            return new Unknown(-1, -1);
+            return new NoTile(-1, -1);
         }
 
         return $this->matrix[$x][$y];

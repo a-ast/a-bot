@@ -52,11 +52,17 @@ class TrainingGame
         $this->strategy->initialize($game);
 
         while (false === $game->isFinished()) {
+
+
+
+
             $nextTile = $this->strategy->getNextTile();
-            $direction = $compass->getDirectionTo($game->getHero(), $nextTile);
 
             print $game->getHero() . ' -> '. $nextTile .PHP_EOL;
-            print $direction .PHP_EOL;
+
+            $direction = $compass->getDirectionTo($game->getHero(), $nextTile);
+
+            print $direction .PHP_EOL.PHP_EOL;
 
             $newState = $this->apiClient->playMove($apiKey, $playUrl, $direction);
             $game->refresh($newState);

@@ -3,7 +3,6 @@
 namespace App\Model;
 
 use App\Model\Direction\DirectionInterface;
-use App\Model\Tile\GoldMine;
 
 interface BoardInterface
 {
@@ -11,5 +10,8 @@ interface BoardInterface
 
     public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface;
 
-    public function getWalkableNearTiles(TileInterface $tile): array;
+    /**
+     * @return array|\App\Model\TileInterface[]
+     */
+    public function getNearTiles(TileInterface $tile, bool $onlyWalkable = true): array;
 }

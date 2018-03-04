@@ -4,6 +4,7 @@ namespace App\Strategy;
 
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
+use App\Model\Tile\Enemy;
 use App\Model\TileInterface;
 use App\Model\TreasureBoardInterface;
 use App\PathFinder\LeeAlgorythm;
@@ -38,6 +39,11 @@ class StatefulStrategy implements StrategyInterface
      */
     private $goalPath;
 
+    /**
+     * @var GameInterface
+     */
+    private $game;
+
 
     public function __construct(LeeAlgorythm $pathFinder)
     {
@@ -46,6 +52,7 @@ class StatefulStrategy implements StrategyInterface
 
     public function initialize(GameInterface $game)
     {
+        $this->game = $game;
         $this->hero = $game->getHero();
         $this->board = $game->getBoard();
         $goals = array_merge($this->board->getGoldMines(), $this->board->getTaverns());
@@ -57,6 +64,28 @@ class StatefulStrategy implements StrategyInterface
     public function getNextTile(): TileInterface
     {
         print $this->state . PHP_EOL;
+
+        if ($this->hero->isRespawned()) {
+            print '****** Heilige Scheisse *******'. PHP_EOL;
+            $this->state = 'Init';
+        }
+
+        // if enemy near, fight
+//        $enemy = $this->game->getNearHero($this->hero);
+//
+//        if ($enemy instanceof Enemy) {
+//            print '****** BANZAI *******'. PHP_EOL;
+//
+//            return $enemy;
+//        }
+
+        foreach ($this->game->getHeroes() as $enemy) {
+            if ($this->hero->isNear($enemy)) {
+                print '****** BANZAI *******'. PHP_EOL;
+
+                return $enemy;
+            }
+        }
 
         do {
 
@@ -76,7 +105,14 @@ class StatefulStrategy implements StrategyInterface
                         break;
                     }
 
-                    $this->findGoal($this->board->getGoldMines($this->hero), 'GoToGold');
+                    $potentialGoals = $this->board->getGoldMines($this->hero);
+
+                    // if all gold is mine, no hurry
+                    if (0 === count($potentialGoals)) {
+                        return $this->hero;
+                    }
+
+                    $this->findGoal($potentialGoals, 'GoToGold');
 
                     break;
 
@@ -89,14 +125,10 @@ class StatefulStrategy implements StrategyInterface
                 case 'GoToGold':
 
                     if ($this->hero->getLifePoints() < 30) {
-                        $this->state = 'GoToTavern';
+                        $this->state = 'FindTavern';
 
                         break;
                     }
-
-                    // Check if enough HP
-
-                    // if not change state to GoToTavern
 
                     return $this->goToGoal();
 
@@ -110,9 +142,19 @@ class StatefulStrategy implements StrategyInterface
 
                     return $this->goToGoal();
 
+                case 'Drink':
+                    if ($this->hero->getLifePoints() < 90) {
+
+                        // Noch ein Bier bitte
+
+                        return $this->goToGoal();
+                    }
+
+                    $this->state = 'FindGold';
 
 
             }
+
         } while (true);
     }
 
@@ -120,16 +162,27 @@ class StatefulStrategy implements StrategyInterface
     {
         if ($this->hero->isNear($this->goalTile)) {
 
-            $this->state = 'FindGold';
+            if ('GoToTavern' === $this->state) {
+                $this->state = 'Drink';
+            } else {
+
+                $this->state = 'FindGold';
+            }
+
 
             return $this->goalTile;
         }
 
-        // Just use next()
-        $nextTile = current($this->goalPath);
-        next($this->goalPath);
+        // find next node
+        for ($i = 0; $i < count($this->goalPath); $i++) {
+            if ($this->hero->isOn($this->goalPath[$i])) {
 
-        return $nextTile;
+                return $this->goalPath[$i+1];
+
+            }
+        }
+
+        return $this->goalPath[0];
     }
 
 
@@ -145,13 +198,7 @@ class StatefulStrategy implements StrategyInterface
             $pathLengths[count($path)] = $item;
         }
 
-//        if (0 === count($paths)) {
-//
-//            // Really? @todo: better fight
-//            $this->state = 'FindTavern';
-//
-//            break;
-//        }
+
 
         ksort($pathLengths);
         reset($pathLengths);

@@ -13,4 +13,8 @@ interface GameInterface
     public function getBoard(): TreasureBoardInterface;
 
     public function getHero(): HeroInterface;
+
+    public function getHeroes(): array;
+
+    public function getNearHero(TileInterface $tile): TileInterface;
 }

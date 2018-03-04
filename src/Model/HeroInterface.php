@@ -11,4 +11,10 @@ interface HeroInterface extends TileInterface
     public function getLifePoints(): int;
 
     public function getGoldPoints(): int;
+
+    public function isCrashed(): bool;
+
+    public function isRespawned(): bool;
+
+    public function isOnSpawnTile(): bool;
 }

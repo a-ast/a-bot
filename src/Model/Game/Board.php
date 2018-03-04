@@ -3,8 +3,11 @@
 namespace App\Model\Game;
 
 use App\Model\BoardInterface;
+use App\Model\HeroInterface;
 use App\Model\Direction\DirectionInterface;
 use App\Model\Direction\Directions;
+use App\Model\Tile\NoHero;
+use App\Model\Tile\NoTile;
 use App\Model\Tile\TileFactory;
 use App\Model\Tile\TileMatrix;
 use App\Model\TileInterface;
@@ -46,7 +49,10 @@ class Board implements BoardInterface
         return $this->tiles->getTileInDirection($tile, $direction);
     }
 
-    public function getWalkableNearTiles(TileInterface $tile): array
+    /**
+     * @return array|TileInterface[]
+     */
+    public function getNearTiles(TileInterface $tile, bool $onlyWalkable = true): array
     {
         $tiles = [];
 
@@ -54,13 +60,15 @@ class Board implements BoardInterface
 
             $nearTile = $this->getTileInDirection($tile, $direction);
 
-            if ($nearTile->isWalkable()) {
-                $tiles[] = $this->getTileInDirection($tile, $direction);
+            if (!$onlyWalkable || $nearTile->isWalkable()) {
+                $tiles[] = $nearTile;
             }
         }
 
         return $tiles;
     }
+
+
 
     private function loadInitialTiles(string $tilesData)
     {
