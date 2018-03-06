@@ -35,6 +35,14 @@ class LocationMatrix implements IteratorAggregate, LocationMatrixInterface
         return $x . ':' . $y;
     }
 
+    public function isNear($iLoc, $jLoc)
+    {
+        $a = explode(':', $iLoc);
+        $b = explode(':', $jLoc);
+
+        return 1 === (abs($a[0] - $b[0]) + abs($a[1] - $b[1]));
+    }
+
     /**
      * @return Traversable|LocationInterface[]
      */
