@@ -3,7 +3,7 @@
 namespace App\Tests\Context;
 
 use App\Model\Location\LocationMatrixBuilder;
-use App\PathFinder\FloydAlgorythm;
+use App\PathFinder\FloydWarshallAlgorithm;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Webmozart\Assert\Assert;
@@ -29,7 +29,7 @@ class PathFinderContext implements Context
         $builder = new LocationMatrixBuilder();
         $this->matrix = $builder->buildFromTextWithEol($mapData);
 
-        $this->pathFinder = new FloydAlgorythm();
+        $this->pathFinder = new FloydWarshallAlgorithm();
         $this->pathFinder->initialize($this->matrix);
     }
 

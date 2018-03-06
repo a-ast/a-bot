@@ -6,8 +6,8 @@ namespace App\Command;
 
 use App\Game\TournamentGame;
 use App\Model\Game\Board;
-use App\PathFinder\FloydAlgorythm;
-use App\PathFinder\LeeAlgorythm;
+use App\PathFinder\FloydWarshallAlgorithm;
+use App\PathFinder\LeeAlgorithm;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,7 +41,7 @@ class WatchPathFinderCommand extends Command
         $gold1 = $board->getTileAt(15, 15);
 
         //$pathFinder = new LeeAlgorythm();
-        $pathFinder = new FloydAlgorythm();
+        $pathFinder = new FloydWarshallAlgorithm();
 
         $watch = new Stopwatch(false);
         $watch->start('path');

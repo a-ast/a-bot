@@ -5,7 +5,7 @@ namespace App\PathFinder;
 use App\Model\Location\LocationInterface;
 use App\Model\Location\LocationMatrixInterface;
 
-class FloydAlgorythm implements PathFinderInterface
+class FloydWarshallAlgorithm implements PathFinderInterface
 {
 
     /**

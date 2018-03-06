@@ -7,7 +7,7 @@ use App\Model\HeroInterface;
 use App\Model\Tile\Enemy;
 use App\Model\TileInterface;
 use App\Model\TreasureBoardInterface;
-use App\PathFinder\LeeAlgorythm;
+use App\PathFinder\LeeAlgorithm;
 use SplObjectStorage;
 
 class StatefulStrategy implements StrategyInterface
@@ -15,7 +15,7 @@ class StatefulStrategy implements StrategyInterface
     private $state;
 
     /**
-     * @var LeeAlgorythm
+     * @var LeeAlgorithm
      */
     private $pathFinder;
 
@@ -45,7 +45,7 @@ class StatefulStrategy implements StrategyInterface
     private $game;
 
 
-    public function __construct(LeeAlgorythm $pathFinder)
+    public function __construct(LeeAlgorithm $pathFinder)
     {
         $this->pathFinder = $pathFinder;
     }

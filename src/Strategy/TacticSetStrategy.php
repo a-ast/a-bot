@@ -11,7 +11,7 @@ use App\Model\Tile\NoTile;
 use App\Model\Tile\Tavern;
 use App\Model\TileInterface;
 use App\Model\TreasureBoardInterface;
-use App\PathFinder\LeeAlgorythm;
+use App\PathFinder\LeeAlgorithm;
 use SplObjectStorage;
 
 class TacticSetStrategy implements StrategyInterface
@@ -19,7 +19,7 @@ class TacticSetStrategy implements StrategyInterface
     private $state;
 
     /**
-     * @var LeeAlgorythm
+     * @var LeeAlgorithm
      */
     private $pathFinder;
 
@@ -49,7 +49,7 @@ class TacticSetStrategy implements StrategyInterface
     private $game;
 
 
-    public function __construct(LeeAlgorythm $pathFinder)
+    public function __construct(LeeAlgorithm $pathFinder)
     {
         $this->pathFinder = $pathFinder;
     }

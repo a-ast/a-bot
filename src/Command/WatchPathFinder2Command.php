@@ -10,8 +10,8 @@ use App\Model\Location\LocationMatrixInterface;
 use App\Model\Location\LocationMatrixBuilder;
 use App\Model\Location\Road;
 use App\Model\Location\Wall;
-use App\PathFinder\FloydAlgorythm;
-use App\PathFinder\LeeAlgorythm;
+use App\PathFinder\FloydWarshallAlgorithm;
+use App\PathFinder\LeeAlgorithm;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -44,7 +44,7 @@ class WatchPathFinder2Command extends Command
 //        $from = $matrix->getLocation(0, 0);
 //        $to = $matrix->getLocation(8, 8);
 
-        $pathFinder = new FloydAlgorythm();
+        $pathFinder = new FloydWarshallAlgorithm();
 
         $watch = new Stopwatch(false);
 
