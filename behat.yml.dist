@@ -1,0 +1,7 @@
+default:
+  suites:
+    default:
+      paths:
+        - "%paths.base%/tests/features"
+      contexts:
+        - App\Tests\Context\PathFinderContext

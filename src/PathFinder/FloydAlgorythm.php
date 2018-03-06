@@ -18,8 +18,6 @@ class FloydAlgorythm implements PathFinderInterface
         $locations = $locationMatrix->getKeys();
         $size = count($locations);
 
-
-
         // step 1
 
         for ($i = 0; $i < $size; $i++) {
@@ -37,6 +35,7 @@ class FloydAlgorythm implements PathFinderInterface
 
                 if ($isNear) {
                     $this->distances[$iLoc][$jLoc] = 1;
+                    $this->distances[$jLoc][$iLoc] = 1;
                     $this->next[$iLoc][$jLoc] = $jLoc;
                 }
 
@@ -57,7 +56,7 @@ class FloydAlgorythm implements PathFinderInterface
                     continue;
                 }
 
-                for ($j = $i + 1; $j < $size; $j++) {
+                for ($j = 0; $j < $size; $j++) {
 
                     $jLoc = $locations[$j];
 
