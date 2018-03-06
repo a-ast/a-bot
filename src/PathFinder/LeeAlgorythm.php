@@ -6,7 +6,7 @@ use App\Model\BoardInterface;
 use App\Model\TileInterface;
 use SplObjectStorage;
 
-class LeeAlgorythm
+class LeeAlgorythm // implements PathFinderInterface
 {
     /**
      * @var BoardInterface
