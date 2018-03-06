@@ -43,8 +43,6 @@ class PathFinderContext implements Context
 
         $pathDistance = $this->pathFinder->getDistance($fromLocation, $toLocation);
 
-
         Assert::eq($pathDistance, $distance);
-
     }
 }

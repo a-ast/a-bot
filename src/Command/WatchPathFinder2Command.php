@@ -27,12 +27,16 @@ class WatchPathFinder2Command extends Command
     {
         $this
             ->setName('a-bot:path2')
+            ->addArgument('map-name', InputArgument::REQUIRED)
+
+
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $mapData = file_get_contents(__DIR__ . '/Map/huge.map', FILE_IGNORE_NEW_LINES);
+        $fileName = sprintf('/Map/%s.map', $input->getArgument('map-name'));
+        $mapData = file_get_contents(__DIR__ .$fileName, FILE_IGNORE_NEW_LINES);
 
         $builder = new LocationMatrixBuilder();
         $matrix = $builder->buildFromTextWithEol($mapData);

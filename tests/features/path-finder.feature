@@ -23,3 +23,17 @@ Feature: Finding pathes on the map
 ##########
       """
     Then the distance from "1:1" to "1:3" is 8
+
+
+  Scenario: Find shortest path on the location matrix 3
+    Given there is a map:
+      """
+################
+##  ##        ##
+##    ##      ##
+##      ##    ##
+##        ##  ##
+##            ##
+################
+      """
+    Then the distance from "1:1" to "1:3" is 16
