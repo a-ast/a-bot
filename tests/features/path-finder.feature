@@ -37,3 +37,4 @@ Feature: Finding pathes on the map
 ################
       """
     Then the distance from "1:1" to "1:3" is 16
+    And the distance from "1:3" to "1:1" is 16

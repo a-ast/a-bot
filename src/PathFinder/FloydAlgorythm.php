@@ -7,26 +7,35 @@ use App\Model\Location\LocationMatrixInterface;
 
 class FloydAlgorythm implements PathFinderInterface
 {
-    const INF = 100000;
 
+    /**
+     * @var array
+     */
     private $distances = [];
 
+    /**
+     * @var array
+     */
     private $next = [];
+
+    /**
+     * @var array
+     */
+    private $locations;
+
+    /**
+     * @var int
+     */
+    private $size;
 
     public function initialize(LocationMatrixInterface $locationMatrix, array $context = [])
     {
-        $locations = $locationMatrix->getKeys();
-        $size = count($locations);
+        $this->locations = $locationMatrix->getKeys();
+        $this->size = count($this->locations);
 
-        // step 1
+        $this->prepareAdjacentDistances($locationMatrix);
+        $this->calculateDistances();
 
-        $this->prepareAdjacentDistances($locationMatrix, $size, $locations);
-
-        print "Init matrix finished\n";
-
-        $this->calculateDistances($size, $locations);
-
-        print "Calc matrix finished\n";
     }
 
     public function getDistance(LocationInterface $fromLocation, LocationInterface $toLocation): int
@@ -35,7 +44,10 @@ class FloydAlgorythm implements PathFinderInterface
         $from = $fromLocation->getX().':'.$fromLocation->getY();
         $to = $toLocation->getX().':'.$toLocation->getY();
 
-        return $this->distances[$from][$to];
+        $i = array_search($from, $this->locations);
+        $j = array_search($to, $this->locations);
+
+        return $this->distances[$i][$j];
     }
 
     public function getNextLocation(LocationInterface $fromLocation, LocationInterface $toLocation): LocationInterface
@@ -47,77 +59,71 @@ class FloydAlgorythm implements PathFinderInterface
         return $this->next[$from][$to];
     }
 
-    private function prepareAdjacentDistances(LocationMatrixInterface $locationMatrix, $size, &$locations)
+    private function prepareAdjacentDistances(LocationMatrixInterface $locationMatrix)
     {
+        $size = $this->size;
+
         for ($i = 0; $i < $size; $i++) {
-            $this->distances[$locations[$i]][$locations[$i]] = 0;
+            $this->distances[$i][$i] = 0;
         }
 
         for ($i = 0; $i < $size; $i++) {
 
             for ($j = $i + 1; $j < $size; $j++) {
 
-                $iLoc = $locations[$i];
-                $jLoc = $locations[$j];
+                $iLoc = $this->locations[$i];
+                $jLoc = $this->locations[$j];
 //                $isNear = $locationMatrix->getLocationByKey($iLoc)
 //                    ->isNear($locationMatrix->getLocationByKey($jLoc));
 
                 $isNear = $locationMatrix->isNear($iLoc, $jLoc);
 
                 if ($isNear) {
-                    $this->distances[$iLoc][$jLoc] = 1;
-                    $this->distances[$jLoc][$iLoc] = 1;
-                    $this->next[$iLoc][$jLoc] = $jLoc;
+                    $this->distances[$i][$j] = 1;
+                    $this->distances[$j][$i] = 1;
+                    $this->next[$i][$j] = $jLoc;
                 }
-
             }
         }
     }
 
-    private function calculateDistances($size, &$locations): void
+    private function calculateDistances()
     {
-        for ($k = 0; $k < $size; $k++) {
+        for ($k = 0; $k < $this->size; $k++) {
 
-            $kLoc = $locations[$k];
+            for ($i = 0; $i < $this->size; $i++) {
 
-            for ($i = 0; $i < $size; $i++) {
+//                if ($i === $k) {
+//                    continue;
+//                }
 
-                if ($i === $k) {
-                    continue;
-                }
-
-                $iLoc = $locations[$i];
-
-                if (!isset($this->distances[$iLoc][$kLoc])) {
+                if (!isset($this->distances[$i][$k])) {
                     continue;
                 }
 
                 for ($j = 0; $j < $i; $j++) {
 
-                    if ($j === $k) {
+//                    if ($j === $k) {
+//                        continue;
+//                    }
+
+                    if (!isset($this->distances[$k][$j])) {
                         continue;
                     }
 
-                    $jLoc = $locations[$j];
-
-                    if (!isset($this->distances[$kLoc][$jLoc])) {
-                        continue;
-                    }
-
-                    $d = $this->distances[$iLoc][$kLoc] + $this->distances[$kLoc][$jLoc];
+                    $d = $this->distances[$i][$k] + $this->distances[$k][$j];
                     if (
-                        !isset($this->distances[$iLoc][$jLoc]) ||
-                        $d < $this->distances[$iLoc][$jLoc]) {
+                        !isset($this->distances[$i][$j]) ||
+                        $d < $this->distances[$i][$j]) {
 
-                        $this->distances[$iLoc][$jLoc] = $this->distances[$jLoc][$iLoc] = $d;
+                        $this->distances[$i][$j] = $this->distances[$j][$i] = $d;
 
-                        $this->next[$iLoc][$jLoc] = $this->next[$iLoc][$kLoc] ?? null;
-                        $this->next[$jLoc][$iLoc] = $this->next[$jLoc][$kLoc] ?? null;
+                        $this->next[$i][$j] = $this->next[$i][$k] ?? null;
+                        $this->next[$j][$i] = $this->next[$j][$k] ?? null;
                     }
 
                 }
             }
         }
     }
-
 }
