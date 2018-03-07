@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Game\TournamentGame;
 use App\Model\Game\Board;
+use App\Model\Location\Location;
 use App\PathFinder\FloydWarshallAlgorithm;
 use App\PathFinder\LeeAlgorithm;
 use Exception;
@@ -35,10 +36,11 @@ class WatchPathFinderCommand extends Command
 
         $board = new Board($maxWidth / 2, join('', $mapData));
 
-        $from = $board->getTileAt(0, 0);
-        $to = $board->getTileAt(8, 8);
+        $from = new Location(0, 0);
+        $to = new Location(8, 8);
 
-        $gold1 = $board->getTileAt(15, 15);
+        $goldMines = $board->getGoldMines();
+        $gold1 = $goldMines[0];
 
         //$pathFinder = new LeeAlgorythm();
         $pathFinder = new FloydWarshallAlgorithm();

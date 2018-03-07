@@ -2,10 +2,10 @@
 
 namespace App\Model\Tile;
 
-class Tavern extends AbstractTile
+use App\Model\Location\LocationAwareTrait;
+use App\Model\LocationAwareInterface;
+
+class Tavern implements LocationAwareInterface
 {
-    public function isWalkable()
-    {
-        return false;
-    }
+    use LocationAwareTrait;
 }

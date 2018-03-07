@@ -2,16 +2,29 @@
 
 namespace App\Model;
 
-use App\Model\Direction\DirectionInterface;
+use App\Model\Location\LocationMatrixInterface;
+use App\Model\Tile\GoldMine;
+use App\Model\Tile\Tavern;
 
 interface BoardInterface
 {
-    public function getTileAt(int $x, int $y): TileInterface;
-
-    public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface;
+    /**
+     * @return LocationMatrixInterface
+     */
+    public function getRoads(): LocationMatrixInterface;
 
     /**
-     * @return array|\App\Model\TileInterface[]
+     * @return GoldMine[]|array
      */
-    public function getNearTiles(TileInterface $tile, bool $onlyWalkable = true): array;
+    public function getGoldMines(): array;
+
+    /**
+     * @return GoldMine[]|array
+     */
+    public function getForeignGoldMines();
+
+    /**
+     * @return Tavern[]|array
+     */
+    public function getTaverns(): array;
 }

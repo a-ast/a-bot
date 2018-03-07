@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-interface HeroInterface extends TileInterface
+interface HeroInterface extends LocationAwareInterface
 {
     public function getId(): int;
 
@@ -16,5 +16,5 @@ interface HeroInterface extends TileInterface
 
     public function isRespawned(): bool;
 
-    public function isOnSpawnTile(): bool;
+    public function isOnSpawnLocation(): bool;
 }

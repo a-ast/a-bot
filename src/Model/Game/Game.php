@@ -2,16 +2,11 @@
 
 namespace App\Model\Game;
 
-use App\Model\Direction\DirectionInterface;
 use App\Model\GameInterface;
-use App\Model\Tile\NoHero;
-use App\Model\Tile\NoTile;
-use App\Model\TreasureBoardInterface;
 use App\Model\HeroInterface;
-use App\Model\Tile\Enemy;
-use App\Model\Tile\Hero;
-use App\Model\Tile\TileMatrix;
-use App\Model\TileInterface;
+use App\Model\BoardInterface;
+use App\Model\Location\LocationMatrix;
+use App\Model\Hero\Hero;
 
 class Game implements GameInterface
 {
@@ -21,12 +16,12 @@ class Game implements GameInterface
     private $hero;
 
     /**
-     * @var array|Enemy[]
+     * @var array|HeroInterface[]
      */
-    private $enemies;
+    private $heroes;
 
     /**
-     * @var TileMatrix
+     * @var LocationMatrix
      */
     private $enemyMatrix = [];
 
@@ -46,7 +41,7 @@ class Game implements GameInterface
     private $viewUrl;
 
     /**
-     * @var TreasureBoard
+     * @var Board
      */
     private $board;
 
@@ -59,7 +54,7 @@ class Game implements GameInterface
         $this->createEnemies($initialState['game']['heroes']);
 
         $boardSize = $initialState['game']['board']['size'];
-        $this->board = new TreasureBoard($boardSize, $initialState['game']['board']['tiles']);
+        $this->board = new Board($boardSize, $initialState['game']['board']['tiles']);
 
         $this->refresh($initialState);
     }
@@ -71,7 +66,7 @@ class Game implements GameInterface
         // @todo: stop if finished?
 
         $this->hero->refresh($state['hero']);
-        $this->refreshEnemies($state['game']['heroes']);
+        $this->refreshHeroes($state['game']['heroes']);
 
         $this->board->refresh($state['game']['board']['tiles']);
     }
@@ -91,7 +86,7 @@ class Game implements GameInterface
         return $this->viewUrl;
     }
 
-    public function getBoard(): TreasureBoardInterface
+    public function getBoard(): BoardInterface
     {
         return $this->board;
     }
@@ -103,39 +98,28 @@ class Game implements GameInterface
 
     public function getHeroes(): array
     {
-        return $this->enemies;
+        return $this->heroes;
     }
-
-    public function getHeroOn(TileInterface $tile): HeroInterface
-    {
-        if ($this->enemyMatrix->tileExists($tile->getX(), $tile->getY())) {
-            return $this->enemyMatrix->getTile($tile->getX(), $tile->getY());
-        }
-
-        return new NoHero();
-    }
-
 
     private function createEnemies(array $heroesData)
     {
-        $this->enemyMatrix = new TileMatrix();
-        $this->enemies = [];
+        $this->enemyMatrix = new LocationMatrix();
+        $this->heroes = [];
 
-        foreach ($heroesData as $enemyData) {
-            $enemyId = $enemyData['id'];
+        foreach ($heroesData as $heroData) {
+            $enemyId = $heroData['id'];
             if ($enemyId === $this->hero->getId()) {
                 continue;
             }
 
-            $enemy = new Enemy($enemyData);
-            $this->enemies[$enemyId] = $enemy;
-            $this->enemyMatrix->addTile($enemy);
+            $enemy = new Hero($heroData);
+            $this->heroes[$enemyId] = $enemy;
         }
     }
 
-    private function refreshEnemies(array $heroesData)
+    private function refreshHeroes(array $heroesData)
     {
-        $this->enemyMatrix->reset();
+        //$this->enemyMatrix->reset();
 
         foreach ($heroesData as $enemyData) {
             $enemyId = $enemyData['id'];
@@ -143,10 +127,10 @@ class Game implements GameInterface
                 continue;
             }
 
-            $enemy = $this->enemies[$enemyId];
+            $enemy = $this->heroes[$enemyId];
 
             $enemy->refresh($enemyData);
-            $this->enemyMatrix->addTile($enemy);
+            //$this->enemyMatrix->addTile($enemy);
         }
     }
 }

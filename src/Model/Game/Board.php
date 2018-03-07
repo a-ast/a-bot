@@ -4,20 +4,28 @@ namespace App\Model\Game;
 
 use App\Model\BoardInterface;
 use App\Model\HeroInterface;
-use App\Model\Direction\DirectionInterface;
-use App\Model\Direction\Directions;
-use App\Model\Tile\NoHero;
-use App\Model\Tile\NoTile;
-use App\Model\Tile\TileFactory;
-use App\Model\Tile\TileMatrix;
-use App\Model\TileInterface;
+use App\Model\Location\Location;
+use App\Model\Location\LocationMatrix;
+use App\Model\Location\LocationMatrixInterface;
+use App\Model\Tile\GoldMine;
+use App\Model\Tile\Tavern;
 
 class Board implements BoardInterface
 {
     /**
-     * @var TileMatrix
+     * @var LocationMatrix
      */
-    protected $tiles;
+    protected $roads;
+
+    /**
+     * @var array|GoldMine[]
+     */
+    private $goldMines = [];
+
+    /**
+     * @var array|Tavern[]
+     */
+    private $taverns = [];
 
     /**
      * @var int
@@ -26,9 +34,9 @@ class Board implements BoardInterface
 
     public function __construct(int $boardWidth, string $tileData)
     {
-        $this->tiles = new TileMatrix();
-
         $this->boardSize = $boardWidth;
+
+        $this->roads = new LocationMatrix();
 
         $this->loadInitialTiles($tileData);
     }
@@ -38,56 +46,84 @@ class Board implements BoardInterface
         return $this->boardSize;
     }
 
-    public function getTileAt(int $x, int $y): TileInterface
-    {
-        return $this->tiles->getTile($x, $y);
-    }
-
-
-    public function getTileInDirection(TileInterface $tile, DirectionInterface $direction): TileInterface
-    {
-        return $this->tiles->getTileInDirection($tile, $direction);
-    }
-
-    /**
-     * @return array|TileInterface[]
-     */
-    public function getNearTiles(TileInterface $tile, bool $onlyWalkable = true): array
-    {
-        $tiles = [];
-
-        foreach (Directions::getWalkableDirections() as $direction) {
-
-            $nearTile = $this->getTileInDirection($tile, $direction);
-
-            if (!$onlyWalkable || $nearTile->isWalkable()) {
-                $tiles[] = $nearTile;
-            }
-        }
-
-        return $tiles;
-    }
-
-
-
     private function loadInitialTiles(string $tilesData)
     {
         $mapLines = str_split($tilesData, 2*$this->boardSize);
-        print join(PHP_EOL, $mapLines) . PHP_EOL;
 
         foreach ($mapLines as $x => $mapLine) {
             $items = str_split($mapLine, 2);
 
             foreach ($items as $y => $item) {
-                $tile = TileFactory::createTile($item, $x, $y);
+                if (' ' === $item) {
+                    $road = new Location($x, $y);
+                    $this->roads->addLocation($road);
 
-                $this->tiles->addTile($tile);
-                $this->onLoadTile($tile);
+                    continue;
+                }
+
+                if ('$' === $item[0]) {
+                    $this->goldMines[] = new GoldMine(new Location($x, $y));
+                    // @todo: store gold owners
+                }
+
+                if ('[]' === $item) {
+                    $this->taverns[] = new Tavern(new Location($x, $y));
+                    // @todo: store gold owners
+                }
             }
         }
     }
 
-    protected function onLoadTile(TileInterface $tile)
+    public function refresh(string $tilesData)
     {
+        $mapLines = str_split($tilesData, 2*$this->getWidth());
+
+        foreach ($mapLines as $x => $mapLine) {
+            $items = str_split($mapLine, 2);
+
+            foreach ($items as $y => $item) {
+                if ('$' === $item[0]) {
+//                    /** @var GoldMine $goldMine */
+//                    $goldMine = $this->roads->getTile($x, $y);
+//
+//                    $heroId = ('0' === $item[1]) ? 0 : (int)$item[1];
+//                    $goldMine->setHeroId($heroId);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return GoldMine[]|array
+     */
+    public function getGoldMines(): array
+    {
+        return $this->goldMines;
+    }
+
+    /**
+     * @return GoldMine[]|array
+     */
+    public function getForeignGoldMines(): array
+    {
+        return $this->goldMines;
+
+//        return array_filter($this->goldMines,
+//            function(GoldMine $goldMine) use ($exceptHero) {
+//                return $goldMine->getHeroId() !== $exceptHero->getId();
+//            } );
+    }
+
+    public function getTaverns(): array
+    {
+        return $this->taverns;
+    }
+
+    /**
+     * @return LocationMatrixInterface
+     */
+    public function getRoads(): LocationMatrixInterface
+    {
+        return $this->roads;
     }
 }

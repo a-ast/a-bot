@@ -10,11 +10,9 @@ interface GameInterface
 
     public function getViewUrl(): string;
 
-    public function getBoard(): TreasureBoardInterface;
+    public function getBoard(): BoardInterface;
 
     public function getHero(): HeroInterface;
 
     public function getHeroes(): array;
-
-    public function getHeroOn(TileInterface $tile): HeroInterface;
 }

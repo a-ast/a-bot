@@ -3,7 +3,7 @@
 namespace App\Game;
 
 use App\Api\VindiniumApiClient;
-use App\Model\Direction\Compass;
+use App\Model\Game\Compass;
 use App\Model\Game\Game;
 use App\Progress\ProgressNotifier;
 use App\Strategy\StrategyInterface;
@@ -76,11 +76,11 @@ class TournamentGame
 
         while (false === $game->isFinished()) {
 
-            $nextTile = $this->strategy->getNextTile();
+            $nextLocation = $this->strategy->getNextLocation();
 
-            print $game->getHero().' -> '.$nextTile.PHP_EOL;
+            //print $game->getHero().' -> '.$nextLocation.PHP_EOL;
 
-            $direction = $compass->getDirectionTo($game->getHero(), $nextTile);
+            $direction = $compass->getDirectionTo($game->getHero()->getLocation(), $nextLocation);
 
             print $direction.PHP_EOL.PHP_EOL;
 

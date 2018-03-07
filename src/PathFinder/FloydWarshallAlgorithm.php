@@ -2,7 +2,8 @@
 
 namespace App\PathFinder;
 
-use App\Model\Location\LocationInterface;
+use App\Model\Location\Location;
+use App\Model\LocationInterface;
 use App\Model\Location\LocationMatrixInterface;
 
 class FloydWarshallAlgorithm implements PathFinderInterface
@@ -28,35 +29,39 @@ class FloydWarshallAlgorithm implements PathFinderInterface
      */
     private $size;
 
+    /**
+     * @var array
+     */
+    private $locationIndexes;
+
     public function initialize(LocationMatrixInterface $locationMatrix, array $context = [])
     {
-        $this->locations = $locationMatrix->getKeys();
+        $this->locations = $locationMatrix->getCoordinates();
+        $this->locationIndexes = array_flip($this->locations);
+
         $this->size = count($this->locations);
 
         $this->prepareAdjacentDistances($locationMatrix);
         $this->calculateDistances();
 
+        // @todo: calculate to goals
+
     }
 
     public function getDistance(LocationInterface $fromLocation, LocationInterface $toLocation): int
     {
-        // @todo: find better way
-        $from = $fromLocation->getX().':'.$fromLocation->getY();
-        $to = $toLocation->getX().':'.$toLocation->getY();
-
-        $i = array_search($from, $this->locations);
-        $j = array_search($to, $this->locations);
+        $i = $this->locationIndexes[$fromLocation->getCoordinates()];
+        $j = $this->locationIndexes[$toLocation->getCoordinates()];
 
         return $this->distances[$i][$j];
     }
 
     public function getNextLocation(LocationInterface $fromLocation, LocationInterface $toLocation): LocationInterface
     {
-        // @todo: find better way
-        $from = $fromLocation->getX().':'.$fromLocation->getY();
-        $to = $toLocation->getX().':'.$toLocation->getY();
+        $i = $this->locationIndexes[$fromLocation->getCoordinates()];
+        $j = $this->locationIndexes[$toLocation->getCoordinates()];
 
-        return $this->next[$from][$to];
+        return $this->next[$i][$j];
     }
 
     private function prepareAdjacentDistances(LocationMatrixInterface $locationMatrix)
@@ -71,12 +76,10 @@ class FloydWarshallAlgorithm implements PathFinderInterface
 
             for ($j = $i + 1; $j < $size; $j++) {
 
-                $iLoc = $this->locations[$i];
-                $jLoc = $this->locations[$j];
-//                $isNear = $locationMatrix->getLocationByKey($iLoc)
-//                    ->isNear($locationMatrix->getLocationByKey($jLoc));
+                $iLoc = Location::fromCoordinates($this->locations[$i]);
+                $jLoc = Location::fromCoordinates($this->locations[$j]);
 
-                $isNear = $locationMatrix->isNear($iLoc, $jLoc);
+                $isNear = $iLoc->isNear($jLoc);
 
                 if ($isNear) {
                     $this->distances[$i][$j] = 1;

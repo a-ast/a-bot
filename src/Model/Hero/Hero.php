@@ -1,11 +1,16 @@
 <?php
 
-namespace App\Model\Tile;
+namespace App\Model\Hero;
 
 use App\Model\HeroInterface;
+use App\Model\Location\Location;
+use App\Model\Location\LocationAwareTrait;
+use App\Model\LocationInterface;
 
-abstract class AbstractHero extends AbstractTile implements HeroInterface
+class Hero implements HeroInterface
 {
+    use LocationAwareTrait;
+
     /**
      * @var string
      */
@@ -32,29 +37,23 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
     private $isCrashed;
 
     /**
-     * @var int
-     */
-    private $spawnPosX;
-
-    /**
-     * @var int
-     */
-    private $spawnPosY;
-
-    /**
      * @var bool
      */
     private $isRespawned;
 
+    /**
+     * @var LocationInterface
+     */
+    private $spawnLocation;
+
     public function __construct(array $data)
     {
-        parent::__construct($data['pos']['x'], $data['pos']['y']);
-
-        $this->spawnPosX = $data['spawnPos']['x'];
-        $this->spawnPosY = $data['spawnPos']['y'];
+        $this->location = new Location($data['pos']['x'], $data['pos']['y']);
+        $this->spawnLocation = new Location($data['spawnPos']['x'], $data['spawnPos']['y']);
 
         $this->name = $data['name'];
         $this->id = $data['id'];
+
         $this->refresh($data);
     }
 
@@ -64,16 +63,13 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
         $this->goldPoints = $data['gold'];
         $this->isCrashed = $data['crashed'];
 
-        $newX = $data['pos']['x'];
-        $newY = $data['pos']['y'];
+        $newLocation = new Location($data['pos']['x'], $data['pos']['y']);
 
         $this->isRespawned =
-            $this->getDirectDistance($newX, $newY) > 1 &&
-            ($newX === $this->spawnPosX) &&
-            ($newX === $this->spawnPosX);
+            !$this->location->isNear($newLocation)  &&
+            ($newLocation === $this->spawnLocation);
 
-        $this->x = $newX;
-        $this->y = $newY;
+        $this->location = $newLocation;
     }
 
     public function getName(): string
@@ -106,11 +102,9 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
         return $this->isCrashed;
     }
 
-    public function isOnSpawnTile(): bool
+    public function isOnSpawnLocation(): bool
     {
-        return
-            $this->getX() === $this->spawnPosX &&
-            $this->getY() === $this->spawnPosY;
+        return $this->location === $this->spawnLocation;
     }
 
     public function isRespawned(): bool
@@ -121,17 +115,6 @@ abstract class AbstractHero extends AbstractTile implements HeroInterface
     public function __toString()
     {
         return sprintf('Hero [%d: %d] Gold: %d, LP: %d',
-            $this->getX(), $this->getY(), $this->getGoldPoints(), $this->getLifePoints());
-    }
-
-    /**
-     * @param $newX
-     * @param $newY
-     *
-     * @return float|int
-     */
-    private function getDirectDistance($newX, $newY)
-    {
-        return abs($newX - $this->getX()) + abs($newY - $this->getY());
+            $this->location->getX(), $this->location->getY(), $this->getGoldPoints(), $this->getLifePoints());
     }
 }

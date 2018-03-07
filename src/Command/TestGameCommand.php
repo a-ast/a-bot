@@ -3,8 +3,6 @@
 namespace App\Command;
 
 use App\Model\Game\Game;
-use App\Model\Tile\Road;
-use App\Strategy\StatefulStrategy;
 use App\Strategy\StrategyInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -69,19 +67,19 @@ class TestGameCommand extends Command
 
         do {
 
-            $next = $this->strategy->getNextTile();
+            $next = $this->strategy->getNextLocation();
 
             // @todo: update gold and life
 
-            if ($next instanceof Road) {
-                $game->getHero()->refresh(
-                    [
-                        'pos' => ['x' => $next->getX(), 'y' => $next->getY()],
-                        'life' => 100,
-                        'gold' => 0,
-                        'crashed' => false,
-                    ]);
-            }
+
+            $game->getHero()->refresh(
+                [
+                    'pos' => ['x' => $next->getX(), 'y' => $next->getY()],
+                    'life' => 100,
+                    'gold' => 0,
+                    'crashed' => false,
+                ]);
+
 
         } while (true);
 

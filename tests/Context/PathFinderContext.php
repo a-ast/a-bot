@@ -2,6 +2,7 @@
 
 namespace App\Tests\Context;
 
+use App\Model\Location\Location;
 use App\Model\Location\LocationMatrixBuilder;
 use App\PathFinder\FloydWarshallAlgorithm;
 use Behat\Behat\Context\Context;
@@ -38,8 +39,11 @@ class PathFinderContext implements Context
      */
     public function theDistanceFromToIs($from, $to, $distance)
     {
-        $fromLocation = $this->matrix->getLocationByKey($from);
-        $toLocation = $this->matrix->getLocationByKey($to);
+        $fromXY = explode(':', $from);
+        $toXY = explode(':', $to);
+
+        $fromLocation = new Location($fromXY[0], $fromXY[1]);
+        $toLocation = new Location($toXY[0], $toXY[1]);
 
         $pathDistance = $this->pathFinder->getDistance($fromLocation, $toLocation);
 

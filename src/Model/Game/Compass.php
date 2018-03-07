@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Model\Direction;
+namespace App\Model\Game;
 
-use App\Model\TileInterface;
+use App\Model\LocationInterface;
 
 class Compass
 {
@@ -10,10 +10,10 @@ class Compass
     /**
      * @throws \Exception
      */
-    public function getDirectionTo(TileInterface $fromTile, TileInterface $toTile): string
+    public function getDirectionTo(LocationInterface $from, LocationInterface $to): string
     {
-        $xDiff = $fromTile->getX() - $toTile->getX();
-        $yDiff = $fromTile->getY() - $toTile->getY();
+        $xDiff = $from->getX() - $to->getX();
+        $yDiff = $from->getY() - $to->getY();
 
         switch ($xDiff.':'.$yDiff) {
             case '1:0':

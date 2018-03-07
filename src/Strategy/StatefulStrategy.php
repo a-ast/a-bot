@@ -2,11 +2,10 @@
 
 namespace App\Strategy;
 
+use App\Model\BoardInterface;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
-use App\Model\Tile\Enemy;
-use App\Model\TileInterface;
-use App\Model\TreasureBoardInterface;
+use App\Model\LocationInterface;
 use App\PathFinder\LeeAlgorithm;
 use SplObjectStorage;
 
@@ -20,7 +19,7 @@ class StatefulStrategy implements StrategyInterface
     private $pathFinder;
 
     /**
-     * @var TreasureBoardInterface
+     * @var BoardInterface
      */
     private $board;
 
@@ -30,7 +29,7 @@ class StatefulStrategy implements StrategyInterface
     private $hero;
 
     /**
-     * @var TileInterface
+     * @var LocationInterface
      */
     private $goalTile;
 
@@ -61,7 +60,7 @@ class StatefulStrategy implements StrategyInterface
         $this->state = 'Init';
     }
 
-    public function getNextTile(): TileInterface
+    public function getNextLocation(): LocationInterface
     {
         print $this->state . PHP_EOL;
 
@@ -105,7 +104,7 @@ class StatefulStrategy implements StrategyInterface
                         break;
                     }
 
-                    $potentialGoals = $this->board->getGoldMines($this->hero);
+                    $potentialGoals = $this->board->getForeignGoldMines();
 
                     // if all gold is mine, no hurry
                     if (0 === count($potentialGoals)) {

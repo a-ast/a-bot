@@ -2,39 +2,11 @@
 
 namespace App\Model\Tile;
 
-use App\Model\HeroInterface;
+use App\Model\Location\LocationAwareTrait;
+use App\Model\LocationInterface;
+use App\Model\LocationAwareInterface;
 
-class GoldMine extends AbstractTile
+class GoldMine implements LocationAwareInterface
 {
-    /**
-     * @var int
-     */
-    private $heroId;
-
-    public function __construct(int $x, int $posY, int $heroId)
-    {
-        parent::__construct($x, $posY);
-
-        $this->heroId = $heroId;
-    }
-
-    public function getHeroId(): int
-    {
-        return $this->heroId;
-    }
-
-    public function setHeroId(int $heroId): void
-    {
-        $this->heroId = $heroId;
-    }
-
-    public function belongsTo(HeroInterface $hero)
-    {
-        return $this->getHeroId() === $hero->getId();
-    }
-
-    public function isWalkable()
-    {
-        return false;
-    }
+    use LocationAwareTrait;
 }

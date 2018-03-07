@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Location;
+namespace App\Model;
 
 interface LocationInterface
 {
@@ -9,4 +9,6 @@ interface LocationInterface
     public function getY(): int;
 
     public function isNear(LocationInterface $location): bool;
+
+    public function getCoordinates(): string;
 }

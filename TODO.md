@@ -1,5 +1,12 @@
 # TODO
 
+## Massive refactoring
+
+1. Gold owners
+1. Work on Floyd-Warshall for goals - test w behat first
+   
+
+
 ## Short-term improvals before merge
 1. Decide on location abstractions.
 1. Decide on Tile/Hero abstractions.

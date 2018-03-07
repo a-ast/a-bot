@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Game\TournamentGame;
 use App\Model\Game\Board;
+use App\Model\Location\Location;
 use App\Model\Location\LocationMatrixInterface;
 use App\Model\Location\LocationMatrixBuilder;
 use App\Model\Location\Road;
@@ -41,8 +42,8 @@ class WatchPathFinder2Command extends Command
         $builder = new LocationMatrixBuilder();
         $matrix = $builder->buildFromTextWithEol($mapData);
 
-//        $from = $matrix->getLocation(0, 0);
-//        $to = $matrix->getLocation(8, 8);
+        $from = new Location(0, 0);
+        $to = new Location(8, 8);
 
         $pathFinder = new FloydWarshallAlgorithm();
 
@@ -52,7 +53,7 @@ class WatchPathFinder2Command extends Command
         $pathFinder->initialize($matrix);
         $watchResult = $watch->stop('init path finder');
 
-        //$pathDistance = $pathFinder->getDistance($from, $to);
+        $pathDistance = $pathFinder->getDistance($from, $to);
         //$next = $pathFinder->getNextLocation($from, $to);
 
 

@@ -2,6 +2,8 @@
 
 namespace App\Model\Location;
 
+use App\Model\LocationInterface;
+
 final class Location implements LocationInterface
 {
     /**
@@ -18,6 +20,13 @@ final class Location implements LocationInterface
     {
         $this->x = $x;
         $this->y = $y;
+    }
+
+    public static function fromCoordinates(string $coordinates): LocationInterface
+    {
+        $xy = explode(':', $coordinates);
+
+        return new self($xy[0], $xy[1]);
     }
 
     public function getX(): int
@@ -37,8 +46,8 @@ final class Location implements LocationInterface
             abs($location->getY() - $this->y));
     }
 
-    public function isWalkable(): bool
+    public function getCoordinates(): string
     {
-        return false;
+        return $this->getX() . ':' . $this->getY();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\PathFinder;
 
-use App\Model\Location\LocationInterface;
+use App\Model\LocationInterface;
 use App\Model\Location\LocationMatrixInterface;
 
 interface PathFinderInterface
