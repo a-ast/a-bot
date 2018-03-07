@@ -34,7 +34,7 @@ class LeeAlgorithm // implements PathFinderInterface
      */
     public function getPath(TileInterface $fromTile, TileInterface $toTile)
     {
-        $visited = $this->expandWave($toTile);
+        $visited = $this->waves[$toTile];
 
         return $this->findPath($visited, $toTile, $fromTile);
     }
