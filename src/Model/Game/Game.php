@@ -101,6 +101,11 @@ class Game implements GameInterface
         return $this->heroes;
     }
 
+    public function getFriendIds(): array
+    {
+        return [$this->hero->getId()];
+    }
+
     private function createEnemies(array $heroesData)
     {
         $this->enemyMatrix = new LocationMatrix();

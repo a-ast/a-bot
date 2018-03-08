@@ -2,7 +2,8 @@
 
 ## Massive refactoring
 
-1. Gold owners
+1. do not store locations in matrix - only coordinates 
+1. Imlement board::getForeignHeroes()    
 1. Work on Floyd-Warshall for goals - test w behat first
    
 

@@ -3,7 +3,6 @@
 namespace App\Model\Game;
 
 use App\Model\BoardInterface;
-use App\Model\HeroInterface;
 use App\Model\Location\Location;
 use App\Model\Location\LocationMatrix;
 use App\Model\Location\LocationMatrixInterface;
@@ -13,17 +12,17 @@ use App\Model\Tile\Tavern;
 class Board implements BoardInterface
 {
     /**
-     * @var LocationMatrix
+     * @var LocationMatrixInterface
      */
-    protected $roads;
+    protected $map;
 
     /**
-     * @var array|GoldMine[]
+     * @var LocationAwareMapInterface|GoldMine[]
      */
     private $goldMines = [];
 
     /**
-     * @var array|Tavern[]
+     * @var LocationAwareMapInterface|Tavern[]
      */
     private $taverns = [];
 
@@ -36,7 +35,9 @@ class Board implements BoardInterface
     {
         $this->boardSize = $boardWidth;
 
-        $this->roads = new LocationMatrix();
+        $this->map = new LocationMatrix();
+        $this->goldMines = new LocationAwareMap();
+        $this->taverns = new LocationAwareMap();
 
         $this->loadInitialTiles($tileData);
     }
@@ -54,21 +55,20 @@ class Board implements BoardInterface
             $items = str_split($mapLine, 2);
 
             foreach ($items as $y => $item) {
-                if (' ' === $item) {
-                    $road = new Location($x, $y);
-                    $this->roads->addLocation($road);
-
+                if ('##' === $item) {
                     continue;
                 }
 
+                // everything belongs to map except of wood
+                $location = new Location($x, $y);
+                $this->map->addLocation($location);
+
                 if ('$' === $item[0]) {
-                    $this->goldMines[] = new GoldMine(new Location($x, $y));
-                    // @todo: store gold owners
+                    $this->goldMines->add(new GoldMine($location));
                 }
 
                 if ('[]' === $item) {
-                    $this->taverns[] = new Tavern(new Location($x, $y));
-                    // @todo: store gold owners
+                    $this->taverns->add(new Tavern($location));
                 }
             }
         }
@@ -82,13 +82,16 @@ class Board implements BoardInterface
             $items = str_split($mapLine, 2);
 
             foreach ($items as $y => $item) {
-                if ('$' === $item[0]) {
-//                    /** @var GoldMine $goldMine */
-//                    $goldMine = $this->roads->getTile($x, $y);
-//
-//                    $heroId = ('0' === $item[1]) ? 0 : (int)$item[1];
-//                    $goldMine->setHeroId($heroId);
+                if ('$' !== $item[0]) {
+                    continue;
                 }
+
+                $coordinates = (new Location($x, $y))->getCoordinates();
+                /** @var GoldMine $goldMine */
+                $goldMine = $this->goldMines->getByCoordinates($coordinates);
+
+                $heroId = ('-' === $item[1]) ? 0 : (int)$item[1];
+                $goldMine->setHeroId($heroId);
             }
         }
     }
@@ -96,7 +99,7 @@ class Board implements BoardInterface
     /**
      * @return GoldMine[]|array
      */
-    public function getGoldMines(): array
+    public function getGoldMines(): LocationAwareMapInterface
     {
         return $this->goldMines;
     }
@@ -104,17 +107,15 @@ class Board implements BoardInterface
     /**
      * @return GoldMine[]|array
      */
-    public function getForeignGoldMines(): array
+    public function getForeignGoldMines(array $friendHeroIds): LocationAwareMapInterface
     {
-        return $this->goldMines;
-
-//        return array_filter($this->goldMines,
-//            function(GoldMine $goldMine) use ($exceptHero) {
-//                return $goldMine->getHeroId() !== $exceptHero->getId();
-//            } );
+        return array_filter($this->goldMines,
+            function(GoldMine $goldMine) use ($friendHeroIds) {
+                return in_array($goldMine->getHeroId(), $friendHeroIds);
+            } );
     }
 
-    public function getTaverns(): array
+    public function getTaverns(): LocationAwareMapInterface
     {
         return $this->taverns;
     }
@@ -122,8 +123,8 @@ class Board implements BoardInterface
     /**
      * @return LocationMatrixInterface
      */
-    public function getRoads(): LocationMatrixInterface
+    public function getMap(): LocationMatrixInterface
     {
-        return $this->roads;
+        return $this->map;
     }
 }

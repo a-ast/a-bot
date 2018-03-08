@@ -34,6 +34,11 @@ class TacticSetStrategy implements StrategyInterface
      */
     private $game;
 
+    /**
+     * @var int[]
+     */
+    private $friendIds;
+
 
     public function __construct(FloydWarshallAlgorithm $pathFinder)
     {
@@ -45,9 +50,12 @@ class TacticSetStrategy implements StrategyInterface
         $this->game = $game;
         $this->hero = $game->getHero();
         $this->board = $game->getBoard();
+
+        $this->friendIds = $game->getFriendIds();
+
         $goals = array_merge($this->board->getGoldMines(), $this->board->getTaverns());
 
-        $this->pathFinder->initialize($this->board->getRoads(), $goals);
+        $this->pathFinder->initialize($this->board->getMap(), $goals);
     }
 
     public function getNextLocation(): LocationInterface
@@ -76,7 +84,7 @@ class TacticSetStrategy implements StrategyInterface
             print '#####################'.PHP_EOL;
 
             // Get 4 tiles near
-            $nearLocations = $this->board->getRoads()->getNearLocations($this->hero->getLocation());
+            $nearLocations = $this->board->getMap()->getNearLocations($this->hero->getLocation());
 
             /** @var LocationInterface[] $potentialLocationsToGo */
             $potentialLocationsToGo = [];
@@ -139,7 +147,7 @@ class TacticSetStrategy implements StrategyInterface
         // Go to gold
 
         if ($this->hero->getLifePoints() > 20) {
-            $goldMines = $this->board->getForeignGoldMines();
+            $goldMines = $this->board->getForeignGoldMines($this->friendIds);
 
             if (count($goldMines) > 0) {
 
@@ -172,7 +180,7 @@ class TacticSetStrategy implements StrategyInterface
 
     private function getClosestGoldMine()
     {
-        $goldMines = $this->board->getForeignGoldMines();
+        $goldMines = $this->board->getForeignGoldMines($this->friendIds);
 
         foreach ($goldMines as $goldMine) {
             if ($this->hero->getLocation()->isNear($goldMine->getLocation())) {

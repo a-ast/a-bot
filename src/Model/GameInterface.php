@@ -15,4 +15,9 @@ interface GameInterface
     public function getHero(): HeroInterface;
 
     public function getHeroes(): array;
+
+    /**
+     * @return int[]
+     */
+    public function getFriendIds(): array;
 }
