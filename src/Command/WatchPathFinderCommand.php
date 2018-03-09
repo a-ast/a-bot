@@ -73,7 +73,10 @@ class WatchPathFinderCommand extends Command
 
             foreach ($board->getMap() as $to) {
                 $pathDistance = $pathFinder->getDistance($from, $to);
-                $next = $pathFinder->getNextLocation($from, $to);
+
+                if ($from !== $to) {
+                    $next = $pathFinder->getNextLocation($from, $to);
+                }
             }
         }
 

@@ -11,7 +11,7 @@ use App\Model\Location\LocationMapInterface;
 class FloydWarshallAlgorithm implements PathFinderInterface
 {
 
-    const INF = 100000;
+    const INF = 10000;
 
     /**
      * @var array
@@ -48,16 +48,25 @@ class FloydWarshallAlgorithm implements PathFinderInterface
      */
     private $map;
 
+    /**
+     * @var array
+     *
+     * Coordinates of goals
+     */
+    private $goalLocations;
+
     public function initialize(LocationMapInterface $locationMap,
         LocationAwareMapInterface $goals = null, array $context = [])
     {
         $this->map = $locationMap;
         $this->goals = $goals;
 
-        $goalLocations = $goals ? $goals->getCoordinatesList() : [];
+        $this->goalLocations = $goals ? $goals->getCoordinatesList() : [];
+
+
 
         $this->locations = array_values(array_diff($locationMap->getCoordinatesList(),
-            $goalLocations
+            $this->goalLocations
         ));
 
         $this->locationIndexes = array_flip($this->locations);
@@ -66,7 +75,7 @@ class FloydWarshallAlgorithm implements PathFinderInterface
         $this->prepareAdjacentDistances();
         $this->calculateDistances();
 
-        if (count($goalLocations) > 0) {
+        if (count($this->goalLocations) > 0) {
             $this->calculateDistancesForGoals();
         }
     }
@@ -76,13 +85,6 @@ class FloydWarshallAlgorithm implements PathFinderInterface
         $i = $this->locationIndexes[$fromLocation->getCoordinates()];
         $j = $this->locationIndexes[$toLocation->getCoordinates()];
 
-        if (!isset($this->distances[$i][$j])) {
-            var_dump($fromLocation);
-            var_dump($toLocation);
-
-        }
-
-
         return $this->distances[$i][$j];
     }
 
@@ -91,7 +93,14 @@ class FloydWarshallAlgorithm implements PathFinderInterface
         $i = $this->locationIndexes[$fromLocation->getCoordinates()];
         $j = $this->locationIndexes[$toLocation->getCoordinates()];
 
-        return $this->next[$i][$j];
+//        if (!isset($this->next[$i][$j])) {
+//            var_dump($fromLocation);
+//            var_dump($toLocation);
+//
+//        }
+        $next = $this->next[$i][$j];
+
+        return Location::fromCoordinates($this->locations[$next]);
     }
 
     private function prepareAdjacentDistances()
@@ -171,7 +180,10 @@ class FloydWarshallAlgorithm implements PathFinderInterface
 
             $goalLocation = $goal->getLocation();
             $destCoordinates = $goalLocation->getCoordinates();
+
             $this->locationIndexes[$destCoordinates] = $jNew;
+            $this->locations[$jNew] = $destCoordinates;
+
             $nearLocationCoordinates = $this->getNearCoordinatesNotGoals($goal);
 
             for ($i = 0; $i < $this->size; $i++) {

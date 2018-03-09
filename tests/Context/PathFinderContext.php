@@ -65,6 +65,31 @@ class PathFinderContext implements Context
         Assert::eq($pathDistance, $distance);
     }
 
+    /**
+     * @Then the path from :from to :to is :path
+     */
+    public function thePathFromToIs($from, $to, $path)
+    {
+        $this->initialize();
+
+        $fromLocation = Location::fromCoordinates($from);
+        $toLocation = Location::fromCoordinates($to);
+
+        $pathParts = [];
+
+        while ($fromLocation->getCoordinates() !== $toLocation->getCoordinates()) {
+
+            $pathNext = $this->pathFinder->getNextLocation($fromLocation, $toLocation);
+            $pathParts[] = $pathNext->getCoordinates();
+
+            $fromLocation = $pathNext;
+        }
+
+        $actualPath = join('->', $pathParts);
+
+        Assert::eq($path, $actualPath);
+    }
+
     private function initialize()
     {
         if (null !== $this->pathFinder) {
