@@ -2,12 +2,16 @@
 
 namespace App\PathFinder;
 
+use App\Model\Game\LocationAwareMapInterface;
 use App\Model\Location\Location;
+use App\Model\LocationAwareInterface;
 use App\Model\LocationInterface;
-use App\Model\Location\LocationMatrixInterface;
+use App\Model\Location\LocationMapInterface;
 
 class FloydWarshallAlgorithm implements PathFinderInterface
 {
+
+    const INF = 100000;
 
     /**
      * @var array
@@ -25,6 +29,11 @@ class FloydWarshallAlgorithm implements PathFinderInterface
     private $locations;
 
     /**
+     * @var LocationAwareMapInterface
+     */
+    private $goals;
+
+    /**
      * @var int
      */
     private $size;
@@ -34,24 +43,45 @@ class FloydWarshallAlgorithm implements PathFinderInterface
      */
     private $locationIndexes;
 
-    public function initialize(LocationMatrixInterface $locationMatrix, array $context = [])
-    {
-        $this->locations = $locationMatrix->getCoordinates();
-        $this->locationIndexes = array_flip($this->locations);
+    /**
+     * @var LocationMapInterface
+     */
+    private $map;
 
+    public function initialize(LocationMapInterface $locationMap,
+        LocationAwareMapInterface $goals = null, array $context = [])
+    {
+        $this->map = $locationMap;
+        $this->goals = $goals;
+
+        $goalLocations = $goals ? $goals->getCoordinatesList() : [];
+
+        $this->locations = array_values(array_diff($locationMap->getCoordinatesList(),
+            $goalLocations
+        ));
+
+        $this->locationIndexes = array_flip($this->locations);
         $this->size = count($this->locations);
 
-        $this->prepareAdjacentDistances($locationMatrix);
+        $this->prepareAdjacentDistances();
         $this->calculateDistances();
 
-        // @todo: calculate to goals
-
+        if (count($goalLocations) > 0) {
+            $this->calculateDistancesForGoals();
+        }
     }
 
     public function getDistance(LocationInterface $fromLocation, LocationInterface $toLocation): int
     {
         $i = $this->locationIndexes[$fromLocation->getCoordinates()];
         $j = $this->locationIndexes[$toLocation->getCoordinates()];
+
+        if (!isset($this->distances[$i][$j])) {
+            var_dump($fromLocation);
+            var_dump($toLocation);
+
+        }
+
 
         return $this->distances[$i][$j];
     }
@@ -64,7 +94,7 @@ class FloydWarshallAlgorithm implements PathFinderInterface
         return $this->next[$i][$j];
     }
 
-    private function prepareAdjacentDistances(LocationMatrixInterface $locationMatrix)
+    private function prepareAdjacentDistances()
     {
         $size = $this->size;
 
@@ -84,7 +114,8 @@ class FloydWarshallAlgorithm implements PathFinderInterface
                 if ($isNear) {
                     $this->distances[$i][$j] = 1;
                     $this->distances[$j][$i] = 1;
-                    $this->next[$i][$j] = $jLoc;
+                    $this->next[$i][$j] = $j;
+                    $this->next[$j][$i] = $i;
                 }
             }
         }
@@ -129,4 +160,82 @@ class FloydWarshallAlgorithm implements PathFinderInterface
             }
         }
     }
+
+    private function calculateDistancesForGoals()
+    {
+        // calculate distances from existing locations to goals
+        // it needs new vertical columns for distance array
+        $jNew = count($this->distances);
+
+        foreach ($this->goals as $goal) {
+
+            $goalLocation = $goal->getLocation();
+            $destCoordinates = $goalLocation->getCoordinates();
+            $this->locationIndexes[$destCoordinates] = $jNew;
+            $nearLocationCoordinates = $this->getNearCoordinatesNotGoals($goal);
+
+            for ($i = 0; $i < $this->size; $i++) {
+
+                $sourceCoordinates = $this->locations[$i];
+
+
+                $minDistance = self::INF;
+                $minJIndex = self::INF;
+
+                // find min distance
+                foreach ($nearLocationCoordinates as $nearCoordinate) {
+
+                    // this is not road - gold or tavern
+                    if (!isset($this->locationIndexes[$nearCoordinate])) {
+                        continue(2);
+                    }
+
+                    // get index of the column
+                    $j = $this->locationIndexes[$nearCoordinate];
+
+                    // skip if the near location is our current i-location
+                    if ($j === $i) {
+                        $this->distances[$i][$jNew] = 1;
+                        $this->next[$i][$jNew] = $jNew;
+
+                        continue(2); // @todo: sure you don't miss smth?
+                    }
+
+                    if ($this->distances[$i][$j] < $minDistance) {
+                        $minDistance = $this->distances[$i][$j];
+                        $minJIndex = $j;
+                    }
+                }
+
+                // Every goal - new j-column
+                $this->distances[$i][$jNew] = $minDistance + 1;
+                $this->next[$i][$jNew] = $this->next[$i][$minJIndex];
+
+//                $coordinatesOfMinJIndex = $this->locations[$minJIndex];
+//                $this->locationIndexes[$coordinatesOfMinJIndex] = $minJIndex;
+
+            }
+
+            $jNew++;
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getNearCoordinatesNotGoals(LocationAwareInterface $goal): array
+    {
+        $nearLocations = $this->map->getNearLocations($goal->getLocation());
+
+        $coordinates = [];
+
+        foreach ($nearLocations as $nearLocation) {
+            $coordinates[] = $nearLocation->getCoordinates();
+        }
+
+        $coordinates = array_diff($coordinates, $this->goals->getCoordinatesList());
+
+        return $coordinates;
+    }
+
 }

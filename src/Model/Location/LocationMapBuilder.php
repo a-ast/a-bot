@@ -2,14 +2,14 @@
 
 namespace App\Model\Location;
 
-class LocationMatrixBuilder
+class LocationMapBuilder
 {
-    public function buildFromTextWithEol(string $text): LocationMatrixInterface
+    public function buildFromTextWithEol(string $text): LocationMapInterface
     {
         $mapLines = explode(PHP_EOL, rtrim($text));
         print join(PHP_EOL, $mapLines) . PHP_EOL;
 
-        $matrix = new LocationMatrix();
+        $map = new LocationMap();
 
         foreach ($mapLines as $x => $mapLine) {
             $items = str_split($mapLine, 2);
@@ -17,11 +17,11 @@ class LocationMatrixBuilder
             foreach ($items as $y => $item) {
 
                 if ('##' !== $item) {
-                    $matrix->addLocation(new Location($x, $y));
+                    $map->add(new Location($x, $y));
                 }
             }
         }
 
-        return $matrix;
+        return $map;
     }
 }

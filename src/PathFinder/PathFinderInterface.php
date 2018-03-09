@@ -2,12 +2,14 @@
 
 namespace App\PathFinder;
 
+use App\Model\Game\LocationAwareMapInterface;
 use App\Model\LocationInterface;
-use App\Model\Location\LocationMatrixInterface;
+use App\Model\Location\LocationMapInterface;
 
 interface PathFinderInterface
 {
-    public function initialize(LocationMatrixInterface $locations, array $context = []);
+    public function initialize(LocationMapInterface $locations,
+        LocationAwareMapInterface $goals = null, array $context = []);
 
     public function getDistance(LocationInterface $fromLocation, LocationInterface $toLocation): int;
 

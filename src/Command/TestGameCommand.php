@@ -31,7 +31,7 @@ class TestGameCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $mapData = file(__DIR__ . '/Map/m6.map', FILE_IGNORE_NEW_LINES);
+        $mapData = file(__DIR__ . '/Map/small-with-gold.map', FILE_IGNORE_NEW_LINES);
 
         $maxWidth = max(array_map('strlen', $mapData));
         $mapData = array_map(function($item) use ($maxWidth) { return str_pad($item, $maxWidth); }, $mapData);

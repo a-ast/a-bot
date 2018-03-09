@@ -4,15 +4,15 @@ namespace App\Model\Game;
 
 use App\Model\BoardInterface;
 use App\Model\Location\Location;
-use App\Model\Location\LocationMatrix;
-use App\Model\Location\LocationMatrixInterface;
+use App\Model\Location\LocationMap;
+use App\Model\Location\LocationMapInterface;
 use App\Model\Tile\GoldMine;
 use App\Model\Tile\Tavern;
 
 class Board implements BoardInterface
 {
     /**
-     * @var LocationMatrixInterface
+     * @var LocationMapInterface
      */
     protected $map;
 
@@ -35,7 +35,7 @@ class Board implements BoardInterface
     {
         $this->boardSize = $boardWidth;
 
-        $this->map = new LocationMatrix();
+        $this->map = new LocationMap();
         $this->goldMines = new LocationAwareMap();
         $this->taverns = new LocationAwareMap();
 
@@ -61,7 +61,7 @@ class Board implements BoardInterface
 
                 // everything belongs to map except of wood
                 $location = new Location($x, $y);
-                $this->map->addLocation($location);
+                $this->map->add($location);
 
                 if ('$' === $item[0]) {
                     $this->goldMines->add(new GoldMine($location));
@@ -121,9 +121,9 @@ class Board implements BoardInterface
     }
 
     /**
-     * @return LocationMatrixInterface
+     * @return LocationMapInterface
      */
-    public function getMap(): LocationMatrixInterface
+    public function getMap(): LocationMapInterface
     {
         return $this->map;
     }

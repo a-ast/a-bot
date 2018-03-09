@@ -53,7 +53,9 @@ class TacticSetStrategy implements StrategyInterface
 
         $this->friendIds = $game->getFriendIds();
 
-        $goals = array_merge($this->board->getGoldMines(), $this->board->getTaverns());
+        $goldMines = $this->board->getGoldMines();
+        $taverns = $this->board->getTaverns();
+        $goals = $goldMines->addMap($taverns);
 
         $this->pathFinder->initialize($this->board->getMap(), $goals);
     }

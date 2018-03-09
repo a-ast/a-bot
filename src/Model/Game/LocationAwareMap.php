@@ -19,7 +19,7 @@ class LocationAwareMap implements IteratorAggregate, LocationAwareMapInterface
         $this->items[$item->getLocation()->getCoordinates()] = $item;
     }
 
-    public function getCoordinateList(): array
+    public function getCoordinatesList(): array
     {
         return array_keys($this->items);
     }
@@ -32,5 +32,16 @@ class LocationAwareMap implements IteratorAggregate, LocationAwareMapInterface
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->items);
+    }
+
+    public function addMap(LocationAwareMapInterface $map): LocationAwareMapInterface
+    {
+        $newMap = clone $this;
+
+        foreach ($map as $item) {
+            $newMap->add($item);
+        }
+
+        return $newMap;
     }
 }

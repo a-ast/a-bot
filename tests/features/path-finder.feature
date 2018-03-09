@@ -1,17 +1,5 @@
 Feature: Finding pathes on the map
 
-  @ignore
-  Scenario: Find shortest path on the location matrix
-    Given there is a map:
-      """
-##      ##
-##  ##  ##
-##      ##
-##########
-      """
-    Then the distance from "0:1" to "2:3" is 4
-
-
   Scenario: Find shortest path on the location matrix
     Given there is a map:
       """
@@ -38,3 +26,16 @@ Feature: Finding pathes on the map
       """
     Then the distance from "1:1" to "1:3" is 16
     And the distance from "1:3" to "1:1" is 16
+
+
+  Scenario: Find shortest path on the map with a goal
+    Given there is a map:
+      """
+############
+##    $-  ##
+##        ##
+############
+      """
+    And the map has the goal at "1:3"
+    Then the distance from "1:1" to "1:4" is 5
+    And the distance from "1:1" to "1:3" is 2

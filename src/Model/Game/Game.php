@@ -5,7 +5,7 @@ namespace App\Model\Game;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
 use App\Model\BoardInterface;
-use App\Model\Location\LocationMatrix;
+use App\Model\Location\LocationMap;
 use App\Model\Hero\Hero;
 
 class Game implements GameInterface
@@ -21,7 +21,7 @@ class Game implements GameInterface
     private $heroes;
 
     /**
-     * @var LocationMatrix
+     * @var LocationMap
      */
     private $enemyMatrix = [];
 
@@ -108,7 +108,7 @@ class Game implements GameInterface
 
     private function createEnemies(array $heroesData)
     {
-        $this->enemyMatrix = new LocationMatrix();
+        $this->enemyMatrix = new LocationMap();
         $this->heroes = [];
 
         foreach ($heroesData as $heroData) {

@@ -7,33 +7,13 @@ use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
 
-class LocationMatrix implements IteratorAggregate, LocationMatrixInterface
+class LocationMap implements IteratorAggregate, LocationMapInterface
 {
     private $matrix = [];
 
-    public function addLocation(LocationInterface $location)
+    public function add(LocationInterface $location)
     {
         $this->matrix[$location->getCoordinates()] = $location;
-    }
-
-//    public function getLocation(int $x, int $y): LocationInterface
-//    {
-//        return $this->matrix[$this->getKey($x, $y)];
-//    }
-
-//    public function getLocationByKey(string $key): LocationInterface
-//    {
-//        return $this->matrix[$key];
-//    }
-
-    public function isNear($iLoc, $jLoc)
-    {
-        // @todo: fix it
-
-        $a = explode(':', $iLoc);
-        $b = explode(':', $jLoc);
-
-        return 1 === (abs($a[0] - $b[0]) + abs($a[1] - $b[1]));
     }
 
     public function getNearLocations(LocationInterface $location): array
@@ -61,7 +41,7 @@ class LocationMatrix implements IteratorAggregate, LocationMatrixInterface
         return $near;
     }
 
-    public function getCoordinates(): array
+    public function getCoordinatesList(): array
     {
         return array_keys($this->matrix);
     }

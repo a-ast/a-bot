@@ -3,7 +3,7 @@
 namespace App\Model;
 
 use App\Model\Game\LocationAwareMapInterface;
-use App\Model\Location\LocationMatrixInterface;
+use App\Model\Location\LocationMapInterface;
 use App\Model\Tile\GoldMine;
 use App\Model\Tile\Tavern;
 
@@ -12,9 +12,9 @@ interface BoardInterface
     public function getWidth(): int;
 
     /**
-     * @return LocationMatrixInterface
+     * @return LocationMapInterface
      */
-    public function getMap(): LocationMatrixInterface;
+    public function getMap(): LocationMapInterface;
 
     /**
      * @return GoldMine[]
