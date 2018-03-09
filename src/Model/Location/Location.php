@@ -2,52 +2,18 @@
 
 namespace App\Model\Location;
 
-use App\Model\LocationInterface;
-
-final class Location implements LocationInterface
+final class Location
 {
     /**
-     * @var int
+     * @return string[]
      */
-    private $x;
-
-    /**
-     * @var int
-     */
-    private $y;
-
-    public function __construct(int $x, int $y)
+    public static function getXY($location): array
     {
-        $this->x = $x;
-        $this->y = $y;
+        return explode(':', $location);
     }
 
-    public static function fromCoordinates(string $coordinates): LocationInterface
+    public static function getLocation($x, $y): string
     {
-        $xy = explode(':', $coordinates);
-
-        return new self($xy[0], $xy[1]);
-    }
-
-    public function getX(): int
-    {
-        return $this->x;
-    }
-
-    public function getY(): int
-    {
-        return $this->y;
-    }
-
-    public function isNear(LocationInterface $location): bool
-    {
-        return 1 ===
-            (abs($location->getX() - $this->x) +
-            abs($location->getY() - $this->y));
-    }
-
-    public function getCoordinates(): string
-    {
-        return $this->getX() . ':' . $this->getY();
+        return $x . ':' . $y;
     }
 }

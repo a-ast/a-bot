@@ -5,3 +5,4 @@ default:
         - "%paths.base%/tests/features"
       contexts:
         - App\Tests\Context\PathFinderContext
+        - App\Tests\Context\LocationGraphContext

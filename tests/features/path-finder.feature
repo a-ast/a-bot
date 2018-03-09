@@ -1,4 +1,4 @@
-Feature: Finding pathes on the map
+Feature: Finding paths on the map
 
   Scenario: Find shortest path on the location matrix
     Given there is a map:
