@@ -86,6 +86,7 @@ class TacticSetStrategy implements StrategyInterface
 
             // Get 4 tiles near
             $nearLocations = $this->board->getMap()->getNearLocations($this->hero->getLocation());
+            $nearLocations = array_diff($nearLocations, $this->board->getGoalLocations());
 
             /** @var string[] $potentialLocationsToGo */
             $potentialLocationsToGo = [];
