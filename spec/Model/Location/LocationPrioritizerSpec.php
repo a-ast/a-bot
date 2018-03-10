@@ -33,4 +33,19 @@ class LocationPrioritizerSpec extends ObjectBehavior
         $pair->getLocation()->shouldReturn('2:2');
         $pair->getPriority()->shouldReturn(86868686);
     }
+
+    function it_gets_location_with_min_priority()
+    {
+        $this->add('1:1', 10);
+        $this->add('2:1', 0);
+        $this->add('8:7', 80);
+        $this->add('4:3', -999);
+        $this->add('2:2', 86868686);
+        $this->add('1:7', 100);
+        $this->add('3:3', -100);
+
+        $pair = $this->getWithMinPriority();
+        $pair->getLocation()->shouldReturn('4:3');
+        $pair->getPriority()->shouldReturn(-999);
+    }
 }

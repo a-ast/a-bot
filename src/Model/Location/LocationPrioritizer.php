@@ -17,4 +17,11 @@ class LocationPrioritizer
 
         return new LocationPriorityPair($this->items[$max], $max);
     }
+
+    public function getWithMinPriority(): LocationPriorityPair
+    {
+        $min = min(array_keys($this->items));
+
+        return new LocationPriorityPair($this->items[$min], $min);
+    }
 }
