@@ -3,7 +3,7 @@
 namespace App\PathFinder;
 
 use App\Model\BoardInterface;
-use App\Model\LocationInterface;
+
 use SplObjectStorage;
 
 class LeeAlgorithm // implements PathFinderInterface
@@ -30,16 +30,16 @@ class LeeAlgorithm // implements PathFinderInterface
     }
 
     /**
-     * @return array|LocationInterface[]
+     * @return array|string[]
      */
-    public function getPath(LocationInterface $fromTile, LocationInterface $toTile)
+    public function getPath(string $fromTile, string $toTile)
     {
         $visited = $this->waves[$toTile];
 
         return $this->findPath($visited, $toTile, $fromTile);
     }
 
-    private function expandWave(LocationInterface $toTile): SplObjectStorage
+    private function expandWave(string $toTile): SplObjectStorage
     {
         $visited = new SplObjectStorage();
         $frontier = new SplObjectStorage();
@@ -84,7 +84,7 @@ class LeeAlgorithm // implements PathFinderInterface
         return $visited;
     }
 
-    private function findPath($waveMap, LocationInterface $toTile, LocationInterface $fromTile): array
+    private function findPath($waveMap, string $toTile, string $fromTile): array
     {
         $pathTile = $fromTile;
 

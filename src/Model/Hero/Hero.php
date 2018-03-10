@@ -5,7 +5,7 @@ namespace App\Model\Hero;
 use App\Model\HeroInterface;
 use App\Model\Location\Location;
 use App\Model\Location\LocationAwareTrait;
-use App\Model\LocationInterface;
+
 
 class Hero implements HeroInterface
 {
@@ -42,14 +42,14 @@ class Hero implements HeroInterface
     private $isRespawned;
 
     /**
-     * @var LocationInterface
+     * @var string
      */
     private $spawnLocation;
 
     public function __construct(array $data)
     {
-        $this->location = new Location($data['pos']['x'], $data['pos']['y']);
-        $this->spawnLocation = new Location($data['spawnPos']['x'], $data['spawnPos']['y']);
+        $this->location = Location::getLocation($data['pos']['x'], $data['pos']['y']);
+        $this->spawnLocation = Location::getLocation($data['spawnPos']['x'], $data['spawnPos']['y']);
 
         $this->name = $data['name'];
         $this->id = $data['id'];
@@ -63,10 +63,10 @@ class Hero implements HeroInterface
         $this->goldPoints = $data['gold'];
         $this->isCrashed = $data['crashed'];
 
-        $newLocation = new Location($data['pos']['x'], $data['pos']['y']);
+        $newLocation = Location::getLocation($data['pos']['x'], $data['pos']['y']);
 
         $this->isRespawned =
-            !$this->location->isNear($newLocation)  &&
+            !Location::isNear($this->location, $newLocation)  &&
             ($newLocation === $this->spawnLocation);
 
         $this->location = $newLocation;
@@ -114,7 +114,7 @@ class Hero implements HeroInterface
 
     public function __toString()
     {
-        return sprintf('Hero [%d: %d] Gold: %d, LP: %d',
-            $this->location->getX(), $this->location->getY(), $this->getGoldPoints(), $this->getLifePoints());
+        return sprintf('Hero [%s] Gold: %d, LP: %d',
+            $this->location, $this->getGoldPoints(), $this->getLifePoints());
     }
 }

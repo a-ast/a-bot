@@ -2,15 +2,11 @@
 
 namespace App\PathFinder;
 
-use App\Model\Game\LocationAwareMapInterface;
-use App\Model\Location\Location;
-use App\Model\LocationAwareInterface;
-use App\Model\LocationInterface;
-use App\Model\Location\LocationMapInterface;
+use App\Model\Game\LocationAwareListInterface;
+use App\Model\LocationGraphInterface;
 
 class FloydWarshallAlgorithm implements PathFinderInterface
 {
-
     const INF = 10000;
 
     /**
@@ -29,7 +25,7 @@ class FloydWarshallAlgorithm implements PathFinderInterface
     private $locations;
 
     /**
-     * @var LocationAwareMapInterface
+     * @var LocationAwareListInterface
      */
     private $goals;
 
@@ -44,9 +40,9 @@ class FloydWarshallAlgorithm implements PathFinderInterface
     private $locationIndexes;
 
     /**
-     * @var LocationMapInterface
+     * @var LocationGraphInterface
      */
-    private $map;
+    private $graph;
 
     /**
      * @var array
@@ -55,17 +51,13 @@ class FloydWarshallAlgorithm implements PathFinderInterface
      */
     private $goalLocations;
 
-    public function initialize(LocationMapInterface $locationMap,
-        LocationAwareMapInterface $goals = null, array $context = [])
+    public function initialize(LocationGraphInterface $locationGraph,
+        array $goalLocations = [], array $context = [])
     {
-        $this->map = $locationMap;
-        $this->goals = $goals;
+        $this->graph = $locationGraph;
+        $this->goalLocations = $goalLocations;
 
-        $this->goalLocations = $goals ? $goals->getCoordinatesList() : [];
-
-
-
-        $this->locations = array_values(array_diff($locationMap->getCoordinatesList(),
+        $this->locations = array_values(array_diff($locationGraph->getLocations(),
             $this->goalLocations
         ));
 
@@ -80,27 +72,30 @@ class FloydWarshallAlgorithm implements PathFinderInterface
         }
     }
 
-    public function getDistance(LocationInterface $fromLocation, LocationInterface $toLocation): int
+    public function getDistance(string $from, string $to): int
     {
-        $i = $this->locationIndexes[$fromLocation->getCoordinates()];
-        $j = $this->locationIndexes[$toLocation->getCoordinates()];
+        $i = $this->locationIndexes[$from];
+        $j = $this->locationIndexes[$to];
+
+        if (!isset($this->distances[$i][$j])) {
+            print sprintf('SOS! Unknown distance from %s to %s', $from, $to) . PHP_EOL;
+        }
 
         return $this->distances[$i][$j];
     }
 
-    public function getNextLocation(LocationInterface $fromLocation, LocationInterface $toLocation): LocationInterface
+    public function getNextLocation(string $from, string $to): string
     {
-        $i = $this->locationIndexes[$fromLocation->getCoordinates()];
-        $j = $this->locationIndexes[$toLocation->getCoordinates()];
+        $i = $this->locationIndexes[$from];
+        $j = $this->locationIndexes[$to];
 
-//        if (!isset($this->next[$i][$j])) {
-//            var_dump($fromLocation);
-//            var_dump($toLocation);
-//
-//        }
+        if (!isset($this->next[$i][$j])) {
+            print sprintf('SOS! Unknown next step from %s to %s', $from, $to) . PHP_EOL;
+        }
+
         $next = $this->next[$i][$j];
 
-        return Location::fromCoordinates($this->locations[$next]);
+        return $this->locations[$next];
     }
 
     private function prepareAdjacentDistances()
@@ -115,10 +110,10 @@ class FloydWarshallAlgorithm implements PathFinderInterface
 
             for ($j = $i + 1; $j < $size; $j++) {
 
-                $iLoc = Location::fromCoordinates($this->locations[$i]);
-                $jLoc = Location::fromCoordinates($this->locations[$j]);
+                $iLoc = $this->locations[$i];
+                $jLoc = $this->locations[$j];
 
-                $isNear = $iLoc->isNear($jLoc);
+                $isNear = $this->graph->isNear($iLoc, $jLoc);
 
                 if ($isNear) {
                     $this->distances[$i][$j] = 1;
@@ -176,15 +171,12 @@ class FloydWarshallAlgorithm implements PathFinderInterface
         // it needs new vertical columns for distance array
         $jNew = count($this->distances);
 
-        foreach ($this->goals as $goal) {
+        foreach ($this->goalLocations as $goalLocation) {
 
-            $goalLocation = $goal->getLocation();
-            $destCoordinates = $goalLocation->getCoordinates();
+            $this->locationIndexes[$goalLocation] = $jNew;
+            $this->locations[$jNew] = $goalLocation;
 
-            $this->locationIndexes[$destCoordinates] = $jNew;
-            $this->locations[$jNew] = $destCoordinates;
-
-            $nearLocationCoordinates = $this->getNearCoordinatesNotGoals($goal);
+            $nearLocationCoordinates = $this->getNearLocationsButNotGoals($goalLocation);
 
             for ($i = 0; $i < $this->size; $i++) {
 
@@ -235,17 +227,11 @@ class FloydWarshallAlgorithm implements PathFinderInterface
     /**
      * @return string[]
      */
-    private function getNearCoordinatesNotGoals(LocationAwareInterface $goal): array
+    private function getNearLocationsButNotGoals(string $goal): array
     {
-        $nearLocations = $this->map->getNearLocations($goal->getLocation());
+        $nearLocations = $this->graph->getNearLocations($goal);
 
-        $coordinates = [];
-
-        foreach ($nearLocations as $nearLocation) {
-            $coordinates[] = $nearLocation->getCoordinates();
-        }
-
-        $coordinates = array_diff($coordinates, $this->goals->getCoordinatesList());
+        $coordinates = array_diff($nearLocations, $this->goalLocations);
 
         return $coordinates;
     }

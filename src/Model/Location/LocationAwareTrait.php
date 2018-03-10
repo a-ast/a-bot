@@ -2,21 +2,19 @@
 
 namespace App\Model\Location;
 
-use App\Model\LocationInterface;
-
 trait LocationAwareTrait
 {
     /**
-     * @var LocationInterface
+     * @var string
      */
     private $location;
 
-    public function __construct(LocationInterface $location)
+    public function __construct(string $location)
     {
         $this->location = $location;
     }
 
-    public function getLocation(): LocationInterface
+    public function getLocation(): string
     {
         return $this->location;
     }

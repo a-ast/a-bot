@@ -7,8 +7,8 @@ namespace App\Command;
 use App\Game\TournamentGame;
 use App\Model\Game\Board;
 use App\Model\Location\Location;
-use App\Model\Location\LocationMapInterface;
-use App\Model\Location\LocationMapBuilder;
+use App\Model\Location\LocationGraphInterface;
+use App\Model\Location\LocationGraphBuilder;
 use App\Model\Location\Road;
 use App\Model\Location\Wall;
 use App\PathFinder\FloydWarshallAlgorithm;
@@ -44,34 +44,21 @@ class WatchPathFinderCommand extends Command
 
         $board = new Board($maxWidth / 2, join('', $mapData));
 
-        $from = new Location(0, 0);
-        $to = new Location(5, 2);
-
         $pathFinder = new FloydWarshallAlgorithm();
 
         $watch = new Stopwatch(false);
 
-        $goldMines = $board->getGoldMines();
-        $taverns = $board->getTaverns();
-        $goals = $goldMines->addMap($taverns);
-
         $watch->start('init path finder');
-        $pathFinder->initialize($board->getMap(), $goals);
+        $pathFinder->initialize($board->getMap(), $board->getGoalLocations());
         $watchResult = $watch->stop('init path finder');
 
 
         $output->writeln('Duration: '.$watchResult->getDuration());
         $output->writeln('Memory: '.$watchResult->getMemory() / (1024));
 
-        foreach ($board->getMap() as $from) {
+        foreach ($board->getWalkableLocations() as $from) {
 
-            foreach ($goals as $goal) {
-                if ($goal->getLocation() === $from) {
-                    continue(2);
-                }
-            }
-
-            foreach ($board->getMap() as $to) {
+            foreach ($board->getMap()->getLocations() as $to) {
                 $pathDistance = $pathFinder->getDistance($from, $to);
 
                 if ($from !== $to) {

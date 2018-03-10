@@ -2,8 +2,7 @@
 
 namespace App\Model;
 
-use App\Model\Game\LocationAwareMapInterface;
-use App\Model\Location\LocationMapInterface;
+use App\Model\Game\LocationAwareListInterface;
 use App\Model\Tile\GoldMine;
 use App\Model\Tile\Tavern;
 
@@ -12,22 +11,32 @@ interface BoardInterface
     public function getWidth(): int;
 
     /**
-     * @return LocationMapInterface
+     * @return LocationGraphInterface
      */
-    public function getMap(): LocationMapInterface;
+    public function getMap(): LocationGraphInterface;
 
     /**
      * @return GoldMine[]
      */
-    public function getGoldMines(): LocationAwareMapInterface;
+    public function getGoldMines(): LocationAwareListInterface;
 
     /**
      * @return GoldMine[]
      */
-    public function getForeignGoldMines(array $friendHeroIds): LocationAwareMapInterface;
+    public function getForeignGoldMines(array $friendHeroIds): LocationAwareListInterface;
 
     /**
      * @return Tavern[]
      */
-    public function getTaverns(): LocationAwareMapInterface;
+    public function getTaverns(): LocationAwareListInterface;
+
+    /**
+     * @return string[]
+     */
+    public function getGoalLocations(): array;
+
+    /**
+     * @return string[]
+     */
+    public function getWalkableLocations(): array;
 }

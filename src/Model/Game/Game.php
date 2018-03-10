@@ -16,14 +16,9 @@ class Game implements GameInterface
     private $hero;
 
     /**
-     * @var array|HeroInterface[]
+     * @var HeroInterface[]
      */
     private $heroes;
-
-    /**
-     * @var LocationMap
-     */
-    private $enemyMatrix = [];
 
     /**
      * @var bool
@@ -108,17 +103,17 @@ class Game implements GameInterface
 
     private function createEnemies(array $heroesData)
     {
-        $this->enemyMatrix = new LocationMap();
         $this->heroes = [];
 
         foreach ($heroesData as $heroData) {
-            $enemyId = $heroData['id'];
-            if ($enemyId === $this->hero->getId()) {
+            $heroId = $heroData['id'];
+
+            if ($heroId === $this->hero->getId()) {
                 continue;
             }
 
-            $enemy = new Hero($heroData);
-            $this->heroes[$enemyId] = $enemy;
+            $hero = new Hero($heroData);
+            $this->heroes[$heroId] = $hero;
         }
     }
 
@@ -135,7 +130,6 @@ class Game implements GameInterface
             $enemy = $this->heroes[$enemyId];
 
             $enemy->refresh($enemyData);
-            //$this->enemyMatrix->addTile($enemy);
         }
     }
 }

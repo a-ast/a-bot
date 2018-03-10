@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Model\Game\Game;
+use App\Model\Location\Location;
 use App\Strategy\StrategyInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -74,7 +75,7 @@ class TestGameCommand extends Command
 
             $game->getHero()->refresh(
                 [
-                    'pos' => ['x' => $next->getX(), 'y' => $next->getY()],
+                    'pos' => ['x' => Location::getXY($next)[0], 'y' => Location::getXY($next)[1]],
                     'life' => 100,
                     'gold' => 0,
                     'crashed' => false,

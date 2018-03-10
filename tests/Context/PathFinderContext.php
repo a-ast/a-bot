@@ -2,11 +2,14 @@
 
 namespace App\Tests\Context;
 
-use App\Model\Game\LocationAwareMap;
+use App\Model\Game\LocationAwareList;
+use App\Model\Game\LocationAwareListInterface;
 use App\Model\Location\Location;
-use App\Model\Location\LocationMapBuilder;
+use App\Model\Location\LocationGraphBuilder;
+use App\Model\LocationGraphInterface;
 use App\Model\Tile\GoldMine;
 use App\PathFinder\FloydWarshallAlgorithm;
+use App\PathFinder\PathFinderInterface;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Webmozart\Assert\Assert;
@@ -14,17 +17,17 @@ use Webmozart\Assert\Assert;
 class PathFinderContext implements Context
 {
     /**
-     * @var \App\PathFinder\PathFinderInterface
+     * @var PathFinderInterface
      */
     private $pathFinder;
 
     /**
-     * @var \App\Model\Location\LocationMapInterface
+     * @var LocationGraphInterface
      */
-    private $map;
+    private $graph;
 
     /**
-     * @var \App\Model\Game\LocationAwareMapInterface
+     * @var LocationAwareListInterface
      */
     private $goals;
 
@@ -34,20 +37,20 @@ class PathFinderContext implements Context
     public function thereIsAMap(PyStringNode $string)
     {
         $mapData = $string->getRaw();
-        $builder = new LocationMapBuilder();
-        $this->map = $builder->buildFromTextWithEol($mapData);
+        $builder = new LocationGraphBuilder();
+        $this->graph = $builder->buildFromTextWithEol($mapData);
     }
 
     /**
-     * @Given the map has the goal at :coordinates
+     * @Given the map has the goal at :location
      */
-    public function theMapHasTheGoalAt($coordinates)
+    public function theMapHasTheGoalAt($location)
     {
         if (null === $this->goals) {
-            $this->goals = new LocationAwareMap();
+            $this->goals = new LocationAwareList();
         }
 
-        $this->goals->add(new GoldMine(Location::fromCoordinates($coordinates)));
+        $this->goals->add(new GoldMine($location));
     }
 
     /**
@@ -57,10 +60,7 @@ class PathFinderContext implements Context
     {
         $this->initialize();
 
-        $fromLocation = Location::fromCoordinates($from);
-        $toLocation = Location::fromCoordinates($to);
-
-        $pathDistance = $this->pathFinder->getDistance($fromLocation, $toLocation);
+        $pathDistance = $this->pathFinder->getDistance($from, $to);
 
         Assert::eq($pathDistance, $distance);
     }
@@ -72,17 +72,14 @@ class PathFinderContext implements Context
     {
         $this->initialize();
 
-        $fromLocation = Location::fromCoordinates($from);
-        $toLocation = Location::fromCoordinates($to);
-
         $pathParts = [];
 
-        while ($fromLocation->getCoordinates() !== $toLocation->getCoordinates()) {
+        while ($from !== $to) {
 
-            $pathNext = $this->pathFinder->getNextLocation($fromLocation, $toLocation);
-            $pathParts[] = $pathNext->getCoordinates();
+            $pathNext = $this->pathFinder->getNextLocation($from, $to);
+            $pathParts[] = $pathNext;
 
-            $fromLocation = $pathNext;
+            $from = $pathNext;
         }
 
         $actualPath = join('->', $pathParts);
@@ -97,6 +94,6 @@ class PathFinderContext implements Context
         }
 
         $this->pathFinder = new FloydWarshallAlgorithm();
-        $this->pathFinder->initialize($this->map, $this->goals);
+        $this->pathFinder->initialize($this->graph, $this->goals);
     }
 }

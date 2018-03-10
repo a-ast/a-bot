@@ -2,7 +2,9 @@
 
 namespace App\Model\Location;
 
-class LocationGraph
+use App\Model\LocationGraphInterface;
+
+class LocationGraph implements LocationGraphInterface
 {
     /**
      * @var array
@@ -14,7 +16,7 @@ class LocationGraph
      */
     private $edges = [];
 
-    public function add(int $x, int $y)
+    public function add(int $x, int $y): string
     {
         $location = Location::getLocation($x, $y);
         $this->items[$location] = 1;
@@ -31,6 +33,8 @@ class LocationGraph
                 $this->edges[$location][] = $neighbourLocation;
             }
         }
+
+        return $location;
     }
 
     /**
@@ -43,5 +47,20 @@ class LocationGraph
         }
 
         return $this->edges[$location];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getLocations(): array
+    {
+        return array_keys($this->items);
+    }
+
+    public function isNear(string $from, string $to): bool
+    {
+        $near = $this->getNearLocations($from);
+
+        return in_array($to, $near);
     }
 }

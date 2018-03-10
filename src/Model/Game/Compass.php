@@ -2,7 +2,7 @@
 
 namespace App\Model\Game;
 
-use App\Model\LocationInterface;
+use App\Model\Location\Location;
 
 class Compass
 {
@@ -10,12 +10,15 @@ class Compass
     /**
      * @throws \Exception
      */
-    public function getDirectionTo(LocationInterface $from, LocationInterface $to): string
+    public function getDirectionTo(string $from, string $to): string
     {
-        $xDiff = $from->getX() - $to->getX();
-        $yDiff = $from->getY() - $to->getY();
+        list($fromX, $fromY) = Location::getXY($from);
+        list($toX, $toY) = Location::getXY($to);
+        
+        $xDiff = $fromX - $toX;
+        $yDiff = $fromY - $toY;
 
-        switch ($xDiff.':'.$yDiff) {
+        switch ($xDiff . ':' . $yDiff) {
             case '1:0':
                 return 'North';
             case '-1:0':

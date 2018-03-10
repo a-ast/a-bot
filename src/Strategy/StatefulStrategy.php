@@ -5,7 +5,7 @@ namespace App\Strategy;
 use App\Model\BoardInterface;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
-use App\Model\LocationInterface;
+
 use App\PathFinder\LeeAlgorithm;
 use SplObjectStorage;
 
@@ -29,7 +29,7 @@ class StatefulStrategy implements StrategyInterface
     private $hero;
 
     /**
-     * @var LocationInterface
+     * @var string
      */
     private $goalTile;
 
@@ -60,7 +60,7 @@ class StatefulStrategy implements StrategyInterface
         $this->state = 'Init';
     }
 
-    public function getNextLocation(): LocationInterface
+    public function getNextLocation(): string
     {
         print $this->state . PHP_EOL;
 

@@ -3,12 +3,13 @@
 namespace App\Strategy;
 
 use App\Model\BoardInterface;
+use App\Model\Game\LocationAwareListInterface;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
 use App\Model\Location\Location;
 use App\Model\Tile\GoldMine;
 use App\Model\Tile\Tavern;
-use App\Model\LocationInterface;
+
 use App\PathFinder\FloydWarshallAlgorithm;
 use SplObjectStorage;
 
@@ -53,14 +54,12 @@ class TacticSetStrategy implements StrategyInterface
 
         $this->friendIds = $game->getFriendIds();
 
-        $goldMines = $this->board->getGoldMines();
-        $taverns = $this->board->getTaverns();
-        $goals = $goldMines->addMap($taverns);
+        $goals = $this->board->getGoalLocations();
 
         $this->pathFinder->initialize($this->board->getMap(), $goals);
     }
 
-    public function getNextLocation(): LocationInterface
+    public function getNextLocation(): string
     {
 
         $enemyNear = $this->getClosestEnemy();
@@ -73,7 +72,7 @@ class TacticSetStrategy implements StrategyInterface
 
             print '## ATTACK'.PHP_EOL;
 
-            return $enemyNear;
+            return $enemyNear->getLocation();
 
         }
 
@@ -88,7 +87,7 @@ class TacticSetStrategy implements StrategyInterface
             // Get 4 tiles near
             $nearLocations = $this->board->getMap()->getNearLocations($this->hero->getLocation());
 
-            /** @var LocationInterface[] $potentialLocationsToGo */
+            /** @var string[] $potentialLocationsToGo */
             $potentialLocationsToGo = [];
             foreach ($nearLocations as $nearLocation) {
 
@@ -99,7 +98,7 @@ class TacticSetStrategy implements StrategyInterface
 
             // no way to run
             if (0 === count($potentialLocationsToGo)) {
-                return $enemyNear;
+                return $enemyNear->getLocation();
             }
 
             // choose between possible location one that far from enemies
@@ -126,7 +125,7 @@ class TacticSetStrategy implements StrategyInterface
 
             print '## DRINK MORE'.PHP_EOL;
 
-            return $tavernNear;
+            return $tavernNear->getLocation();
         }
 
 
@@ -149,9 +148,10 @@ class TacticSetStrategy implements StrategyInterface
         // Go to gold
 
         if ($this->hero->getLifePoints() > 20) {
+
             $goldMines = $this->board->getForeignGoldMines($this->friendIds);
 
-            if (count($goldMines) > 0) {
+            if ($goldMines->count() > 0) {
 
                 print '## GO GOLD'.PHP_EOL;
 
@@ -172,12 +172,12 @@ class TacticSetStrategy implements StrategyInterface
     private function getClosestEnemy()
     {
         foreach ($this->game->getHeroes() as $enemy) {
-            if ($this->hero->getLocation()->isNear($enemy->getLocation())) {
+            if (1 === $this->pathFinder->getDistance($this->hero->getLocation(), $enemy->getLocation())) {
                 return $enemy;
             }
         }
 
-        return new Location(-1, -1);
+        return null;
     }
 
     private function getClosestGoldMine()
@@ -185,47 +185,47 @@ class TacticSetStrategy implements StrategyInterface
         $goldMines = $this->board->getForeignGoldMines($this->friendIds);
 
         foreach ($goldMines as $goldMine) {
-            if ($this->hero->getLocation()->isNear($goldMine->getLocation())) {
+            if (1 === $this->pathFinder->getDistance($this->hero->getLocation(), $goldMine->getLocation())) {
                 return $goldMine;
             }
         }
 
-        return new Location(-1, -1);
+        return null;
     }
 
     private function getClosestTavern()
     {
         foreach ($this->game->getBoard()->getTaverns() as $tavern) {
-            if ($this->hero->getLocation()->isNear($tavern->getLocation())) {
+            if (1 === $this->pathFinder->getDistance($this->hero->getLocation(), $tavern->getLocation())) {
                 return $tavern;
             }
         }
 
-        return new Location(-1, -1);
+        return null;
     }
 
 
-    private function findGoal(array $potentialGoals): LocationInterface
+    private function findGoal(LocationAwareListInterface $potentialGoals): string
     {
-        $paths = new SplObjectStorage();
+//        $paths = new SplObjectStorage();
 
-        foreach ($potentialGoals as $item) {
-
-
-            // add goal to the path
-            $path[] = $item;
-
-            $paths[$item] = $path;
-        }
+//        foreach ($potentialGoals as $item) {
+//
+//
+//            // add goal to the path
+//            $path[] = $item;
+//
+//            $paths[$item] = $path;
+//        }
 
         $minPathLength = 10000;
         $goal = null;
         $nextLocation = null;
 
-        foreach ($potentialGoals as $pathGoal) {
+        foreach ($potentialGoals->getLocations() as $pathGoal) {
 
-            $pathDistance = $this->pathFinder->getDistance($this->hero->getLocation(), $item->getLocation());
-            $pathNextLocation = $this->pathFinder->getNextLocation($this->hero->getLocation(), $item->getLocation());
+            $pathDistance = $this->pathFinder->getDistance($this->hero->getLocation(), $pathGoal);
+            $pathNextLocation = $this->pathFinder->getNextLocation($this->hero->getLocation(), $pathGoal);
 
 
             if ($pathDistance < $minPathLength) {

@@ -78,7 +78,7 @@ class TournamentGame
 
             $nextLocation = $this->strategy->getNextLocation();
 
-            //print $game->getHero().' -> '.$nextLocation.PHP_EOL;
+            print $game->getHero()->getLocation().' -> '.$nextLocation.PHP_EOL;
 
             $direction = $compass->getDirectionTo($game->getHero()->getLocation(), $nextLocation);
 
