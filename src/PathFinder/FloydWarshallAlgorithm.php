@@ -74,11 +74,15 @@ class FloydWarshallAlgorithm implements PathFinderInterface
 
     public function getDistance(string $from, string $to): int
     {
+        if ($from === $to) {
+            return 0;
+        }
+
         $i = $this->locationIndexes[$from];
         $j = $this->locationIndexes[$to];
 
         if (!isset($this->distances[$i][$j])) {
-            print sprintf('SOS! Unknown distance from %s to %s', $from, $to) . PHP_EOL;
+            return self::INF;
         }
 
         return $this->distances[$i][$j];

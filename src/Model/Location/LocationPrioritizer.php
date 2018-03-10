@@ -8,20 +8,37 @@ class LocationPrioritizer
 
     public function add(string $location, int $priority)
     {
-        $this->items[$priority] = $location;
+        $this->items[$location] = $priority;
     }
 
     public function getWithMaxPriority(): LocationPriorityPair
     {
-        $max = max(array_keys($this->items));
+        arsort($this->items);
 
-        return new LocationPriorityPair($this->items[$max], $max);
+        $location = key($this->items);
+        $prio = current($this->items);
+
+        return new LocationPriorityPair($location, $prio);
     }
 
     public function getWithMinPriority(): LocationPriorityPair
     {
-        $min = min(array_keys($this->items));
+        asort($this->items);
 
-        return new LocationPriorityPair($this->items[$min], $min);
+        $location = key($this->items);
+        $prio = current($this->items);
+
+        return new LocationPriorityPair($location, $prio);
+    }
+
+    public function dump(string $title)
+    {
+        $text = 'Priorities for [' . $title . ']:' .PHP_EOL;
+
+        foreach ($this->items as $location => $priority) {
+            $text .= sprintf('    %s - %d', $location, $priority) . PHP_EOL;
+        }
+
+        print $text;
     }
 }
