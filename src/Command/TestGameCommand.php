@@ -50,8 +50,8 @@ class TestGameCommand extends Command
                 'life' => 100,
                 'gold' => 0,
                 'crashed' => false,
-                'pos' => ['x' => 4, 'y' => 5],
-                'spawnPos' => ['x' => 0, 'y' => 0],
+                'pos' => ['x' => 1, 'y' => 1],
+                'spawnPos' => ['x' => 1, 'y' => 1],
             ],
             'game' => [
                 'finished' => false,
@@ -71,8 +71,6 @@ class TestGameCommand extends Command
             $next = $this->strategy->getNextLocation();
 
             // @todo: update gold and life
-
-
             $game->getHero()->refresh(
                 [
                     'pos' => ['x' => Location::getXY($next)[0], 'y' => Location::getXY($next)[1]],

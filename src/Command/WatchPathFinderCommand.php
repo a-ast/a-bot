@@ -29,8 +29,6 @@ class WatchPathFinderCommand extends Command
         $this
             ->setName('a-bot:path')
             ->addArgument('map-name', InputArgument::REQUIRED)
-
-
         ;
     }
 
@@ -66,14 +64,5 @@ class WatchPathFinderCommand extends Command
                 }
             }
         }
-
-
-//
-//
-//        foreach ($path as $item) {
-//            $output->writeln(sprintf('%d:%d', $item->getX(), $item->getY()));
-//        }
-
-
     }
 }
