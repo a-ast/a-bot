@@ -76,6 +76,8 @@ class TournamentGame
 
         while (false === $game->isFinished()) {
 
+            print 'Hero: '. $game->getHero()->getLocation().PHP_EOL;
+
             $nextLocation = $this->strategy->getNextLocation();
 
             print $game->getHero()->getLocation().' -> '.$nextLocation.PHP_EOL;
