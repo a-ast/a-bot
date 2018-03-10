@@ -4,10 +4,9 @@ namespace App\Tests\Context;
 
 use App\Model\Game\LocationAwareList;
 use App\Model\Game\LocationAwareListInterface;
-use App\Model\Location\Location;
 use App\Model\Location\LocationGraphBuilder;
 use App\Model\LocationGraphInterface;
-use App\Model\Tile\GoldMine;
+use App\Model\Game\GoldMine;
 use App\PathFinder\FloydWarshallAlgorithm;
 use App\PathFinder\PathFinderInterface;
 use Behat\Behat\Context\Context;
@@ -94,6 +93,7 @@ class PathFinderContext implements Context
         }
 
         $this->pathFinder = new FloydWarshallAlgorithm();
-        $this->pathFinder->initialize($this->graph, $this->goals);
+        $this->pathFinder->initialize($this->graph,
+            $this->goals ? $this->goals->getLocations() : []);
     }
 }

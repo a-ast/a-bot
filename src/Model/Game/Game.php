@@ -6,7 +6,7 @@ use App\Model\GameInterface;
 use App\Model\HeroInterface;
 use App\Model\BoardInterface;
 use App\Model\Location\LocationMap;
-use App\Model\Hero\Hero;
+use App\Model\Game\Hero;
 
 class Game implements GameInterface
 {

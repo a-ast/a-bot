@@ -6,12 +6,9 @@ use App\Model\BoardInterface;
 use App\Model\Game\LocationAwareListInterface;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
-use App\Model\Location\Location;
-use App\Model\Tile\GoldMine;
-use App\Model\Tile\Tavern;
-
+use App\Model\Game\GoldMine;
+use App\Model\Game\Tavern;
 use App\PathFinder\FloydWarshallAlgorithm;
-use SplObjectStorage;
 
 class TacticSetStrategy implements StrategyInterface
 {
@@ -208,17 +205,6 @@ class TacticSetStrategy implements StrategyInterface
 
     private function findGoal(LocationAwareListInterface $potentialGoals): string
     {
-//        $paths = new SplObjectStorage();
-
-//        foreach ($potentialGoals as $item) {
-//
-//
-//            // add goal to the path
-//            $path[] = $item;
-//
-//            $paths[$item] = $path;
-//        }
-
         $minPathLength = 10000;
         $goal = null;
         $nextLocation = null;

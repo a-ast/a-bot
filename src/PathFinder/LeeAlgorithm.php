@@ -32,11 +32,11 @@ class LeeAlgorithm // implements PathFinderInterface
     /**
      * @return array|string[]
      */
-    public function getPath(string $fromTile, string $toTile)
+    public function getPath(string $fromGame, string $toGame)
     {
-        $visited = $this->waves[$toTile];
+        $visited = $this->waves[$toGame];
 
-        return $this->findPath($visited, $toTile, $fromTile);
+        return $this->findPath($visited, $toGame, $fromTile);
     }
 
     private function expandWave(string $toTile): SplObjectStorage

@@ -3,8 +3,8 @@
 namespace App\Model;
 
 use App\Model\Game\LocationAwareListInterface;
-use App\Model\Tile\GoldMine;
-use App\Model\Tile\Tavern;
+use App\Model\Game\GoldMine;
+use App\Model\Game\Tavern;
 
 interface BoardInterface
 {

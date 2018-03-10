@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Tile;
+namespace App\Model\Game;
 
 use App\Model\Location\LocationAwareTrait;
 use App\Model\LocationAwareInterface;

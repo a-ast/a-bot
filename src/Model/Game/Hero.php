@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Hero;
+namespace App\Model\Game;
 
 use App\Model\HeroInterface;
 use App\Model\Location\Location;

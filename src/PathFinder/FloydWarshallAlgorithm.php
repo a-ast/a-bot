@@ -214,10 +214,6 @@ class FloydWarshallAlgorithm implements PathFinderInterface
                 // Every goal - new j-column
                 $this->distances[$i][$jNew] = $minDistance + 1;
                 $this->next[$i][$jNew] = $this->next[$i][$minJIndex];
-
-//                $coordinatesOfMinJIndex = $this->locations[$minJIndex];
-//                $this->locationIndexes[$coordinatesOfMinJIndex] = $minJIndex;
-
             }
 
             $jNew++;

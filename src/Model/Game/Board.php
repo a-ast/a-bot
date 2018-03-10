@@ -6,8 +6,8 @@ use App\Model\BoardInterface;
 use App\Model\Location\Location;
 use App\Model\Location\LocationGraph;
 use App\Model\LocationGraphInterface;
-use App\Model\Tile\GoldMine;
-use App\Model\Tile\Tavern;
+use App\Model\Game\GoldMine;
+use App\Model\Game\Tavern;
 
 class Board implements BoardInterface
 {
