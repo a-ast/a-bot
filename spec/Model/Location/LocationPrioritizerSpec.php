@@ -3,6 +3,7 @@
 namespace spec\App\Model\Location;
 
 use App\Model\Location\LocationPrioritizer;
+use App\Model\Location\LocationPriorityPair;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -28,6 +29,8 @@ class LocationPrioritizerSpec extends ObjectBehavior
         $this->add('1:7', 100);
         $this->add('3:3', -100);
 
-        $this->getWithMaxPriority()->shouldReturn('2:2');
+        $pair = $this->getWithMaxPriority();
+        $pair->getLocation()->shouldReturn('2:2');
+        $pair->getPriority()->shouldReturn(86868686);
     }
 }

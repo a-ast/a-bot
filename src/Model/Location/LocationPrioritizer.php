@@ -11,10 +11,10 @@ class LocationPrioritizer
         $this->items[$priority] = $location;
     }
 
-    public function getWithMaxPriority(): string
+    public function getWithMaxPriority(): LocationPriorityPair
     {
         $max = max(array_keys($this->items));
 
-        return $this->items[$max];
+        return new LocationPriorityPair($this->items[$max], $max);
     }
 }
