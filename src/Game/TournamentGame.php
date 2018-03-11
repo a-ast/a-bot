@@ -27,11 +27,15 @@ class TournamentGame
 
     public function __construct(
         VindiniumApiClient $apiClient,
-        StrategyInterface $strategy,
         ProgressNotifier $progressNotifier)
     {
         $this->apiClient = $apiClient;
         $this->progressNotifier = $progressNotifier;
+
+    }
+
+    public function setStrategy(StrategyInterface $strategy)
+    {
         $this->strategy = $strategy;
     }
 

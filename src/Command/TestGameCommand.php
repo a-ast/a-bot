@@ -16,10 +16,8 @@ class TestGameCommand extends Command
      */
     private $strategy;
 
-    public function __construct(StrategyInterface $strategy)
+    public function setStrategy(StrategyInterface $strategy)
     {
-        parent::__construct();
-
         $this->strategy = $strategy;
     }
 

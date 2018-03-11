@@ -193,4 +193,8 @@ class WeighedTacticsStrategy implements StrategyInterface
         return 0;
     }
 
+    public function getAlias(): string
+    {
+        return 'w';
+    }
 }

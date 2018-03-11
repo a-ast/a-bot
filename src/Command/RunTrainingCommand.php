@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Game\TournamentGame;
+use App\Strategy\StrategyProvider;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,11 +17,17 @@ class RunTrainingCommand extends Command
      */
     private $game;
 
-    public function __construct(TournamentGame $game)
+    /**
+     * @var StrategyProvider
+     */
+    private $strategyProvider;
+
+    public function __construct(TournamentGame $game, StrategyProvider $strategyProvider)
     {
         parent::__construct();
 
         $this->game = $game;
+        $this->strategyProvider = $strategyProvider;
     }
 
     protected function configure()
@@ -28,6 +35,7 @@ class RunTrainingCommand extends Command
         $this
             ->setName('a-bot:train')
             ->addArgument('bot-api-key', InputArgument::REQUIRED)
+            ->addArgument('strategy', InputArgument::REQUIRED)
             ->addArgument('turn-count', InputArgument::OPTIONAL, '', null)
             ->addArgument('map', InputArgument::OPTIONAL, '', null)
         ;
@@ -35,6 +43,9 @@ class RunTrainingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $strategyAlias = $input->getArgument('strategy');
+        $this->game->setStrategy($this->strategyProvider->getByAlias($strategyAlias));
+
         try {
             $this->game->executeTraining(
               $input->getArgument('bot-api-key'),

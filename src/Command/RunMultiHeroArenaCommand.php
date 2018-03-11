@@ -29,10 +29,10 @@ class RunMultiHeroArenaCommand extends Command
 
         foreach ($keys as $key) {
 
-            list($apiKey, $botCount) = explode(':', $key);
+            list($apiKey, $botCount, $strategyAlias) = explode(':', $key);
 
             for ($i = 0; $i < $botCount; $i++) {
-                $process = new Process($this->getProcessCli($apiKey));
+                $process = new Process($this->getProcessCli($apiKey, $strategyAlias));
                 $processes[] = $process;
             }
         }
@@ -53,8 +53,8 @@ class RunMultiHeroArenaCommand extends Command
 
     }
 
-    private function getProcessCli(string $apiKey)
+    private function getProcessCli(string $apiKey, string $strategyAlias)
     {
-        return sprintf('bin/console a-bot:arena %s', $apiKey);
+        return sprintf('bin/console a-bot:arena %s %s', $apiKey, $strategyAlias);
     }
 }
