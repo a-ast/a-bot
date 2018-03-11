@@ -79,10 +79,11 @@ class WeighedTacticsStrategy implements StrategyInterface
     private function getLocationPriority(string $location): int
     {
         return
-            1000 * $this->takeGoldTacticPrio($location)
+              1000 * $this->takeGoldTacticPrio($location)
             + 1000 * $this->takeBearTacticPrio($location)
             + 1000 * $this->attackWeakHeroTacticPrio($location)
-            ;
+            + 1000 * $this->avoidStrongHeroTacticPrio($location)
+        ;
     }
 
     private function getClosestLocationWithDistance(string $location,
@@ -100,10 +101,6 @@ class WeighedTacticsStrategy implements StrategyInterface
                 $location, $item->getLocation());
             $prioritizer->add($item->getLocation(), $distance);
         }
-
-        //$prioritizer->dump('Bear finder');
-
-
 
         $pair = $prioritizer->getWithMinPriority();
 
@@ -163,13 +160,37 @@ class WeighedTacticsStrategy implements StrategyInterface
             $hero->getLifePoints() < $this->hero->getLifePoints() &&
             count($this->board->getGoldMinesOf($hero->getId())) > 0
 
-        ) {
+            // do not attack heroes that stay on their spawn ?
+            && (!$hero->isOnSpawnLocation() && $distance === 1)
 
-            var_dump($hero);
+        ) {
 
             return 1000 - 10 * $locationWithDistance->getPriority();
         }
 
         return 0;
     }
+
+    private function avoidStrongHeroTacticPrio($location)
+    {
+        $locationWithDistance = $this->getClosestLocationWithDistance(
+            $location,
+            $this->game->getHeroes()
+        );
+
+        $distance = $locationWithDistance->getPriority();
+
+        /** @var HeroInterface $hero */
+        $hero = $this->game->getHeroes()->get($locationWithDistance->getLocation());
+
+        if ($distance < 3 &&
+            $hero->getLifePoints() > $this->hero->getLifePoints()
+
+        ) {
+            return -1000;
+        }
+
+        return 0;
+    }
+
 }
