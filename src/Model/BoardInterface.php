@@ -26,6 +26,11 @@ interface BoardInterface
     public function getForeignGoldMines(array $friendHeroIds): LocationAwareListInterface;
 
     /**
+     * @return GoldMine[]
+     */
+    public function getGoldMinesOf(int $heroId): LocationAwareListInterface;
+
+    /**
      * @return Tavern[]
      */
     public function getTaverns(): LocationAwareListInterface;

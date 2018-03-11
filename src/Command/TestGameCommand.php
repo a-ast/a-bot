@@ -50,7 +50,7 @@ class TestGameCommand extends Command
                 'life' => 100,
                 'gold' => 0,
                 'crashed' => false,
-                'pos' => ['x' => 3, 'y' => 1],
+                'pos' => ['x' => 1, 'y' => 1],
                 'spawnPos' => ['x' => 0, 'y' => 1],
             ],
             'game' => [

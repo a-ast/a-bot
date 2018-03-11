@@ -81,6 +81,7 @@ class WeighedTacticsStrategy implements StrategyInterface
         return
             1000 * $this->takeGoldTacticPrio($location)
             + 1000 * $this->takeBearTacticPrio($location)
+            + 1000 * $this->attackWeakHeroTacticPrio($location)
             ;
     }
 
@@ -134,8 +135,6 @@ class WeighedTacticsStrategy implements StrategyInterface
         );
 
         return 1000 - $k * $locationWithDistance->getPriority();
-
-
     }
 
     /**
@@ -146,5 +145,31 @@ class WeighedTacticsStrategy implements StrategyInterface
     private function isGameObject($nearLocation): bool
     {
         return in_array($nearLocation, $this->board->getGoalLocations());
+    }
+
+    private function attackWeakHeroTacticPrio($location)
+    {
+        $locationWithDistance = $this->getClosestLocationWithDistance(
+            $location,
+            $this->game->getHeroes()
+        );
+
+        $distance = $locationWithDistance->getPriority();
+
+        /** @var HeroInterface $hero */
+        $hero = $this->game->getHeroes()->get($locationWithDistance->getLocation());
+
+        if ($distance < 3 &&
+            $hero->getLifePoints() < $this->hero->getLifePoints() &&
+            count($this->board->getGoldMinesOf($hero->getId())) > 0
+
+        ) {
+
+            var_dump($hero);
+
+            return 1000 - 10 * $locationWithDistance->getPriority();
+        }
+
+        return 0;
     }
 }

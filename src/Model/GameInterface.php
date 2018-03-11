@@ -2,6 +2,8 @@
 
 namespace App\Model;
 
+use App\Model\Game\LocationAwareListInterface;
+
 interface GameInterface
 {
     public function isFinished(): bool;
@@ -14,7 +16,7 @@ interface GameInterface
 
     public function getHero(): HeroInterface;
 
-    public function getHeroes(): array;
+    public function getHeroes(): LocationAwareListInterface;
 
     /**
      * @return int[]

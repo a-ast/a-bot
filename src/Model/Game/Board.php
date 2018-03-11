@@ -113,13 +113,25 @@ class Board implements BoardInterface
     }
 
     /**
-     * @return GoldMine[]|array
+     * @return GoldMine[]
      */
     public function getForeignGoldMines(array $friendHeroIds): LocationAwareListInterface
     {
         return $this->goldMines->getFilteredList(
             function(GoldMine $goldMine) use ($friendHeroIds) {
                 return !in_array($goldMine->getHeroId(), $friendHeroIds);
+            }
+        );
+    }
+
+    /**
+     * @return GoldMine[]
+     */
+    public function getGoldMinesOf(int $heroId): LocationAwareListInterface
+    {
+        return $this->goldMines->getFilteredList(
+            function(GoldMine $goldMine) use ($heroId) {
+                return $goldMine->getHeroId() === $heroId;
             }
         );
     }

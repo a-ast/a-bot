@@ -40,6 +40,11 @@ class Game implements GameInterface
      */
     private $board;
 
+    /**
+     * @var LocationAwareListInterface
+     */
+    private $heroList;
+
     public function __construct(array $initialState)
     {
         $this->playUrl = $initialState['playUrl'];
@@ -63,6 +68,7 @@ class Game implements GameInterface
         $this->hero->refresh($state['hero']);
         $this->refreshHeroes($state['game']['heroes']);
 
+        // refresh gold ownings
         $this->board->refresh($state['game']['board']['tiles']);
     }
 
@@ -91,9 +97,15 @@ class Game implements GameInterface
         return $this->hero;
     }
 
-    public function getHeroes(): array
+    public function getHeroes(): LocationAwareListInterface
     {
-        return $this->heroes;
+        $this->heroList = new LocationAwareList();
+
+        foreach ($this->heroes as $hero) {
+            $this->heroList->add($hero);
+        }
+
+        return $this->heroList;
     }
 
     public function getFriendIds(): array
