@@ -52,4 +52,9 @@ class LocationAwareList implements IteratorAggregate, LocationAwareListInterface
     {
         return count($this->items);
     }
+
+    public function exists(string $location): bool
+    {
+        return isset($this->items[$location]);
+    }
 }

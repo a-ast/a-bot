@@ -12,10 +12,18 @@ services:
         exclude: '../src/{Model,Exceptions,Tests,Kernel.php}'
 
     # App\Strategy\StrategyInterface: '@App\Strategy\TacticSetStrategy'
-    # App\Strategy\StrategyInterface: '@App\Strategy\WeighedTacticsStrategy'
+    App\Strategy\StrategyInterface: '@App\Strategy\WeightedTacticsStrategy'
+
+    App\Strategy\WeightedTacticsStrategy:
+        arguments:
+            - '@App\PathFinder\FloydWarshallAlgorithm'
+            -
+                'take gold': '@App\Strategy\WeightedTactic\TakeGoldTactic'
+                'take beer': '@App\Strategy\WeightedTactic\TakeBeerTactic'
 
     App\Strategy\StrategyProvider:
         arguments:
             -
                 - '@App\Strategy\TacticSetStrategy'
-                - '@App\Strategy\WeighedTacticsStrategy'
+                - '@App\Strategy\WeightedTacticsStrategy'
+

@@ -40,6 +40,10 @@ interface BoardInterface
      */
     public function getGoalLocations(): array;
 
+    public function isGoal(string $location): bool;
+
+    public function getGoal(string $location): LocationAwareInterface;
+
     /**
      * @return string[]
      */

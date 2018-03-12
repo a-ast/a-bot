@@ -3,7 +3,9 @@
 namespace App\Strategy;
 
 use App\Model\BoardInterface;
+use App\Model\Game\GoldMine;
 use App\Model\Game\LocationAwareListInterface;
+use App\Model\Game\Tavern;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
 use App\Model\Location\LocationPrioritizer;
@@ -11,7 +13,7 @@ use App\Model\Location\LocationPriorityPair;
 use App\PathFinder\FloydWarshallAlgorithm;
 use App\PathFinder\PathFinderInterface;
 
-class WeighedTacticsStrategy implements StrategyInterface
+class WeightedTacticsStrategy implements StrategyInterface
 {
     /**
      * @var BoardInterface
@@ -33,9 +35,15 @@ class WeighedTacticsStrategy implements StrategyInterface
      */
     private $pathFinder;
 
-    public function __construct(FloydWarshallAlgorithm $pathFinder)
+    /**
+     * @var WeightedTactic\WeightedTacticInterface[]
+     */
+    private $tactics;
+
+    public function __construct(PathFinderInterface $pathFinder, array $tactics)
     {
         $this->pathFinder = $pathFinder;
+        $this->tactics = $tactics;
     }
 
     public function initialize(GameInterface $game)
@@ -56,17 +64,18 @@ class WeighedTacticsStrategy implements StrategyInterface
             $this->board->getMap()->getNearLocations($heroLocation) +
             [$this->hero->getLocation()];
 
+        $weightDebugger = [];
+
         foreach ($nearLocations as $nearLocation) {
 
-            // if location is goldmine/tavern/hero, calc from hero point
-            // because hero will not move
-            $stayLocation = $this->isGameObject($nearLocation) ?
-                $this->hero->getLocation() :
-                $nearLocation;
+            $weights = $this->getLocationWeights($nearLocation);
 
-            $priority = $this->getLocationPriority($stayLocation);
-            $locationPrioritizer->add($nearLocation, $priority);
+            $weightDebugger[$nearLocation] = $weights;
+
+            $locationPrioritizer->add($nearLocation, array_sum($weights));
         }
+
+        $this->dumpWeights($weightDebugger);
 
         $locationPrioritizer->dump('Select location');
         $selectedLocation = $locationPrioritizer->getWithMaxPriority()->getLocation();
@@ -76,76 +85,46 @@ class WeighedTacticsStrategy implements StrategyInterface
         return $nextLocation;
     }
 
-    private function getLocationPriority(string $location): int
-    {
-        return
-              1000 * $this->takeGoldTacticPrio($location)
-            + 1000 * $this->takeBearTacticPrio($location)
-            + 1000 * $this->attackWeakHeroTacticPrio($location)
-            + 1000 * $this->avoidStrongHeroTacticPrio($location)
-        ;
-    }
-
-    private function getClosestLocationWithDistance(string $location,
-        LocationAwareListInterface $goals): LocationPriorityPair
-    {
-        if (0 === count($goals)) {
-            return new LocationPriorityPair($location, 0);
-        }
-
-        $prioritizer = new LocationPrioritizer();
-
-        foreach ($goals as $item) {
-
-            $distance = $this->pathFinder->getDistance(
-                $location, $item->getLocation());
-            $prioritizer->add($item->getLocation(), $distance);
-        }
-
-        $pair = $prioritizer->getWithMinPriority();
-
-        return $pair;
-    }
-
-    private function takeGoldTacticPrio(string $location): int
-    {
-        $locationWithDistance = $this->getClosestLocationWithDistance(
-            $location,
-            $this->board->getForeignGoldMines($this->game->getFriendIds())
-        );
-
-        $distance = $locationWithDistance->getPriority();
-        if ($this->hero->getLifePoints() - $distance < 25) {
-            return 0;
-        }
-
-        return 1000 - 10 * $locationWithDistance->getPriority();
-    }
-
-    private function takeBearTacticPrio(string $location): int
-    {
-        $k = $this->hero->getLifePoints() < 25 ? 10 : 1;
-
-        $locationWithDistance = $this->getClosestLocationWithDistance(
-            $location,
-            $this->board->getTaverns()
-        );
-
-        return 1000 - $k * $locationWithDistance->getPriority();
-    }
-
     /**
-     * @param $nearLocation
-     *
-     * @return bool
+     * @return int[]
      */
-    private function isGameObject($nearLocation): bool
+    private function getLocationWeights(string $location): array
     {
-        return in_array($nearLocation, $this->board->getGoalLocations());
+        $weights = [];
+
+        $coefficients = [
+            'take gold' => 1001,
+            'take beer' => 1000,
+        ];
+
+        foreach ($this->tactics as $tacticName => $tactic) {
+            $weights[$tacticName] =
+                $coefficients[$tacticName] *
+                $tactic->getWeight($this->game, $location);
+        }
+
+        return $weights;
     }
+
+
 
     private function attackWeakHeroTacticPrio($location)
     {
+        if (0 === $this->game->getHeroes()->count()) {
+            return 0;
+        }
+
+        if ($this->board->isGoal($location)) {
+            $goal = $this->board->getGoal($location);
+
+            if ($goal instanceof GoldMine ||
+                $goal instanceof Tavern
+            ) {
+                return 0;
+            }
+        }
+
+
         $locationWithDistance = $this->getClosestLocationWithDistance(
             $location,
             $this->game->getHeroes()
@@ -154,7 +133,10 @@ class WeighedTacticsStrategy implements StrategyInterface
         $distance = $locationWithDistance->getPriority();
 
         /** @var HeroInterface $hero */
-        $hero = $this->game->getHeroes()->get($locationWithDistance->getLocation());
+        $closestLocation = $locationWithDistance->getLocation();
+
+
+        $hero = $this->game->getHeroes()->get($closestLocation);
 
         if ($distance < 3 &&
             $hero->getLifePoints() < $this->hero->getLifePoints() &&
@@ -173,6 +155,21 @@ class WeighedTacticsStrategy implements StrategyInterface
 
     private function avoidStrongHeroTacticPrio($location)
     {
+        if (0 === $this->game->getHeroes()->count()) {
+            return 0;
+        }
+
+        if ($this->board->isGoal($location)) {
+            $goal = $this->board->getGoal($location);
+
+            if ($goal instanceof GoldMine ||
+                $goal instanceof Tavern
+            ) {
+                return 0;
+            }
+        }
+
+
         $locationWithDistance = $this->getClosestLocationWithDistance(
             $location,
             $this->game->getHeroes()
@@ -180,8 +177,10 @@ class WeighedTacticsStrategy implements StrategyInterface
 
         $distance = $locationWithDistance->getPriority();
 
+        $closestLocation = $locationWithDistance->getLocation();
+
         /** @var HeroInterface $hero */
-        $hero = $this->game->getHeroes()->get($locationWithDistance->getLocation());
+        $hero = $this->game->getHeroes()->get($closestLocation);
 
         if ($distance < 3 &&
             $hero->getLifePoints() > $this->hero->getLifePoints()
@@ -196,5 +195,19 @@ class WeighedTacticsStrategy implements StrategyInterface
     public function getAlias(): string
     {
         return 'w';
+    }
+
+    private function dumpWeights(array $weights)
+    {
+        $text = PHP_EOL;
+
+        foreach ($weights as $location => $tactics) {
+            $text .= $location .PHP_EOL;
+            foreach ($tactics as $tacticName => $weight) {
+                $text .= sprintf('    %s - %d', $tacticName, $weight).PHP_EOL;
+            }
+        }
+
+        print $text;
     }
 }

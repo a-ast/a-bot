@@ -1,24 +1,18 @@
 # TODO
 
-## Massive refactoring
+## Ideas
 
-1. do not store locations in matrix - only coordinates 
-1. Imlement board::getForeignHeroes()    
-1. Work on Floyd-Warshall for goals - test w behat first
-   
+Tactic returns from 0 to 1000
+Tactic can't calculate from goals
+Coeeficents must differ to avoid move cycling
+However another mechanism avoiding cycling also must be in place 
+(randomizing? or just trying to avoid place where you have been already)
 
+## Yet another refactoring
+1. Introduce game builder, ? location graph builder
+2. Move all objects to Game
+3. Introduce methods like isGoal, getGoal in 
 
-## Short-term improvals before merge
-1. Decide on location abstractions.
-1. Decide on Tile/Hero abstractions.
-1. Fix TacticsSetStrategy and all code.
-
-## Better abstractions and sorting
-
-1. Implement better abstraction for Direction. See SplEnum (???)
-
-1. Implement abstraction for collections for sorting: DS?
-    * Path as collection
 
 ## Tactics:
 
@@ -26,3 +20,4 @@
 1. Attack weaker enemy at distance = 2 with gold > 0
 2. Choose tavern that has more gold around.
 3. Friendly mode?
+4. Not attack weaker enemy on its spawn place

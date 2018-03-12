@@ -5,6 +5,7 @@ namespace App\Model\Game;
 use App\Model\BoardInterface;
 use App\Model\Location\Location;
 use App\Model\Location\LocationGraph;
+use App\Model\LocationAwareInterface;
 use App\Model\LocationGraphInterface;
 use App\Model\Game\GoldMine;
 use App\Model\Game\Tavern;
@@ -27,6 +28,11 @@ class Board implements BoardInterface
     private $taverns;
 
     /**
+     * @var LocationAwareListInterface
+     */
+    private $goals;
+
+    /**
      * @var int
      */
     private $boardSize;
@@ -43,6 +49,7 @@ class Board implements BoardInterface
         $this->map = new LocationGraph();
         $this->goldMines = new LocationAwareList();
         $this->taverns = new LocationAwareList();
+        $this->goals = new LocationAwareList();
 
         $this->loadInitialTiles($tileData);
     }
@@ -70,12 +77,16 @@ class Board implements BoardInterface
                 $location = $this->map->add($x, $y);
 
                 if ('$' === $item[0]) {
-                    $this->goldMines->add(new GoldMine($location));
+                    $goldMine = new GoldMine($location);
+                    $this->goldMines->add($goldMine);
+                    $this->goals->add($goldMine);
                     $this->goalLocations[] = $location;
                 }
 
                 if ('[]' === $item) {
-                    $this->taverns->add(new Tavern($location));
+                    $tavern = new Tavern($location);
+                    $this->taverns->add($tavern);
+                    $this->goals->add($tavern);
                     $this->goalLocations[] = $location;
                 }
             }
@@ -163,5 +174,15 @@ class Board implements BoardInterface
     public function getWalkableLocations(): array
     {
         return array_diff($this->map->getLocations(), $this->goalLocations);
+    }
+
+    public function isGoal(string $location): bool
+    {
+        return $this->goals->exists($location);
+    }
+
+    public function getGoal(string $location): LocationAwareInterface
+    {
+        return $this->goals->get($location);
     }
 }

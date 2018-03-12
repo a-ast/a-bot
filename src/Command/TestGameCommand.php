@@ -16,8 +16,10 @@ class TestGameCommand extends Command
      */
     private $strategy;
 
-    public function setStrategy(StrategyInterface $strategy)
+    public function __construct(StrategyInterface $strategy)
     {
+        parent::__construct();
+
         $this->strategy = $strategy;
     }
 
@@ -30,7 +32,7 @@ class TestGameCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $mapData = file(__DIR__ . '/Map/m1.map', FILE_IGNORE_NEW_LINES);
+        $mapData = file(__DIR__ . '/Map/m5.map', FILE_IGNORE_NEW_LINES);
 
         $maxWidth = max(array_map('strlen', $mapData));
         $mapData = array_map(function($item) use ($maxWidth) { return str_pad($item, $maxWidth); }, $mapData);
@@ -48,7 +50,7 @@ class TestGameCommand extends Command
                 'life' => 100,
                 'gold' => 0,
                 'crashed' => false,
-                'pos' => ['x' => 1, 'y' => 1],
+                'pos' => ['x' => 2, 'y' => 6],
                 'spawnPos' => ['x' => 0, 'y' => 1],
             ],
             'game' => [
