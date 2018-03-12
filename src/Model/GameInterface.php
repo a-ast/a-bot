@@ -2,8 +2,6 @@
 
 namespace App\Model;
 
-use App\Model\Game\LocationAwareListInterface;
-
 interface GameInterface
 {
     public function isFinished(): bool;

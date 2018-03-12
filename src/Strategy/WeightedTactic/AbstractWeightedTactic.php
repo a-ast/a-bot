@@ -3,7 +3,7 @@
 namespace App\Strategy\WeightedTactic;
 
 use App\Exceptions\StrategyException;
-use App\Model\Game\LocationAwareListInterface;
+use App\Model\Location\LocationAwareListInterface;
 use App\Model\GameInterface;
 use App\Model\Location\LocationPrioritizer;
 use App\Model\Location\LocationPriorityPair;

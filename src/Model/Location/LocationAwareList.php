@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Model\Game;
+namespace App\Model\Location;
 
 use App\Model\LocationAwareInterface;
+use App\Model\LocationAwareListInterface;
 use ArrayIterator;
 use IteratorAggregate;
 use Traversable;
@@ -14,8 +15,6 @@ class LocationAwareList implements IteratorAggregate, LocationAwareListInterface
      */
     private $items = [];
 
-    /**
-     */
     public function __construct(array $items = [])
     {
         $this->items = $items;

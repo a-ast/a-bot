@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Model\Game;
+namespace App\Model;
 
-use App\Model\LocationAwareInterface;
+use Countable;
 
-interface LocationAwareListInterface extends \Countable
+interface LocationAwareListInterface extends Countable
 {
     public function add(LocationAwareInterface $item);
 

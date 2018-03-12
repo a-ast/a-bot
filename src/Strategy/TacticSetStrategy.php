@@ -3,7 +3,7 @@
 namespace App\Strategy;
 
 use App\Model\BoardInterface;
-use App\Model\Game\LocationAwareListInterface;
+use App\Model\Location\LocationAwareListInterface;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
 use App\Model\Game\GoldMine;

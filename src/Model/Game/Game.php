@@ -5,8 +5,9 @@ namespace App\Model\Game;
 use App\Model\GameInterface;
 use App\Model\HeroInterface;
 use App\Model\BoardInterface;
-use App\Model\Location\LocationMap;
 use App\Model\Game\Hero;
+use App\Model\Location\LocationAwareList;
+use App\Model\LocationAwareListInterface;
 
 class Game implements GameInterface
 {

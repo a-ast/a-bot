@@ -2,7 +2,6 @@
 
 namespace App\Model;
 
-use App\Model\Game\LocationAwareListInterface;
 use App\Model\Game\GoldMine;
 use App\Model\Game\Tavern;
 

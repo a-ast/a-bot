@@ -2,11 +2,11 @@
 
 namespace App\Tests\Context;
 
-use App\Model\Game\LocationAwareList;
-use App\Model\Game\LocationAwareListInterface;
+use App\Model\Game\GoldMine;
+use App\Model\LocationAwareListInterface;
+use App\Model\Location\LocationAwareList;
 use App\Model\Location\LocationGraphBuilder;
 use App\Model\LocationGraphInterface;
-use App\Model\Game\GoldMine;
 use App\PathFinder\FloydWarshallAlgorithm;
 use App\PathFinder\PathFinderInterface;
 use Behat\Behat\Context\Context;

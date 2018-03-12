@@ -4,8 +4,10 @@ namespace App\Model\Game;
 
 use App\Model\BoardInterface;
 use App\Model\Location\Location;
+use App\Model\Location\LocationAwareList;
 use App\Model\Location\LocationGraph;
 use App\Model\LocationAwareInterface;
+use App\Model\LocationAwareListInterface;
 use App\Model\LocationGraphInterface;
 use App\Model\Game\GoldMine;
 use App\Model\Game\Tavern;

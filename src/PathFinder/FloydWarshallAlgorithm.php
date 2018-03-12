@@ -2,7 +2,7 @@
 
 namespace App\PathFinder;
 
-use App\Model\Game\LocationAwareListInterface;
+use App\Model\Location\LocationAwareListInterface;
 use App\Model\LocationGraphInterface;
 
 class FloydWarshallAlgorithm implements PathFinderInterface
