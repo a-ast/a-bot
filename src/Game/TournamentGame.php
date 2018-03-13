@@ -78,7 +78,6 @@ class TournamentGame
     {
         $compass = new Compass();
 
-
         $game = $this->gameBuilder->buildGame($initialStateData);
 
         $playUrl = $game->getPlayUrl();

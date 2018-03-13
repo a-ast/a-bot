@@ -2,11 +2,9 @@
 
 namespace App\Strategy;
 
-use App\Model\Game\GoldMine;
 use App\Model\GamePlayInterface;
-use App\Model\LocationAwareListInterface;
+use App\Model\Game\GoldMine;
 use App\Model\Game\Tavern;
-use App\Model\GameInterface;
 use App\Model\Game\Hero;
 use App\Model\Location\LocationPrioritizer;
 use App\PathFinder\PathFinderInterface;
@@ -19,7 +17,7 @@ class WeightedTacticsStrategy implements StrategyInterface
     private $hero;
 
     /**
-     * @var GameInterface
+     * @var GamePlayInterface
      */
     private $game;
 
@@ -87,6 +85,7 @@ class WeightedTacticsStrategy implements StrategyInterface
         $coefficients = [
             'take gold' => 1001,
             'take beer' => 1000,
+            'attack hero' => 999,
         ];
 
         foreach ($this->tactics as $tacticName => $tactic) {
@@ -96,53 +95,6 @@ class WeightedTacticsStrategy implements StrategyInterface
         }
 
         return $weights;
-    }
-
-
-
-    private function attackWeakHeroTacticPrio($location)
-    {
-        if (0 === $this->game->getRivalHeroes()->count()) {
-            return 0;
-        }
-
-        if ($this->board->isGoal($location)) {
-            $goal = $this->board->getGoal($location);
-
-            if ($goal instanceof GoldMine ||
-                $goal instanceof Tavern
-            ) {
-                return 0;
-            }
-        }
-
-
-        $locationWithDistance = $this->getClosestLocationWithDistance(
-            $location,
-            $this->game->getRivalHeroes()
-        );
-
-        $distance = $locationWithDistance->getPriority();
-
-        /** @var Hero $hero */
-        $closestLocation = $locationWithDistance->getLocation();
-
-
-        $hero = $this->game->getRivalHeroes()->get($closestLocation);
-
-        if ($distance < 3 &&
-            $hero->getLifePoints() < $this->hero->getLifePoints() &&
-            count($this->board->getGoldMinesOf($hero->getId())) > 0
-
-            // do not attack heroes that stay on their spawn ?
-            && (!$hero->isOnSpawnLocation() && $distance === 1)
-
-        ) {
-
-            return 1000 - 10 * $locationWithDistance->getPriority();
-        }
-
-        return 0;
     }
 
     private function avoidStrongHeroTacticPrio($location)

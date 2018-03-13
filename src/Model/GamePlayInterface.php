@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Model\Exceptions\GamePlayException;
+use App\Model\Game\GoldMine;
 use App\Model\Game\Hero;
 use App\Model\LocationAwareInterface;
 use App\Model\LocationAwareListInterface;

@@ -8,9 +8,6 @@ Coefficents must differ to avoid move cycling
 However another mechanism avoiding cycling also must be in place 
 (randomizing? or just trying to avoid place where you have been already)
 
-## Yet another refactoring
-1. Fix test game
-
 ## Tactics:
 
 1. Avoid stronger enemy at distance = 2
