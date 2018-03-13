@@ -66,6 +66,7 @@ class Game implements GameInterface
     public function __construct()
     {
         $this->map = new LocationGraph();
+        $this->hero = new Hero(1, '', '0:0', '0:0');
         $this->goldMines = new LocationAwareList();
         $this->taverns = new LocationAwareList();
         $this->goals = new LocationAwareList();

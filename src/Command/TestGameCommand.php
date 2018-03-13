@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Game\GameBuilder;
 use App\Model\Game\Game;
 use App\Model\Location\Location;
 use App\Strategy\StrategyInterface;
@@ -16,10 +17,16 @@ class TestGameCommand extends Command
      */
     private $strategy;
 
-    public function __construct(StrategyInterface $strategy)
+    /**
+     * @var \App\Game\GameBuilder
+     */
+    private $gameBuilder;
+
+    public function __construct(GameBuilder $gameBuilder, StrategyInterface $strategy)
     {
         parent::__construct();
 
+        $this->gameBuilder = $gameBuilder;
         $this->strategy = $strategy;
     }
 
@@ -37,51 +44,30 @@ class TestGameCommand extends Command
         $maxWidth = max(array_map('strlen', $mapData));
         $mapData = array_map(function($item) use ($maxWidth) { return str_pad($item, $maxWidth); }, $mapData);
 
-        $boardWidth = $maxWidth / 2;
-        $tileData = join('', $mapData);
+        $game = new Game();
+        $this->gameBuilder->buildObjects($game, $mapData);
 
-        $state = [
-            'playUrl' => '',
-            'viewUrl' => '',
-
-            'hero' => [
-                'name' => 'Frodo',
-                'id' => 1,
-                'life' => 100,
-                'gold' => 0,
-                'crashed' => false,
-                'pos' => ['x' => 2, 'y' => 6],
-                'spawnPos' => ['x' => 0, 'y' => 1],
-            ],
-            'game' => [
-                'finished' => false,
-                'heroes' => [],
-                'board' => [
-                    'size' => $boardWidth,
-                    'tiles' => $tileData,
-                ],
-            ],
-        ];
-
-        $game = new Game($state);
         $this->strategy->initialize($game->getGamePlay());
+
+        $hero = $game->getHero();
+        $hero->setLocation('0:0');
+        $hero->setLifePoints(100);
+        $hero->setGoldPoints(0);
+
+        $turns = 10;
+        $currentTurn = 0;
+
 
         do {
 
             $next = $this->strategy->getNextLocation();
 
-            // @todo: update gold and life
-            $game->getHero()->refresh(
-                [
-                    'pos' => ['x' => Location::getXY($next)[0], 'y' => Location::getXY($next)[1]],
-                    'life' => 100,
-                    'gold' => 0,
-                    'crashed' => false,
-                ]);
+            if (false === $game->getGamePlay()->isGameObjectAt($next)) {
+                $hero->setLocation($next);
+            }
 
+            $currentTurn++;
 
-        } while (true);
-
-
+        } while ($currentTurn <= $turns);
     }
 }

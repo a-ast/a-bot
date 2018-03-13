@@ -18,6 +18,11 @@ class TakeGoldTactic extends AbstractWeightedTactic
      */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
+        // If you have all gold, do something else. E.g., find a girl.
+        if (0 === $game->getForeignGoldMines()->count()) {
+            return 0;
+        }
+
         if ($game->isGameObjectAt($location)) {
             $goal = $game->getGameObjectAt($location);
 

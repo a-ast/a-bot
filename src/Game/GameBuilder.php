@@ -4,7 +4,6 @@ namespace App\Game;
 
 use App\Model\Game\Game;
 use App\Model\Game\GoldMine;
-use App\Model\Game\Hero;
 use App\Model\Game\Tavern;
 use App\Model\GameInterface;
 use App\Model\Location\Location;
@@ -32,8 +31,7 @@ class GameBuilder
         $game->setHero($this->heroBuilder->buildHero($initialState['hero']));
         $this->createRivalHeroes($game, $initialState['game']['heroes']);
 
-        $boardSize = $this->getBoardSize($initialState);
-        $this->createObjects($game, $boardSize, $initialState['game']['board']['tiles']);
+        $this->buildObjects($game, $this->getBoardMapArray($initialState));
 
         return $game;
     }
@@ -51,13 +49,11 @@ class GameBuilder
         }
     }
 
-    private function createObjects(Game $game, int $boardSize, string $tilesData)
+    public function buildObjects(Game $game, array $mapData)
     {
-        $mapLines = str_split($tilesData, 2*$boardSize);
+        print join(PHP_EOL, $mapData).PHP_EOL;
 
-        print join(PHP_EOL, $mapLines).PHP_EOL;
-
-        foreach ($mapLines as $x => $mapLine) {
+        foreach ($mapData as $x => $mapLine) {
             $items = str_split($mapLine, 2);
 
             foreach ($items as $y => $item) {
@@ -87,7 +83,8 @@ class GameBuilder
 
         $this->heroBuilder->updateHero($game->getHero(), $state['hero']);
         $this->updateRivalHeroes($game, $state['game']['heroes']);
-        $this->updateGoldMineOwning($game, $this->getBoardSize($state), $state['game']['board']['tiles']);
+
+        $this->updateGoldMineOwning($game, $this->getBoardMapArray($state));
     }
 
     private function updateRivalHeroes(Game $game, array $heroesData)
@@ -103,11 +100,9 @@ class GameBuilder
         }
     }
 
-    public function updateGoldMineOwning(Game $game, int $boardSize, string $tilesData)
+    public function updateGoldMineOwning(Game $game, array $mapData)
     {
-        $mapLines = str_split($tilesData, 2*$boardSize);
-
-        foreach ($mapLines as $x => $mapLine) {
+        foreach ($mapData as $x => $mapLine) {
             $items = str_split($mapLine, 2);
 
             foreach ($items as $y => $item) {
@@ -125,8 +120,15 @@ class GameBuilder
         }
     }
 
-    private function getBoardSize(array $state): int
+    /**
+     * @return string[]
+     */
+    private function getBoardMapArray(array $state): array
     {
-        return $state['game']['board']['size'];
+        $boardSize = $state['game']['board']['size'];
+        $tiles = $state['game']['board']['tiles'];
+
+        return str_split($tiles, 2*$boardSize);
     }
+
 }

@@ -32,9 +32,6 @@ class TakeBeerTactic extends AbstractWeightedTactic
             }
         }
 
-
-
-
         $locationWithDistance = $this->getClosestLocationWithDistance(
             $location,
             $game->getTaverns()
