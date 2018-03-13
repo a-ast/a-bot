@@ -25,6 +25,6 @@ services:
     App\Strategy\StrategyProvider:
         arguments:
             -
-                - '@App\Strategy\TacticSetStrategy'
-                - '@App\Strategy\WeightedTacticsStrategy'
+                t: '@App\Strategy\TacticSetStrategy'
+                w: '@App\Strategy\WeightedTacticsStrategy'
 

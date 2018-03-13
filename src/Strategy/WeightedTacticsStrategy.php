@@ -136,11 +136,6 @@ class WeightedTacticsStrategy implements StrategyInterface
         return 0;
     }
 
-    public function getAlias(): string
-    {
-        return 'w';
-    }
-
     private function dumpWeights(array $weights)
     {
         $text = PHP_EOL;

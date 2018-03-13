@@ -217,9 +217,4 @@ class TacticSetStrategy implements StrategyInterface
         return $nextLocation;
     }
 
-    public function getAlias(): string
-    {
-        return 't';
-    }
-
 }

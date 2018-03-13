@@ -17,13 +17,13 @@ class RunMultiHeroArenaCommand extends Command
     {
         $this
             ->setName('a-bot:multi')
-            ->addArgument('bot-api-key-with-bot-count', InputArgument::IS_ARRAY)
+            ->addArgument('api-key-with-bot-count', InputArgument::IS_ARRAY)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $keys = $input->getArgument('bot-api-key-with-bot-count');
+        $keys = $input->getArgument('api-key-with-bot-count');
 
         $processes = [];
 

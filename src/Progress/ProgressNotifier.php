@@ -11,7 +11,7 @@ class ProgressNotifier
     {
         print $url .PHP_EOL;
 
-        $process = new Process('open '.$url);
-        $process->start();
+//        $process = new Process('open '.$url);
+//        $process->start();
     }
 }

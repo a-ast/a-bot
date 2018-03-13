@@ -202,8 +202,4 @@ class StatefulStrategy implements StrategyInterface
         $this->state = $finalState;
     }
 
-    public function getAlias(): string
-    {
-        return 's';
-    }
 }

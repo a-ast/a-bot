@@ -11,10 +11,7 @@ class StrategyProvider
 
     public function __construct(array $strategies)
     {
-        foreach ($strategies as $strategy) {
-            $this->strategies[$strategy->getAlias()] = $strategy;
-        }
-
+        $this->strategies = $strategies;
     }
 
     public function getByAlias(string $alias): StrategyInterface
