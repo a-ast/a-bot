@@ -3,8 +3,7 @@
 namespace App\Strategy\WeightedTactic;
 
 use App\Exceptions\StrategyException;
-use App\Model\Location\LocationAwareListInterface;
-use App\Model\GameInterface;
+use App\Model\LocationAwareListInterface;
 use App\Model\Location\LocationPrioritizer;
 use App\Model\Location\LocationPriorityPair;
 use App\PathFinder\PathFinderInterface;
@@ -21,6 +20,9 @@ abstract class AbstractWeightedTactic implements WeightedTacticInterface
         $this->pathFinder = $pathFinder;
     }
 
+    /**
+     * @throws \App\Exceptions\StrategyException
+     */
     protected function getClosestLocationWithDistance(string $location,
         LocationAwareListInterface $goals): LocationPriorityPair
     {
@@ -30,16 +32,14 @@ abstract class AbstractWeightedTactic implements WeightedTacticInterface
 
         $prioritizer = new LocationPrioritizer();
 
-        foreach ($goals as $item) {
+        foreach ($goals->getLocations() as $goalLocation) {
 
-            $distance = $this->pathFinder->getDistance(
-                $location, $item->getLocation());
-            $prioritizer->add($item->getLocation(), $distance);
+            $distance = $this->pathFinder->getDistance($location, $goalLocation);
+            $prioritizer->add($goalLocation, $distance);
         }
 
         $pair = $prioritizer->getWithMinPriority();
 
         return $pair;
     }
-
 }

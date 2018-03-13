@@ -2,6 +2,8 @@
 
 namespace App\Model;
 
+use App\Model\Game\Hero;
+
 interface GameInterface
 {
     public function isFinished(): bool;
@@ -10,14 +12,20 @@ interface GameInterface
 
     public function getViewUrl(): string;
 
-    public function getBoard(): BoardInterface;
+    public function getMap(): LocationGraphInterface;
 
-    public function getHero(): HeroInterface;
+    public function getHero(): Hero;
 
-    public function getHeroes(): LocationAwareListInterface;
+    public function getRivalHeroes(): LocationAwareListInterface;
+
+    public function getGoldMines(): LocationAwareListInterface;
+
+    public function getTaverns(): LocationAwareListInterface;
 
     /**
      * @return int[]
      */
     public function getFriendIds(): array;
+
+    public function getGamePlay(): GamePlayInterface;
 }

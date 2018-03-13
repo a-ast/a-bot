@@ -2,26 +2,19 @@
 
 namespace App\Strategy;
 
-use App\Model\BoardInterface;
 use App\Model\Game\GoldMine;
-use App\Model\Location\LocationAwareListInterface;
+use App\Model\GamePlayInterface;
+use App\Model\LocationAwareListInterface;
 use App\Model\Game\Tavern;
 use App\Model\GameInterface;
-use App\Model\HeroInterface;
+use App\Model\Game\Hero;
 use App\Model\Location\LocationPrioritizer;
-use App\Model\Location\LocationPriorityPair;
-use App\PathFinder\FloydWarshallAlgorithm;
 use App\PathFinder\PathFinderInterface;
 
 class WeightedTacticsStrategy implements StrategyInterface
 {
     /**
-     * @var BoardInterface
-     */
-    private $board;
-
-    /**
-     * @var HeroInterface
+     * @var Hero
      */
     private $hero;
 
@@ -46,13 +39,12 @@ class WeightedTacticsStrategy implements StrategyInterface
         $this->tactics = $tactics;
     }
 
-    public function initialize(GameInterface $game)
+    public function initialize(GamePlayInterface $game)
     {
         $this->game = $game;
         $this->hero = $game->getHero();
-        $this->board = $game->getBoard();
 
-        $this->pathFinder->initialize($this->board->getMap(), $this->board->getGoalLocations());
+        $this->pathFinder->initialize($game->getMap(), $game->getTavernAndGoldMineLocations());
    }
 
     public function getNextLocation(): string
@@ -61,7 +53,7 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         $heroLocation = $this->hero->getLocation();
         $nearLocations =
-            $this->board->getMap()->getNearLocations($heroLocation) +
+            $this->game->getMap()->getNearLocations($heroLocation) +
             [$this->hero->getLocation()];
 
         $weightDebugger = [];
@@ -110,7 +102,7 @@ class WeightedTacticsStrategy implements StrategyInterface
 
     private function attackWeakHeroTacticPrio($location)
     {
-        if (0 === $this->game->getHeroes()->count()) {
+        if (0 === $this->game->getRivalHeroes()->count()) {
             return 0;
         }
 
@@ -127,16 +119,16 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         $locationWithDistance = $this->getClosestLocationWithDistance(
             $location,
-            $this->game->getHeroes()
+            $this->game->getRivalHeroes()
         );
 
         $distance = $locationWithDistance->getPriority();
 
-        /** @var HeroInterface $hero */
+        /** @var Hero $hero */
         $closestLocation = $locationWithDistance->getLocation();
 
 
-        $hero = $this->game->getHeroes()->get($closestLocation);
+        $hero = $this->game->getRivalHeroes()->get($closestLocation);
 
         if ($distance < 3 &&
             $hero->getLifePoints() < $this->hero->getLifePoints() &&
@@ -155,7 +147,7 @@ class WeightedTacticsStrategy implements StrategyInterface
 
     private function avoidStrongHeroTacticPrio($location)
     {
-        if (0 === $this->game->getHeroes()->count()) {
+        if (0 === $this->game->getRivalHeroes()->count()) {
             return 0;
         }
 
@@ -172,15 +164,15 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         $locationWithDistance = $this->getClosestLocationWithDistance(
             $location,
-            $this->game->getHeroes()
+            $this->game->getRivalHeroes()
         );
 
         $distance = $locationWithDistance->getPriority();
 
         $closestLocation = $locationWithDistance->getLocation();
 
-        /** @var HeroInterface $hero */
-        $hero = $this->game->getHeroes()->get($closestLocation);
+        /** @var Hero $hero */
+        $hero = $this->game->getRivalHeroes()->get($closestLocation);
 
         if ($distance < 3 &&
             $hero->getLifePoints() > $this->hero->getLifePoints()

@@ -2,10 +2,8 @@
 
 namespace App\Strategy;
 
-use App\Model\BoardInterface;
-use App\Model\GameInterface;
-use App\Model\HeroInterface;
-
+use App\Model\GamePlayInterface;
+use App\Model\Game\Hero;
 use App\PathFinder\LeeAlgorithm;
 use SplObjectStorage;
 
@@ -18,13 +16,9 @@ class StatefulStrategy implements StrategyInterface
      */
     private $pathFinder;
 
-    /**
-     * @var BoardInterface
-     */
-    private $board;
 
     /**
-     * @var HeroInterface
+     * @var Hero
      */
     private $hero;
 
@@ -49,7 +43,7 @@ class StatefulStrategy implements StrategyInterface
         $this->pathFinder = $pathFinder;
     }
 
-    public function initialize(GameInterface $game)
+    public function initialize(GamePlayInterface $game)
     {
         $this->game = $game;
         $this->hero = $game->getHero();
@@ -78,7 +72,7 @@ class StatefulStrategy implements StrategyInterface
 //            return $enemy;
 //        }
 
-        foreach ($this->game->getHeroes() as $enemy) {
+        foreach ($this->game->getRivalHeroes() as $enemy) {
             if ($this->hero->isNear($enemy)) {
                 print '****** BANZAI *******'. PHP_EOL;
 

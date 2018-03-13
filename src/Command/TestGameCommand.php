@@ -64,7 +64,7 @@ class TestGameCommand extends Command
         ];
 
         $game = new Game($state);
-        $this->strategy->initialize($game);
+        $this->strategy->initialize($game->getGamePlay());
 
         do {
 

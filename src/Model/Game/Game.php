@@ -3,23 +3,25 @@
 namespace App\Model\Game;
 
 use App\Model\GameInterface;
-use App\Model\HeroInterface;
-use App\Model\BoardInterface;
+use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 use App\Model\Location\LocationAwareList;
+use App\Model\Location\LocationGraph;
+use App\Model\LocationAwareInterface;
 use App\Model\LocationAwareListInterface;
+use App\Model\LocationGraphInterface;
 
 class Game implements GameInterface
 {
     /**
-     * @var HeroInterface
+     * @var Hero
      */
     private $hero;
 
     /**
-     * @var HeroInterface[]
+     * @var LocationAwareListInterface
      */
-    private $heroes;
+    private $rivalHeroes;
 
     /**
      * @var bool
@@ -37,40 +39,38 @@ class Game implements GameInterface
     private $viewUrl;
 
     /**
-     * @var Board
+     * @var LocationGraphInterface
      */
-    private $board;
+    protected $map;
+
+    /**
+     * @var LocationAwareListInterface|GoldMine[]
+     */
+    private $goldMines;
+
+    /**
+     * @var LocationAwareListInterface|Tavern[]
+     */
+    private $taverns;
 
     /**
      * @var LocationAwareListInterface
      */
-    private $heroList;
+    private $goals;
 
-    public function __construct(array $initialState)
+    /**
+     * @var GamePlayInterface
+     */
+    private $gamePlay;
+
+    public function __construct()
     {
-        $this->playUrl = $initialState['playUrl'];
-        $this->viewUrl = $initialState['viewUrl'];
-
-        $this->hero = new Hero($initialState['hero']);
-        $this->createEnemies($initialState['game']['heroes']);
-
-        $boardSize = $initialState['game']['board']['size'];
-        $this->board = new Board($boardSize, $initialState['game']['board']['tiles']);
-
-        $this->refresh($initialState);
-    }
-
-    public function refresh(array $state)
-    {
-        $this->finished = $state['game']['finished'];
-
-        // @todo: stop if finished?
-
-        $this->hero->refresh($state['hero']);
-        $this->refreshHeroes($state['game']['heroes']);
-
-        // refresh gold ownings
-        $this->board->refresh($state['game']['board']['tiles']);
+        $this->map = new LocationGraph();
+        $this->goldMines = new LocationAwareList();
+        $this->taverns = new LocationAwareList();
+        $this->goals = new LocationAwareList();
+        $this->rivalHeroes = new LocationAwareList();
+        $this->gamePlay = new GamePlay($this);
     }
 
     public function isFinished(): bool
@@ -88,25 +88,24 @@ class Game implements GameInterface
         return $this->viewUrl;
     }
 
-    public function getBoard(): BoardInterface
-    {
-        return $this->board;
-    }
-
-    public function getHero(): HeroInterface
+    public function getHero(): Hero
     {
         return $this->hero;
     }
 
-    public function getHeroes(): LocationAwareListInterface
+    public function setHero(Hero $hero): void
     {
-        $this->heroList = new LocationAwareList();
+        $this->hero = $hero;
+    }
 
-        foreach ($this->heroes as $hero) {
-            $this->heroList->add($hero);
-        }
+    public function getRivalHeroes(): LocationAwareListInterface
+    {
+        return $this->rivalHeroes;
+    }
 
-        return $this->heroList;
+    public function addRivalHero(Hero $hero)
+    {
+        $this->rivalHeroes->add($hero, $hero->getId());
     }
 
     public function getFriendIds(): array
@@ -114,35 +113,55 @@ class Game implements GameInterface
         return [$this->hero->getId()];
     }
 
-    private function createEnemies(array $heroesData)
+    public function setFinished(bool $finished): void
     {
-        $this->heroes = [];
-
-        foreach ($heroesData as $heroData) {
-            $heroId = $heroData['id'];
-
-            if ($heroId === $this->hero->getId()) {
-                continue;
-            }
-
-            $hero = new Hero($heroData);
-            $this->heroes[$heroId] = $hero;
-        }
+        $this->finished = $finished;
     }
 
-    private function refreshHeroes(array $heroesData)
+    public function setPlayUrl(string $playUrl): void
     {
-        //$this->enemyMatrix->reset();
+        $this->playUrl = $playUrl;
+    }
 
-        foreach ($heroesData as $enemyData) {
-            $enemyId = $enemyData['id'];
-            if ($enemyId === $this->hero->getId()) {
-                continue;
-            }
+    public function setViewUrl(string $viewUrl): void
+    {
+        $this->viewUrl = $viewUrl;
+    }
 
-            $enemy = $this->heroes[$enemyId];
+    public function getGoldMines(): LocationAwareListInterface
+    {
+        return $this->goldMines;
+    }
 
-            $enemy->refresh($enemyData);
-        }
+    public function addGoldMine(LocationAwareInterface $goldMine): void
+    {
+        $this->goldMines->add($goldMine);
+        $this->goals->add($goldMine);
+    }
+
+    public function getTaverns(): LocationAwareListInterface
+    {
+        return $this->taverns;
+    }
+
+    public function addTavern(LocationAwareInterface $tavern): void
+    {
+        $this->taverns->add($tavern);
+        $this->goals->add($tavern);
+    }
+    
+    public function getGoals(): LocationAwareListInterface
+    {
+        return $this->goals;
+    }
+
+    public function getMap(): LocationGraphInterface
+    {
+        return $this->map;
+    }
+
+    public function getGamePlay(): GamePlayInterface
+    {
+        return $this->gamePlay;
     }
 }

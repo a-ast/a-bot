@@ -2,14 +2,14 @@
 
 namespace App\Strategy;
 
-use App\Model\GameInterface;
+use App\Model\GamePlayInterface;
 
 
 interface StrategyInterface
 {
     public function getAlias(): string;
 
-    public function initialize(GameInterface $game);
+    public function initialize(GamePlayInterface $game);
 
     public function getNextLocation(): string;
 }

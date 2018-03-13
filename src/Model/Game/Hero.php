@@ -2,12 +2,11 @@
 
 namespace App\Model\Game;
 
-use App\Model\HeroInterface;
-use App\Model\Location\Location;
 use App\Model\Location\LocationAwareTrait;
+use App\Model\LocationAwareInterface;
 
 
-class Hero implements HeroInterface
+class Hero implements LocationAwareInterface
 {
     use LocationAwareTrait;
 
@@ -46,30 +45,17 @@ class Hero implements HeroInterface
      */
     private $spawnLocation;
 
-    public function __construct(array $data)
+    /**
+     * @var string
+     */
+    private $location;
+
+    public function __construct(int $id, string $name, string $location, string $spawnLocation)
     {
-        $this->location = Location::getLocation($data['pos']['x'], $data['pos']['y']);
-        $this->spawnLocation = Location::getLocation($data['spawnPos']['x'], $data['spawnPos']['y']);
-
-        $this->name = $data['name'];
-        $this->id = $data['id'];
-
-        $this->refresh($data);
-    }
-
-    public function refresh(array $data)
-    {
-        $this->lifePoints = $data['life'];
-        $this->goldPoints = $data['gold'];
-        $this->isCrashed = $data['crashed'];
-
-        $newLocation = Location::getLocation($data['pos']['x'], $data['pos']['y']);
-
-        $this->isRespawned =
-            !Location::isNear($this->location, $newLocation)  &&
-            ($newLocation === $this->spawnLocation);
-
-        $this->location = $newLocation;
+        $this->id = $id;
+        $this->name = $name;
+        $this->location = $location;
+        $this->spawnLocation = $spawnLocation;
     }
 
     public function getName(): string
@@ -92,11 +78,6 @@ class Hero implements HeroInterface
         return $this->goldPoints;
     }
 
-    public function isWalkable()
-    {
-        return false;
-    }
-
     public function isCrashed(): bool
     {
         return $this->isCrashed;
@@ -110,6 +91,36 @@ class Hero implements HeroInterface
     public function isRespawned(): bool
     {
         return $this->isRespawned;
+    }
+
+    public function getSpawnLocation(): string
+    {
+        return $this->spawnLocation;
+    }
+
+    public function setLifePoints(int $lifePoints): void
+    {
+        $this->lifePoints = $lifePoints;
+    }
+
+    public function setGoldPoints(int $goldPoints): void
+    {
+        $this->goldPoints = $goldPoints;
+    }
+
+    public function setCrashed(bool $isCrashed): void
+    {
+        $this->isCrashed = $isCrashed;
+    }
+
+    public function setRespawned(bool $isRespawned): void
+    {
+        $this->isRespawned = $isRespawned;
+    }
+
+    public function setLocation(string $location)
+    {
+        $this->location = $location;
     }
 
     public function __toString()

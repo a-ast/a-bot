@@ -25,13 +25,19 @@ class TournamentGame
      */
     private $progressNotifier;
 
+    /**
+     * @var \App\Game\GameBuilder
+     */
+    private $gameBuilder;
+
     public function __construct(
         VindiniumApiClient $apiClient,
+        GameBuilder $gameBuilder,
         ProgressNotifier $progressNotifier)
     {
         $this->apiClient = $apiClient;
         $this->progressNotifier = $progressNotifier;
-
+        $this->gameBuilder = $gameBuilder;
     }
 
     public function setStrategy(StrategyInterface $strategy)
@@ -70,13 +76,15 @@ class TournamentGame
      */
     private function execute(string $apiKey, $initialStateData): void
     {
-        $game = new Game($initialStateData);
         $compass = new Compass();
+
+
+        $game = $this->gameBuilder->buildGame($initialStateData);
 
         $playUrl = $game->getPlayUrl();
         $this->progressNotifier->openUrl($game->getViewUrl());
 
-        $this->strategy->initialize($game);
+        $this->strategy->initialize($game->getGamePlay());
 
         while (false === $game->isFinished()) {
 
@@ -89,7 +97,8 @@ class TournamentGame
             print $direction.PHP_EOL.PHP_EOL;
 
             $newState = $this->apiClient->playMove($apiKey, $playUrl, $direction);
-            $game->refresh($newState);
+
+            $this->gameBuilder->updateGame($game, $newState);
         }
     }
 }

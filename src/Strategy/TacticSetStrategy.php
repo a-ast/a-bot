@@ -3,9 +3,10 @@
 namespace App\Strategy;
 
 use App\Model\BoardInterface;
+use App\Model\GamePlayInterface;
 use App\Model\Location\LocationAwareListInterface;
 use App\Model\GameInterface;
-use App\Model\HeroInterface;
+use App\Model\Game\Hero;
 use App\Model\Game\GoldMine;
 use App\Model\Game\Tavern;
 use App\PathFinder\FloydWarshallAlgorithm;
@@ -23,7 +24,7 @@ class TacticSetStrategy implements StrategyInterface
     private $board;
 
     /**
-     * @var HeroInterface
+     * @var Hero
      */
     private $hero;
 
@@ -43,7 +44,7 @@ class TacticSetStrategy implements StrategyInterface
         $this->pathFinder = $pathFinder;
     }
 
-    public function initialize(GameInterface $game)
+    public function initialize(GamePlayInterface $game)
     {
         $this->game = $game;
         $this->hero = $game->getHero();
@@ -64,7 +65,7 @@ class TacticSetStrategy implements StrategyInterface
         $goldNear = $this->getClosestGoldMine();
 
         // Attack
-        if ($enemyNear instanceof HeroInterface &&
+        if ($enemyNear instanceof Hero &&
             $enemyNear->getLifePoints() <= $this->hero->getLifePoints()) {
 
             print '## ATTACK'.PHP_EOL;
@@ -74,7 +75,7 @@ class TacticSetStrategy implements StrategyInterface
         }
 
         // Avoid attack
-        if ($enemyNear instanceof HeroInterface &&
+        if ($enemyNear instanceof Hero &&
             $enemyNear->getLifePoints() > $this->hero->getLifePoints()) {
 
             print '#####################'.PHP_EOL;
@@ -169,7 +170,7 @@ class TacticSetStrategy implements StrategyInterface
 
     private function getClosestEnemy()
     {
-        foreach ($this->game->getHeroes() as $enemy) {
+        foreach ($this->game->getRivalHeroes() as $enemy) {
             if (1 === $this->pathFinder->getDistance($this->hero->getLocation(), $enemy->getLocation())) {
                 return $enemy;
             }
