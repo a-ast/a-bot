@@ -3,8 +3,6 @@
 namespace App\Strategy;
 
 use App\Model\GamePlayInterface;
-use App\Model\Game\GoldMine;
-use App\Model\Game\Tavern;
 use App\Model\Game\Hero;
 use App\Model\Location\LocationPrioritizer;
 use App\PathFinder\PathFinderInterface;
@@ -86,6 +84,7 @@ class WeightedTacticsStrategy implements StrategyInterface
             'take gold' => 1001,
             'take beer' => 1000,
             'attack hero' => 999,
+            'avoid hero' => 998,
         ];
 
         foreach ($this->tactics as $tacticName => $tactic) {
@@ -95,45 +94,6 @@ class WeightedTacticsStrategy implements StrategyInterface
         }
 
         return $weights;
-    }
-
-    private function avoidStrongHeroTacticPrio($location)
-    {
-        if (0 === $this->game->getRivalHeroes()->count()) {
-            return 0;
-        }
-
-        if ($this->board->isGoal($location)) {
-            $goal = $this->board->getGoal($location);
-
-            if ($goal instanceof GoldMine ||
-                $goal instanceof Tavern
-            ) {
-                return 0;
-            }
-        }
-
-
-        $locationWithDistance = $this->getClosestLocationWithDistance(
-            $location,
-            $this->game->getRivalHeroes()
-        );
-
-        $distance = $locationWithDistance->getPriority();
-
-        $closestLocation = $locationWithDistance->getLocation();
-
-        /** @var Hero $hero */
-        $hero = $this->game->getRivalHeroes()->get($closestLocation);
-
-        if ($distance < 3 &&
-            $hero->getLifePoints() > $this->hero->getLifePoints()
-
-        ) {
-            return -1000;
-        }
-
-        return 0;
     }
 
     private function dumpWeights(array $weights)

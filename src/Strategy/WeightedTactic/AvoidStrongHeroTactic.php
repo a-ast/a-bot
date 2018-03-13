@@ -9,7 +9,7 @@ use App\Model\Game\Tavern;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 
-class AttackWeakHeroTactic extends AbstractWeightedTactic
+class AvoidStrongHeroTactic extends AbstractWeightedTactic
 {
     /**
      * @throws StrategyException
@@ -43,14 +43,9 @@ class AttackWeakHeroTactic extends AbstractWeightedTactic
         $rival = $game->getRivalHeroes()->get($closestLocation);
 
         if ($distance < 3 &&
-            $rival->getLifePoints() < $game->getHero()->getLifePoints() &&
-            count($game->getGoldMinesOf($rival->getId())) > 0
-
-            // do not attack heroes that stay on their spawn ?
-            && !($rival->isOnSpawnLocation() && $distance === 1)
-
+            $rival->getLifePoints() > $game->getHero()->getLifePoints()
         ) {
-            return 1000 - 10 * $distance;
+            return -1000 + 10 * $distance;
         }
 
         return 0;

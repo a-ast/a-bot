@@ -34,7 +34,7 @@ class RunTrainingCommand extends Command
     {
         $this
             ->setName('a-bot:train')
-            ->addArgument('bot-api-key', InputArgument::REQUIRED)
+            ->addArgument('api-key', InputArgument::REQUIRED)
             ->addArgument('strategy', InputArgument::REQUIRED)
             ->addArgument('turn-count', InputArgument::OPTIONAL, '', null)
             ->addArgument('map', InputArgument::OPTIONAL, '', null)
@@ -48,7 +48,7 @@ class RunTrainingCommand extends Command
 
         try {
             $this->game->executeTraining(
-              $input->getArgument('bot-api-key'),
+              $input->getArgument('api-key'),
               $input->getArgument('turn-count'),
               $input->getArgument('map')
             );

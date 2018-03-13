@@ -4,6 +4,8 @@ namespace App\Command;
 
 use App\Game\GameBuilder;
 use App\Model\Game\Game;
+use App\Model\Game\GoldMine;
+use App\Model\Game\Hero;
 use App\Model\Location\Location;
 use App\Strategy\StrategyInterface;
 use Symfony\Component\Console\Command\Command;
@@ -50,9 +52,19 @@ class TestGameCommand extends Command
         $this->strategy->initialize($game->getGamePlay());
 
         $hero = $game->getHero();
-        $hero->setLocation('0:0');
-        $hero->setLifePoints(100);
+        $hero->setLocation('0:6');
+        $hero->setLifePoints(50);
         $hero->setGoldPoints(0);
+
+        $rival = new Hero(2, 'Ayvengo', '0:7', '0:0');
+        $rival->setLifePoints(80);
+        $rival->setGoldPoints(10);
+        $game->addRivalHero($rival);
+
+        $gold = $game->getGoldMines()->get('4:2');
+        if ($gold instanceof GoldMine) {
+            $gold->setHeroId(2);
+        }
 
         $turns = 10;
         $currentTurn = 0;

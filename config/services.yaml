@@ -21,6 +21,7 @@ services:
                 'take gold': '@App\Strategy\WeightedTactic\TakeGoldTactic'
                 'take beer': '@App\Strategy\WeightedTactic\TakeBeerTactic'
                 'attack hero': '@App\Strategy\WeightedTactic\AttackWeakHeroTactic'
+                'avoid hero': '@App\Strategy\WeightedTactic\AvoidStrongHeroTactic'
 
     App\Strategy\StrategyProvider:
         arguments:

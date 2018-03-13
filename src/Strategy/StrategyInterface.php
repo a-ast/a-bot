@@ -4,7 +4,6 @@ namespace App\Strategy;
 
 use App\Model\GamePlayInterface;
 
-
 interface StrategyInterface
 {
     public function initialize(GamePlayInterface $game);
