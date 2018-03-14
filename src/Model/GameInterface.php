@@ -6,6 +6,8 @@ use App\Model\Game\Hero;
 
 interface GameInterface
 {
+    public function getTurn(): int;
+
     public function isFinished(): bool;
 
     public function getPlayUrl(): string;

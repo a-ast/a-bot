@@ -84,7 +84,7 @@ class WeightedTacticsStrategy implements StrategyInterface
             'take gold' => 1001,
             'take beer' => 1000,
             'attack hero' => 999,
-            'avoid hero' => 998,
+            'avoid hero' => 1100,
         ];
 
         foreach ($this->tactics as $tacticName => $tactic) {

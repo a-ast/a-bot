@@ -69,4 +69,13 @@ class LocationAwareList implements IteratorAggregate, LocationAwareListInterface
     {
         return $this->indexedItems[$index];
     }
+
+    public function updateLocations()
+    {
+        $this->items = [];
+
+        foreach ($this->indexedItems as $indexedItem) {
+            $this->items[$indexedItem->getLocation()] = $indexedItem;
+        }
+    }
 }

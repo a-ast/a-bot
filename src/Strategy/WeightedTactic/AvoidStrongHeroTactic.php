@@ -27,7 +27,7 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
             if ($goal instanceof GoldMine ||
                 $goal instanceof Tavern
             ) {
-                return 0;
+                $location = $game->getHero()->getLocation();
             }
         }
 

@@ -17,4 +17,6 @@ interface LocationAwareListInterface extends Countable
     public function getLocations(): array;
 
     public function getFilteredList(callable $filter): LocationAwareListInterface;
+
+    public function updateLocations();
 }

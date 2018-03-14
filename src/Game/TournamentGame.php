@@ -26,18 +26,25 @@ class TournamentGame
     private $progressNotifier;
 
     /**
-     * @var \App\Game\GameBuilder
+     * @var GameBuilder
      */
     private $gameBuilder;
+
+    /**
+     * @var GameDumper
+     */
+    private $gameDumper;
 
     public function __construct(
         VindiniumApiClient $apiClient,
         GameBuilder $gameBuilder,
+        GameDumper $gameDumper,
         ProgressNotifier $progressNotifier)
     {
         $this->apiClient = $apiClient;
-        $this->progressNotifier = $progressNotifier;
         $this->gameBuilder = $gameBuilder;
+        $this->gameDumper = $gameDumper;
+        $this->progressNotifier = $progressNotifier;
     }
 
     public function setStrategy(StrategyInterface $strategy)
@@ -87,10 +94,13 @@ class TournamentGame
 
         while (false === $game->isFinished()) {
 
+            print '['. $game->getTurn() .']'.PHP_EOL;
             print 'Hero: '. $game->getHero()->getLocation().PHP_EOL;
             $nextLocation = $this->strategy->getNextLocation();
 
             print $game->getHero()->getLocation().' -> '.$nextLocation.PHP_EOL;
+            print $this->gameDumper->dumpHeroes($game) . PHP_EOL;
+
             $direction = $compass->getDirectionTo($game->getHero()->getLocation(), $nextLocation);
 
             print $direction.PHP_EOL.PHP_EOL;

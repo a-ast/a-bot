@@ -63,6 +63,11 @@ class Game implements GameInterface
      */
     private $gamePlay;
 
+    /**
+     * @var int
+     */
+    private $turn;
+
     public function __construct()
     {
         $this->map = new LocationGraph();
@@ -164,5 +169,15 @@ class Game implements GameInterface
     public function getGamePlay(): GamePlayInterface
     {
         return $this->gamePlay;
+    }
+
+    public function getTurn(): int
+    {
+        return $this->turn;
+    }
+
+    public function setTurn(int $turn): void
+    {
+        $this->turn = $turn;
     }
 }

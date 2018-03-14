@@ -7,6 +7,7 @@ use App\Model\Game\GoldMine;
 use App\Model\Game\Tavern;
 use App\Model\GameInterface;
 use App\Model\Location\Location;
+use App\Model\Location\LocationAwareList;
 
 class GameBuilder
 {
@@ -24,6 +25,7 @@ class GameBuilder
     {
         $game = new Game();
 
+        $game->setTurn($initialState['game']['turn']);
         $game->setPlayUrl($initialState['playUrl']);
         $game->setViewUrl($initialState['viewUrl']);
         $game->setFinished($initialState['game']['finished']);
@@ -79,6 +81,7 @@ class GameBuilder
 
     public function updateGame(Game $game, array $state)
     {
+        $game->setTurn($state['game']['turn']);
         $game->setFinished($state['game']['finished']);
 
         $this->heroBuilder->updateHero($game->getHero(), $state['hero']);
@@ -89,15 +92,19 @@ class GameBuilder
 
     private function updateRivalHeroes(Game $game, array $heroesData)
     {
+        $heroes = $game->getRivalHeroes();
+        $this->createRivalHeroes($game, $heroesData);
+
         foreach ($heroesData as $heroData) {
             $rivalHeroId = $heroData['id'];
             if ($rivalHeroId === $game->getHero()->getId()) {
                 continue;
             }
 
-            $rivalHero = $game->getRivalHeroes()->getByIndex($rivalHeroId);
+            $rivalHero = $heroes->getByIndex($rivalHeroId);
             $this->heroBuilder->updateHero($rivalHero, $heroData);
         }
+        $heroes->updateLocations();
     }
 
     public function updateGoldMineOwning(Game $game, array $mapData)

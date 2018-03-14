@@ -27,7 +27,7 @@ class AttackWeakHeroTactic extends AbstractWeightedTactic
             if ($goal instanceof GoldMine ||
                 $goal instanceof Tavern
             ) {
-                return 0;
+                $location = $game->getHero()->getLocation();
             }
         }
 
@@ -50,6 +50,8 @@ class AttackWeakHeroTactic extends AbstractWeightedTactic
             && !($rival->isOnSpawnLocation() && $distance === 1)
 
         ) {
+            print sprintf('### Attack rival at %s|%s. Distance: %d###', $closestLocation, $rival->getLocation(), $distance);
+
             return 1000 - 10 * $distance;
         }
 

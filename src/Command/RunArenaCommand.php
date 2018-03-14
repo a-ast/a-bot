@@ -34,7 +34,7 @@ class RunArenaCommand extends Command
     {
         $this
             ->setName('a-bot:arena')
-            ->addArgument('bot-api-key', InputArgument::REQUIRED)
+            ->addArgument('api-key', InputArgument::REQUIRED)
             ->addArgument('strategy', InputArgument::REQUIRED)
         ;
     }
@@ -45,7 +45,7 @@ class RunArenaCommand extends Command
         $this->game->setStrategy($this->strategyProvider->getByAlias($strategyAlias));
 
         try {
-            $this->game->executeArena($input->getArgument('bot-api-key'));
+            $this->game->executeArena($input->getArgument('api-key'));
         } catch (Exception $exception) {
             $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
 

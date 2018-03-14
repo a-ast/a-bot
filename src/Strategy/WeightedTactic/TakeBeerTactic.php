@@ -39,9 +39,4 @@ class TakeBeerTactic extends AbstractWeightedTactic
 
         return 1000 - 10 * $locationWithDistance->getPriority();
     }
-
-    public function getAlias(): string
-    {
-        return 'take bear';
-    }
 }

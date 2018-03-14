@@ -18,16 +18,21 @@ class TakeGoldTactic extends AbstractWeightedTactic
      */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
+        if ($game->getHero()->getLifePoints() <= 21) {
+            return -1000;
+        }
+
         // If you have all gold, do something else. E.g., find a girl.
         if (0 === $game->getForeignGoldMines()->count()) {
-            return 0;
+            return -1000;
         }
 
         if ($game->isGameObjectAt($location)) {
             $goal = $game->getGameObjectAt($location);
 
+            // if it is my golmine
             if ($goal instanceof GoldMine && $goal->getHeroId() === $game->getHero()->getId()) {
-                return 0;
+                return -1000;
             }
 
             if ($goal instanceof Tavern || $goal instanceof Hero) {
@@ -41,15 +46,10 @@ class TakeGoldTactic extends AbstractWeightedTactic
         );
 
         $distance = $locationWithDistance->getPriority();
-        if ($game->getHero()->getLifePoints() - $distance < 25) {
-            return 0;
+        if ($game->getHero()->getLifePoints() - $distance <= 21) {
+            return -1000;
         }
 
         return 1000 - 10 * $locationWithDistance->getPriority();
-    }
-
-    public function getAlias(): string
-    {
-        return 'take gold';
     }
 }
