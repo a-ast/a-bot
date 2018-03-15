@@ -90,6 +90,10 @@ class FloydWarshallAlgorithm implements PathFinderInterface
 
     public function getNextLocation(string $from, string $to): string
     {
+        if ($from === $to) {
+            return $to;
+        }
+
         $i = $this->locationIndexes[$from];
         $j = $this->locationIndexes[$to];
 

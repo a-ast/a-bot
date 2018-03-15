@@ -2,6 +2,9 @@
 
 namespace App\Strategy;
 
+use App\Model\Exceptions\GamePlayException;
+use App\Model\Game\GoldMine;
+use App\Model\Game\Tavern;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 use App\Model\Location\LocationPrioritizer;
@@ -48,13 +51,15 @@ class WeightedTacticsStrategy implements StrategyInterface
         $locationPrioritizer = new LocationPrioritizer();
 
         $heroLocation = $this->hero->getLocation();
-        $nearLocations =
-            $this->game->getMap()->getNearLocations($heroLocation) +
-            [$this->hero->getLocation()];
+        $nearLocations = $this->game->getMap()->getNearLocations($heroLocation);
+
+        $possibleNearLocations = array_merge(
+            $this->getPossibleNearLocations($nearLocations),
+            [$heroLocation]);
 
         $weightDebugger = [];
 
-        foreach ($nearLocations as $nearLocation) {
+        foreach ($possibleNearLocations as $nearLocation) {
 
             $weights = $this->getLocationWeights($nearLocation);
 
@@ -88,6 +93,11 @@ class WeightedTacticsStrategy implements StrategyInterface
         ];
 
         foreach ($this->tactics as $tacticName => $tactic) {
+
+            if (false === $tactic->isApplicable($this->game, $location)) {
+                $location = $this->hero->getLocation();
+            }
+
             $weights[$tacticName] =
                 $coefficients[$tacticName] *
                 $tactic->getWeight($this->game, $location);
@@ -108,5 +118,38 @@ class WeightedTacticsStrategy implements StrategyInterface
         }
 
         print $text;
+    }
+
+    private function getPossibleNearLocations(array $nearLocations): array
+    {
+        $possibleNearLocations = [];
+
+        foreach ($nearLocations as $location) {
+
+            if (false === $this->game->isGameObjectAt($location)) {
+                $possibleNearLocations[] = $location;
+                continue;
+            }
+
+            $goal = $this->game->getGameObjectAt($location);
+
+            if ($goal instanceof GoldMine) {
+                if ($goal->getHeroId() === $this->hero->getId()) {
+                    continue;
+                }
+
+                if ($this->hero->getLifePoints() <= 21) {
+                    continue;
+                }
+            }
+
+            if ($goal instanceof Tavern && $this->hero->getLifePoints() > 95) {
+                continue;
+            }
+
+            $possibleNearLocations[] = $location;
+        }
+
+        return $possibleNearLocations;
     }
 }

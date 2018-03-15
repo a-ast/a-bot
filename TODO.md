@@ -1,5 +1,10 @@
 # TODO
 
+### NEW Ideas
+
+1. Introduce tactic disabler (isApplicable?)
+1. AvoidStrong must also return from 0 to 1000 as a distance to another hero
+
 ## Ideas
 
 Tactic returns from 0 to 1000

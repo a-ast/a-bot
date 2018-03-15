@@ -95,11 +95,11 @@ class TournamentGame
         while (false === $game->isFinished()) {
 
             print '['. $game->getTurn() .']'.PHP_EOL;
-            print 'Hero: '. $game->getHero()->getLocation().PHP_EOL;
+            print $this->gameDumper->dumpHero($game->getHero()) . PHP_EOL;
+            print $this->gameDumper->dumpHeroes($game) . PHP_EOL;
+
             $nextLocation = $this->strategy->getNextLocation();
 
-            print $game->getHero()->getLocation().' -> '.$nextLocation.PHP_EOL;
-            print $this->gameDumper->dumpHeroes($game) . PHP_EOL;
 
             $direction = $compass->getDirectionTo($game->getHero()->getLocation(), $nextLocation);
 

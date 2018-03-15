@@ -34,6 +34,12 @@ class WatchPathFinderCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // @todo:
+        // load a11.map
+        // and figure out why distances
+        // 10:11-12:12 and 11:11-12:12 are both = 3
+
+
         $fileName = sprintf('/Map/%s.map', $input->getArgument('map-name'));
         $mapData = file(__DIR__ . $fileName, FILE_IGNORE_NEW_LINES);
 

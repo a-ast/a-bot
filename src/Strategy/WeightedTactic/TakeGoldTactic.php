@@ -14,29 +14,15 @@ class TakeGoldTactic extends AbstractWeightedTactic
 
     /**
      * @throws StrategyException
-     * @throws GamePlayException
      */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
-        if ($game->getHero()->getLifePoints() <= 21) {
-            return -1000;
-        }
+        if ($game->isGoldMine($location)) {
+            /** @var GoldMine $goldMine */
+            $goldMine = $game->getGameObjectAt($location);
 
-        // If you have all gold, do something else. E.g., find a girl.
-        if (0 === $game->getForeignGoldMines()->count()) {
-            return -1000;
-        }
-
-        if ($game->isGameObjectAt($location)) {
-            $goal = $game->getGameObjectAt($location);
-
-            // if it is my golmine
-            if ($goal instanceof GoldMine && $goal->getHeroId() === $game->getHero()->getId()) {
-                return -1000;
-            }
-
-            if ($goal instanceof Tavern || $goal instanceof Hero) {
-                $location = $game->getHero()->getLocation();
+            if ($goldMine->getHeroId() === $game->getHero()->getId()) {
+                return 0;
             }
         }
 
@@ -47,9 +33,19 @@ class TakeGoldTactic extends AbstractWeightedTactic
 
         $distance = $locationWithDistance->getPriority();
         if ($game->getHero()->getLifePoints() - $distance <= 21) {
-            return -1000;
+            return 0;
         }
 
         return 1000 - 10 * $locationWithDistance->getPriority();
+    }
+
+    public function isApplicable(GamePlayInterface $game, string $location): bool
+    {
+        return
+            ($game->getHero()->getLifePoints() >= 21) &&
+            (false === $game->isHero($location)) &&
+            (false === $game->isTavern($location)) &&
+            ($game->getForeignGoldMines()->count() > 0)
+        ;
     }
 }

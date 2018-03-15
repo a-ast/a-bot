@@ -13,7 +13,6 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
 {
     /**
      * @throws StrategyException
-     * @throws GamePlayException
      */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
@@ -21,14 +20,8 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
             return 0;
         }
 
-        if ($game->isGameObjectAt($location)) {
-            $goal = $game->getGameObjectAt($location);
-
-            if ($goal instanceof GoldMine ||
-                $goal instanceof Tavern
-            ) {
-                $location = $game->getHero()->getLocation();
-            }
+        if ($game->isGoldMine($location) || $game->isTavern($location)) {
+            return 0;
         }
 
         $locationWithDistance = $this->getClosestLocationWithDistance(
@@ -45,10 +38,18 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
         if ($distance < 3 &&
             $rival->getLifePoints() > $game->getHero()->getLifePoints()
         ) {
-            return -1000 + 10 * $distance;
+            // @todo: scale to 1000
+            return 10 * $distance;
         }
 
         return 0;
+    }
 
+    public function isApplicable(GamePlayInterface $game, string $location): bool
+    {
+        return
+            ($game->getRivalHeroes()->count() > 0) &&
+            (false === $game->isGoldMine($location)) &&
+            (false === $game->isTavern($location));
     }
 }

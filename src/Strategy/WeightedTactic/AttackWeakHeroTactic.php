@@ -3,9 +3,6 @@
 namespace App\Strategy\WeightedTactic;
 
 use App\Exceptions\StrategyException;
-use App\Model\Exceptions\GamePlayException;
-use App\Model\Game\GoldMine;
-use App\Model\Game\Tavern;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 
@@ -13,23 +10,10 @@ class AttackWeakHeroTactic extends AbstractWeightedTactic
 {
     /**
      * @throws StrategyException
-     * @throws GamePlayException
      */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
-        if (0 === $game->getRivalHeroes()->count()) {
-            return 0;
-        }
 
-        if ($game->isGameObjectAt($location)) {
-            $goal = $game->getGameObjectAt($location);
-
-            if ($goal instanceof GoldMine ||
-                $goal instanceof Tavern
-            ) {
-                $location = $game->getHero()->getLocation();
-            }
-        }
 
         $locationWithDistance = $this->getClosestLocationWithDistance(
             $location,
@@ -57,5 +41,13 @@ class AttackWeakHeroTactic extends AbstractWeightedTactic
 
         return 0;
 
+    }
+
+    public function isApplicable(GamePlayInterface $game, string $location): bool
+    {
+        return
+            ($game->getRivalHeroes()->count() > 0) &&
+            (false === $game->isGoldMine($location)) &&
+            (false === $game->isTavern($location));
     }
 }

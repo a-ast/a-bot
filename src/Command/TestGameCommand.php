@@ -71,12 +71,17 @@ class TestGameCommand extends Command
 
 
         do {
+            print 'Hero: '. $game->getHero()->getLocation().PHP_EOL;
 
             $next = $this->strategy->getNextLocation();
 
-            if (false === $game->getGamePlay()->isGameObjectAt($next)) {
-                $hero->setLocation($next);
+            if ($game->getGamePlay()->isGameObjectAt($next)) {
+                $next = $game->getHero()->getLocation();
             }
+
+            $hero->setLocation($next);
+
+            print $game->getHero()->getLocation().' -> '.$next.PHP_EOL;
 
             $currentTurn++;
 

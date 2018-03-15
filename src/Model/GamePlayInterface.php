@@ -54,8 +54,11 @@ interface GamePlayInterface
 
     public function isGameObjectAt(string $location): bool;
 
-    /**
-     * @throws GamePlayException
-     */
     public function getGameObjectAt(string $location): LocationAwareInterface;
+
+    public function isGoldMine(string $location): bool;
+
+    public function isTavern(string $location): bool;
+
+    public function isHero(string $location): bool;
 }
