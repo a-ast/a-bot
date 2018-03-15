@@ -29,6 +29,7 @@ class GameBuilder
         $game->setPlayUrl($initialState['playUrl']);
         $game->setViewUrl($initialState['viewUrl']);
         $game->setFinished($initialState['game']['finished']);
+        $game->setBoardSize($initialState['game']['board']['size']);
 
         $game->setHero($this->heroBuilder->buildHero($initialState['hero']));
         $this->createRivalHeroes($game, $initialState['game']['heroes']);
@@ -54,6 +55,7 @@ class GameBuilder
     public function buildObjects(Game $game, array $mapData)
     {
         print join(PHP_EOL, $mapData).PHP_EOL;
+        $game->setBoardSize(count($mapData));
 
         foreach ($mapData as $x => $mapLine) {
             $items = str_split($mapLine, 2);

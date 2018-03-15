@@ -68,6 +68,11 @@ class Game implements GameInterface
      */
     private $turn;
 
+    /**
+     * @var int
+     */
+    private $boardSize;
+
     public function __construct()
     {
         $this->map = new LocationGraph();
@@ -179,5 +184,15 @@ class Game implements GameInterface
     public function setTurn(int $turn): void
     {
         $this->turn = $turn;
+    }
+
+    public function setBoardSize(int $size)
+    {
+        $this->boardSize = $size;
+    }
+
+    public function getBoardSize(): int
+    {
+        return $this->boardSize;
     }
 }

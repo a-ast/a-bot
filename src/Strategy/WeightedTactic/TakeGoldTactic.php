@@ -17,35 +17,51 @@ class TakeGoldTactic extends AbstractWeightedTactic
      */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
-        if ($game->isGoldMine($location)) {
-            /** @var GoldMine $goldMine */
-            $goldMine = $game->getGameObjectAt($location);
 
-            if ($goldMine->getHeroId() === $game->getHero()->getId()) {
-                return 0;
+        $totalWeight = 0;
+
+        $source = $location;
+
+
+        // process state when you stay near goldmine
+
+        if ($game->isGoldMine($source)) {
+
+            $goal = $game->getGameObjectAt($source);
+
+            if ($goal->getHeroId() !== $game->getHero()->getId()) {
+                $source = $game->getHero()->getLocation();
             }
         }
 
-        $locationWithDistance = $this->getClosestLocationWithDistance(
-            $location,
-            $game->getForeignGoldMines()
-        );
+        $goalCount = 0;
+        foreach ($game->getForeignGoldMines() as $goal) {
 
-        $distance = $locationWithDistance->getPriority();
-        if ($game->getHero()->getLifePoints() - $distance <= 21) {
+            $distanceToGoal = $this->getDistanceToGoal($source, $goal);
+
+            if ($game->getHero()->getLifePoints() - $distanceToGoal <= 21) {
+                continue;
+            }
+
+            $totalWeight += 1000 * (1/ $distanceToGoal);
+            $goalCount++;
+        }
+
+        if (0 === $goalCount) {
             return 0;
         }
 
-        return 1000 - 10 * $locationWithDistance->getPriority();
+        $weight = $totalWeight/$goalCount;
+
+        return $weight;
     }
 
-    public function isApplicable(GamePlayInterface $game, string $location): bool
+    public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
         return
-            ($game->getHero()->getLifePoints() >= 21) &&
+            //($game->getHero()->getLifePoints() >= 21) &&
             (false === $game->isHero($location)) &&
-            (false === $game->isTavern($location)) &&
-            ($game->getForeignGoldMines()->count() > 0)
+            (false === $game->isTavern($location))
         ;
     }
 }

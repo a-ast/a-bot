@@ -3,6 +3,7 @@
 namespace App\Strategy\WeightedTactic;
 
 use App\Exceptions\StrategyException;
+use App\Model\LocationAwareInterface;
 use App\Model\LocationAwareListInterface;
 use App\Model\Location\LocationPrioritizer;
 use App\Model\Location\LocationPriorityPair;
@@ -41,5 +42,10 @@ abstract class AbstractWeightedTactic implements WeightedTacticInterface
         $pair = $prioritizer->getWithMinPriority();
 
         return $pair;
+    }
+
+    protected function getDistanceToGoal(string $from, LocationAwareInterface $goal): int
+    {
+        return $this->pathFinder->getDistance($from, $goal->getLocation());
     }
 }

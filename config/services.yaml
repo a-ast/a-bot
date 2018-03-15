@@ -14,6 +14,8 @@ services:
     # App\Strategy\StrategyInterface: '@App\Strategy\TacticSetStrategy'
     App\Strategy\StrategyInterface: '@App\Strategy\WeightedTacticsStrategy'
 
+    App\PathFinder\PathFinderInterface: '@App\PathFinder\FloydWarshallAlgorithm'
+
     App\Strategy\WeightedTacticsStrategy:
         arguments:
             - '@App\PathFinder\FloydWarshallAlgorithm'

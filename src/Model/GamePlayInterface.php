@@ -61,4 +61,6 @@ interface GamePlayInterface
     public function isTavern(string $location): bool;
 
     public function isHero(string $location): bool;
+
+    public function getBoardSize(): int;
 }

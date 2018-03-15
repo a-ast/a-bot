@@ -170,4 +170,9 @@ class GamePlay implements GamePlayInterface
 
         return ($goal instanceof Hero);
     }
+
+    public function getBoardSize(): int
+    {
+        return $this->game->getBoardSize();
+    }
 }

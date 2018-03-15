@@ -14,6 +14,8 @@ interface GameInterface
 
     public function getViewUrl(): string;
 
+    public function getBoardSize(): int;
+
     public function getMap(): LocationGraphInterface;
 
     public function getHero(): Hero;

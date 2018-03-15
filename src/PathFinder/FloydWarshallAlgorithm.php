@@ -81,11 +81,15 @@ class FloydWarshallAlgorithm implements PathFinderInterface
         $i = $this->locationIndexes[$from];
         $j = $this->locationIndexes[$to];
 
-        if (!isset($this->distances[$i][$j])) {
-            return self::INF;
+        if (isset($this->distances[$i][$j])) {
+            return $this->distances[$i][$j];
         }
 
-        return $this->distances[$i][$j];
+        if (isset($this->distances[$j][$i])) {
+            return $this->distances[$j][$i];
+        }
+
+        throw new \Exception(sprintf('SOS! Unknown distance from %s to %s', $from, $to));
     }
 
     public function getNextLocation(string $from, string $to): string
@@ -221,6 +225,7 @@ class FloydWarshallAlgorithm implements PathFinderInterface
 
                 // Every goal - new j-column
                 $this->distances[$i][$jNew] = $minDistance + 1;
+
                 $this->next[$i][$jNew] = $this->next[$i][$minJIndex];
             }
 

@@ -15,18 +15,37 @@ class TakeBeerTactic extends AbstractWeightedTactic
      */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
-        $locationWithDistance = $this->getClosestLocationWithDistance(
-            $location,
-            $game->getTaverns()
-        );
+        if ($game->getHero()->getLifePoints() > 95) {
+            return 0;
+        }
 
-        return 1000 - 10 * $locationWithDistance->getPriority();
+        $totalWeight = 0;
+
+        $source = $location;
+
+//        if ($game->isTavern($source)) {
+//            $source = $game->getHero()->getLocation();
+//        }
+
+        $goalCount = 0;
+        foreach ($game->getTaverns() as $goal) {
+            $distanceToGoal = $this->getDistanceToGoal($source, $goal);
+            $totalWeight += 1000 * (1/ $distanceToGoal);
+            $goalCount++;
+        }
+
+        if (0 === $goalCount) {
+            return 0;
+        }
+
+        $weight = $totalWeight/$goalCount;
+
+        return $weight;
     }
 
-    public function isApplicable(GamePlayInterface $game, string $location): bool
+    public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
         return
-            ($game->getHero()->getLifePoints() < 95) &&
             (false === $game->isGoldMine($location)) &&
             (false === $game->isHero($location));
     }

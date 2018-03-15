@@ -8,45 +8,47 @@ use App\Model\Game\Hero;
 
 class AttackWeakHeroTactic extends AbstractWeightedTactic
 {
-    /**
-     * @throws StrategyException
-     */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
+        $totalWeight = 0;
 
+        $source = $location;
 
-        $locationWithDistance = $this->getClosestLocationWithDistance(
-            $location,
-            $game->getRivalHeroes()
-        );
+//        if ($game->isGoldMine($source)) {
+//            $source = $game->getHero()->getLocation();
+//        }
 
-        $distance = $locationWithDistance->getPriority();
-        $closestLocation = $locationWithDistance->getLocation();
+        $goalCount = 0;
+        foreach ($game->getRivalHeroes() as $goal) {
 
-        /** @var Hero $rival */
-        $rival = $game->getRivalHeroes()->get($closestLocation);
+            if (0 === $game->getGoldMinesOf($goal->getId())->count()) {
+                continue;
+            }
 
-        if ($distance < 3 &&
-            $rival->getLifePoints() < $game->getHero()->getLifePoints() &&
-            count($game->getGoldMinesOf($rival->getId())) > 0
+            if ($goal->getLifePoints() >= $game->getHero()->getLifePoints()) {
+                continue;
+            }
 
-            // do not attack heroes that stay on their spawn ?
-            && !($rival->isOnSpawnLocation() && $distance === 1)
+            $distanceToGoal = $this->getDistanceToGoal($source, $goal);
 
-        ) {
-            print sprintf('### Attack rival at %s|%s. Distance: %d###', $closestLocation, $rival->getLocation(), $distance);
-
-            return 1000 - 10 * $distance;
+            $totalWeight += 1000 * (1/ $distanceToGoal);
+            $goalCount++;
         }
 
-        return 0;
+        if (0 === $goalCount) {
+            return 0;
+        }
+
+        $weight = $totalWeight/$goalCount;
+
+        return $weight;
 
     }
 
-    public function isApplicable(GamePlayInterface $game, string $location): bool
+    public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
         return
-            ($game->getRivalHeroes()->count() > 0) &&
+            //($game->getRivalHeroes()->count() > 0) &&
             (false === $game->isGoldMine($location)) &&
             (false === $game->isTavern($location));
     }

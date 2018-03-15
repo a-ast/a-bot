@@ -94,7 +94,7 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         foreach ($this->tactics as $tacticName => $tactic) {
 
-            if (false === $tactic->isApplicable($this->game, $location)) {
+            if (false === $tactic->isApplicableLocation($this->game, $location)) {
                 $location = $this->hero->getLocation();
             }
 
@@ -141,10 +141,6 @@ class WeightedTacticsStrategy implements StrategyInterface
                 if ($this->hero->getLifePoints() <= 21) {
                     continue;
                 }
-            }
-
-            if ($goal instanceof Tavern && $this->hero->getLifePoints() > 95) {
-                continue;
             }
 
             $possibleNearLocations[] = $location;
