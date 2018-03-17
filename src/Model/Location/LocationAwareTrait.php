@@ -7,7 +7,7 @@ trait LocationAwareTrait
     /**
      * @var string
      */
-    private $location;
+    private $location = '';
 
     public function __construct(string $location)
     {

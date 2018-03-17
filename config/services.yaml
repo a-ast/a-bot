@@ -6,6 +6,8 @@ services:
         autowire: true
         autoconfigure: true
         public: false
+        bind:
+            $gameFilesPath: '%kernel.project_dir%/games/'
 
     App\:
         resource: '../src/*'

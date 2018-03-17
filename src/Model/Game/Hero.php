@@ -13,42 +13,42 @@ class Hero implements LocationAwareInterface
     /**
      * @var string
      */
-    private $name;
+    private $name = '';
 
     /**
      * @var int
      */
-    private $id;
+    private $id = 0;
 
     /**
      * @var int
      */
-    private $lifePoints;
+    private $lifePoints = 0;
 
     /**
      * @var int
      */
-    private $goldPoints;
+    private $goldPoints = 0;
 
     /**
      * @var bool
      */
-    private $isCrashed;
+    private $isCrashed = false;
 
     /**
      * @var bool
      */
-    private $isRespawned;
+    private $isRespawned = false;
 
     /**
      * @var string
      */
-    private $spawnLocation;
+    private $spawnLocation = '';
 
     /**
      * @var string
      */
-    private $location;
+    private $location = '';
 
     public function __construct(int $id, string $name, string $location, string $spawnLocation)
     {

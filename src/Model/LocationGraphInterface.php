@@ -17,4 +17,6 @@ interface LocationGraphInterface
     public function getLocations(): array;
 
     public function isNear(string $from, string $to): bool;
+
+    public function exists(string $location): bool;
 }

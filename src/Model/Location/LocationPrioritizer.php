@@ -31,14 +31,8 @@ class LocationPrioritizer
         return new LocationPriorityPair($location, $prio);
     }
 
-    public function dump(string $title)
+    public function toArray(): array
     {
-        $text = 'Priorities for [' . $title . ']:' .PHP_EOL;
-
-        foreach ($this->items as $location => $priority) {
-            $text .= sprintf('    %s - %d', $location, $priority) . PHP_EOL;
-        }
-
-        print $text;
+        return $this->items;
     }
 }

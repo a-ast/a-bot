@@ -25,6 +25,7 @@ class GameBuilder
     {
         $game = new Game();
 
+        $game->setId($initialState['game']['id']);
         $game->setTurn($initialState['game']['turn']);
         $game->setPlayUrl($initialState['playUrl']);
         $game->setViewUrl($initialState['viewUrl']);
@@ -32,14 +33,14 @@ class GameBuilder
         $game->setBoardSize($initialState['game']['board']['size']);
 
         $game->setHero($this->heroBuilder->buildHero($initialState['hero']));
-        $this->createRivalHeroes($game, $initialState['game']['heroes']);
+        $this->buildRivalHeroes($game, $initialState['game']['heroes']);
 
         $this->buildObjects($game, $this->getBoardMapArray($initialState));
 
         return $game;
     }
 
-    private function createRivalHeroes(Game $game, array $heroesData)
+    public function buildRivalHeroes(Game $game, array $heroesData)
     {
         foreach ($heroesData as $heroData) {
             $heroId = $heroData['id'];
@@ -54,7 +55,6 @@ class GameBuilder
 
     public function buildObjects(Game $game, array $mapData)
     {
-        print join(PHP_EOL, $mapData).PHP_EOL;
         $game->setBoardSize(count($mapData));
 
         foreach ($mapData as $x => $mapLine) {
@@ -71,11 +71,15 @@ class GameBuilder
                 if ('$' === $item[0]) {
                     $goldMine = new GoldMine($location);
                     $game->addGoldMine($goldMine);
+
+                    continue;
                 }
 
                 if ('[]' === $item) {
                     $tavern = new Tavern($location);
                     $game->addTavern($tavern);
+
+                    continue;
                 }
             }
         }
@@ -95,7 +99,7 @@ class GameBuilder
     private function updateRivalHeroes(Game $game, array $heroesData)
     {
         $heroes = $game->getRivalHeroes();
-        $this->createRivalHeroes($game, $heroesData);
+        $this->buildRivalHeroes($game, $heroesData);
 
         foreach ($heroesData as $heroData) {
             $rivalHeroId = $heroData['id'];

@@ -2,10 +2,14 @@
 
 namespace App\Model;
 
+use App\Model\Game\GoldMine;
 use App\Model\Game\Hero;
+use App\Model\Game\Tavern;
 
 interface GameInterface
 {
+    public function getId(): string ;
+
     public function getTurn(): int;
 
     public function isFinished(): bool;
@@ -20,10 +24,19 @@ interface GameInterface
 
     public function getHero(): Hero;
 
+    /**
+     * @return Hero[]
+     */
     public function getRivalHeroes(): LocationAwareListInterface;
 
+    /**
+     * @return GoldMine[]
+     */
     public function getGoldMines(): LocationAwareListInterface;
 
+    /**
+     * @return Tavern[]
+     */
     public function getTaverns(): LocationAwareListInterface;
 
     /**

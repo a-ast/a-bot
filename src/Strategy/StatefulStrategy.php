@@ -191,8 +191,6 @@ class StatefulStrategy implements StrategyInterface
             $pathLengths[count($path)] = $item;
         }
 
-
-
         ksort($pathLengths);
         reset($pathLengths);
 
@@ -202,4 +200,8 @@ class StatefulStrategy implements StrategyInterface
         $this->state = $finalState;
     }
 
+    public function getCurrentAnalysis(): array
+    {
+        return [];
+    }
 }

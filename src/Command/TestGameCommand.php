@@ -4,9 +4,7 @@ namespace App\Command;
 
 use App\Game\GameBuilder;
 use App\Model\Game\Game;
-use App\Model\Game\GoldMine;
 use App\Model\Game\Hero;
-use App\Model\Location\Location;
 use App\Strategy\StrategyInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

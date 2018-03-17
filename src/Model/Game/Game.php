@@ -26,17 +26,17 @@ class Game implements GameInterface
     /**
      * @var bool
      */
-    private $finished;
+    private $finished = false;
 
     /**
      * @var string
      */
-    private $playUrl;
+    private $playUrl = '';
 
     /**
      * @var string
      */
-    private $viewUrl;
+    private $viewUrl = '';
 
     /**
      * @var LocationGraphInterface
@@ -66,12 +66,17 @@ class Game implements GameInterface
     /**
      * @var int
      */
-    private $turn;
+    private $turn = 0;
 
     /**
      * @var int
      */
-    private $boardSize;
+    private $boardSize = 0;
+
+    /**
+     * @var string
+     */
+    private $id = '';
 
     public function __construct()
     {
@@ -194,5 +199,15 @@ class Game implements GameInterface
     public function getBoardSize(): int
     {
         return $this->boardSize;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function setId(string $id): void
+    {
+        $this->id = $id;
     }
 }

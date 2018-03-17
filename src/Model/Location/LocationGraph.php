@@ -63,4 +63,9 @@ class LocationGraph implements LocationGraphInterface
 
         return in_array($to, $near);
     }
+
+    public function exists(string $location): bool
+    {
+        return isset($this->items[$location]);
+    }
 }

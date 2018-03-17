@@ -9,4 +9,6 @@ interface StrategyInterface
     public function initialize(GamePlayInterface $game);
 
     public function getNextLocation(): string;
+
+    public function getCurrentAnalysis(): array;
 }

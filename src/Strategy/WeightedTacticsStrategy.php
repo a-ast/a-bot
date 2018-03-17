@@ -32,6 +32,11 @@ class WeightedTacticsStrategy implements StrategyInterface
      */
     private $tactics;
 
+    /**
+     * @var array
+     */
+    private $analysis;
+
     public function __construct(PathFinderInterface $pathFinder, array $tactics)
     {
         $this->pathFinder = $pathFinder;
@@ -48,8 +53,6 @@ class WeightedTacticsStrategy implements StrategyInterface
 
     public function getNextLocation(): string
     {
-        $locationPrioritizer = new LocationPrioritizer();
-
         $heroLocation = $this->hero->getLocation();
         $nearLocations = $this->game->getMap()->getNearLocations($heroLocation);
 
@@ -58,22 +61,23 @@ class WeightedTacticsStrategy implements StrategyInterface
             [$heroLocation]);
 
         $weightDebugger = [];
+        $locationPrioritizer = new LocationPrioritizer();
 
         foreach ($possibleNearLocations as $nearLocation) {
 
             $weights = $this->getLocationWeights($nearLocation);
-
             $weightDebugger[$nearLocation] = $weights;
 
             $locationPrioritizer->add($nearLocation, array_sum($weights));
         }
 
-        $this->dumpWeights($weightDebugger);
-
-        $locationPrioritizer->dump('Select location');
         $selectedLocation = $locationPrioritizer->getWithMaxPriority()->getLocation();
-
         $nextLocation = $this->pathFinder->getNextLocation($heroLocation, $selectedLocation);
+
+        $this->analysis = [
+            'weights' => $weightDebugger,
+            'locations' => $locationPrioritizer->toArray(),
+        ];
 
         return $nextLocation;
     }
@@ -147,5 +151,10 @@ class WeightedTacticsStrategy implements StrategyInterface
         }
 
         return $possibleNearLocations;
+    }
+
+    public function getCurrentAnalysis(): array
+    {
+        return $this->analysis;
     }
 }

@@ -87,26 +87,26 @@ class TournamentGame
 
         $game = $this->gameBuilder->buildGame($initialStateData);
 
+        $this->gameDumper->dumpInitialState($game);
+
+        $this->progressNotifier->notify($game->getViewUrl(), $this->gameDumper->getFilePath($game));
         $playUrl = $game->getPlayUrl();
-        $this->progressNotifier->openUrl($game->getViewUrl());
 
         $this->strategy->initialize($game->getGamePlay());
 
         while (false === $game->isFinished()) {
 
-            print '['. $game->getTurn() .']'.PHP_EOL;
-            print $this->gameDumper->dumpHero($game->getHero()) . PHP_EOL;
-            print $this->gameDumper->dumpHeroes($game) . PHP_EOL;
-
             $nextLocation = $this->strategy->getNextLocation();
-
-
             $direction = $compass->getDirectionTo($game->getHero()->getLocation(), $nextLocation);
 
-            print $direction.PHP_EOL.PHP_EOL;
+            $strategyResults = array_merge($this->strategy->getCurrentAnalysis() ,[
+                'nextLocation' => $nextLocation,
+                'direction' => $direction,
+            ]);
+
+            $this->gameDumper->dumpTurn($game, $strategyResults);
 
             $newState = $this->apiClient->playMove($apiKey, $playUrl, $direction);
-
             $this->gameBuilder->updateGame($game, $newState);
         }
     }
