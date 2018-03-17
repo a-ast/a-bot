@@ -24,9 +24,17 @@ class HeroBuilder
 
     public function updateHero(Hero $hero, array $data)
     {
-        $hero->setLifePoints($data['life']);
-        $hero->setGoldPoints($data['gold']);
-        $hero->setCrashed($data['crashed']);
+        if (isset($data['life'])) {
+            $hero->setLifePoints($data['life']);
+        }
+
+        if (isset($data['gold'])) {
+            $hero->setGoldPoints($data['gold']);
+        }
+
+        if (isset($data['crashed'])) {
+            $hero->setCrashed($data['crashed']);
+        }
 
         $newLocation = Location::getLocation($data['pos']['x'], $data['pos']['y']);
 

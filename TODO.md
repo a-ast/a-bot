@@ -1,8 +1,8 @@
 # TODO
 
 ### Plan
-1. GameRecorder - store Game to file
-2. GameRestorer - load any step
+1. GameRestorer - load any step
+1. PROBLEM: take god has same value as on hero position
 
 ### NEW Ideas
 

@@ -29,7 +29,7 @@ class TakeGoldTactic extends AbstractWeightedTactic
 
             $goal = $game->getGameObjectAt($source);
 
-            if ($goal->getHeroId() !== $game->getHero()->getId()) {
+            if ($goal->getHeroId() === $game->getHero()->getId()) {
                 $source = $game->getHero()->getLocation();
             }
         }

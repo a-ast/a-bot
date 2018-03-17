@@ -34,11 +34,11 @@ class WatchPathFinderCommand extends Command
 
     /**
      */
-    public function __construct(GameBuilder $gameBuilder)
+    public function __construct(GameBuilder $gameLoader)
     {
         parent::__construct();
 
-        $this->gameBuilder = $gameBuilder;
+        $this->gameBuilder = $gameLoader;
     }
 
     protected function configure()

@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Game\GameBuilder;
+use App\Game\GameLoader;
 use App\Model\Game\Game;
 use App\Model\Game\Hero;
 use App\Strategy\StrategyInterface;
@@ -18,15 +19,15 @@ class TestGameCommand extends Command
     private $strategy;
 
     /**
-     * @var \App\Game\GameBuilder
+     * @var GameLoader
      */
-    private $gameBuilder;
+    private $gameLoader;
 
-    public function __construct(GameBuilder $gameBuilder, StrategyInterface $strategy)
+    public function __construct(GameLoader $gameLoader, StrategyInterface $strategy)
     {
         parent::__construct();
 
-        $this->gameBuilder = $gameBuilder;
+        $this->gameLoader = $gameLoader;
         $this->strategy = $strategy;
     }
 
@@ -34,54 +35,21 @@ class TestGameCommand extends Command
     {
         $this
             ->setName('a-bot:test')
+            ->addArgument('path')
+            ->addArgument('turn')
         ;
     }
 
+    /**
+     * @throws \App\Exceptions\GameException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $mapData = file(__DIR__ . '/Map/a12.map', FILE_IGNORE_NEW_LINES);
-
-        $maxWidth = max(array_map('strlen', $mapData));
-        $mapData = array_map(function($item) use ($maxWidth) { return str_pad($item, $maxWidth); }, $mapData);
-
-        $game = new Game();
-        $this->gameBuilder->buildObjects($game, $mapData);
-
+        $game = $this->gameLoader->loadFromFile($input->getArgument('path'), $input->getArgument('turn'));
         $this->strategy->initialize($game->getGamePlay());
 
-        $hero = $game->getHero();
-        $hero->setLocation('1:7');
-        $hero->setLifePoints(1);
-        $hero->setGoldPoints(130);
+        $next = $this->strategy->getNextLocation();
 
-        $rival = new Hero(2, 'Ayvengo', '6:0', '0:0');
-        $rival->setLifePoints(80);
-        $rival->setGoldPoints(10);
-        $game->addRivalHero($rival);
-
-        $game->getGoldMines()->get('3:9')->setHeroId(1);
-        $game->getGoldMines()->get('3:10')->setHeroId(1);
-
-
-        $turns = 10;
-        $currentTurn = 0;
-
-
-        do {
-            print 'Hero: '. $game->getHero()->getLocation().PHP_EOL;
-
-            $next = $this->strategy->getNextLocation();
-
-            if ($game->getGamePlay()->isGameObjectAt($next)) {
-                $next = $game->getHero()->getLocation();
-            }
-
-            $hero->setLocation($next);
-
-            print $game->getHero()->getLocation().' -> '.$next.PHP_EOL;
-
-            $currentTurn++;
-
-        } while ($currentTurn <= $turns);
+        print $next;
     }
 }

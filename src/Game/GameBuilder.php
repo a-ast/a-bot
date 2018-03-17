@@ -32,15 +32,25 @@ class GameBuilder
         $game->setFinished($initialState['game']['finished']);
         $game->setBoardSize($initialState['game']['board']['size']);
 
-        $game->setHero($this->heroBuilder->buildHero($initialState['hero']));
-        $this->buildRivalHeroes($game, $initialState['game']['heroes']);
+        $this->buildHeroes($game, $initialState['hero'], $initialState['game']['heroes']);
 
         $this->buildObjects($game, $this->getBoardMapArray($initialState));
 
         return $game;
     }
 
-    public function buildRivalHeroes(Game $game, array $heroesData)
+    public function buildHeroes(Game $game, array $heroData, array $heroesData)
+    {
+        $this->buildHero($game, $heroData);
+        $this->buildRivalHeroes($game, $heroesData);
+    }
+
+    private function buildHero(Game $game, array $data): void
+    {
+        $game->setHero($this->heroBuilder->buildHero($data));
+    }
+
+    private function buildRivalHeroes(Game $game, array $heroesData)
     {
         foreach ($heroesData as $heroData) {
             $heroId = $heroData['id'];
@@ -90,16 +100,20 @@ class GameBuilder
         $game->setTurn($state['game']['turn']);
         $game->setFinished($state['game']['finished']);
 
-        $this->heroBuilder->updateHero($game->getHero(), $state['hero']);
-        $this->updateRivalHeroes($game, $state['game']['heroes']);
+        $this->updatedHeroes($game, $state['hero'], $state['game']['heroes']);
+        $this->updateGoldMineOwningFromMap($game, $this->getBoardMapArray($state));
+    }
 
-        $this->updateGoldMineOwning($game, $this->getBoardMapArray($state));
+    public function updatedHeroes(Game $game, array $heroData, array $heroesData)
+    {
+        $this->heroBuilder->updateHero($game->getHero(), $heroData);
+        $this->updateRivalHeroes($game, $heroesData);
     }
 
     private function updateRivalHeroes(Game $game, array $heroesData)
     {
         $heroes = $game->getRivalHeroes();
-        $this->buildRivalHeroes($game, $heroesData);
+        //$this->buildRivalHeroes($game, $heroesData);
 
         foreach ($heroesData as $heroData) {
             $rivalHeroId = $heroData['id'];
@@ -113,7 +127,7 @@ class GameBuilder
         $heroes->updateLocations();
     }
 
-    public function updateGoldMineOwning(Game $game, array $mapData)
+    public function updateGoldMineOwningFromMap(Game $game, array $mapData)
     {
         foreach ($mapData as $x => $mapLine) {
             $items = str_split($mapLine, 2);
@@ -130,6 +144,13 @@ class GameBuilder
                 $heroId = ('-' === $item[1]) ? 0 : (int)$item[1];
                 $goldMine->setHeroId($heroId);
             }
+        }
+    }
+
+    public function updateGoldMineOwningFromList(Game $game, array $ownerList)
+    {
+        foreach ($ownerList as $location => $ownerId) {
+            $game->getGoldMines()->get($location)->setHeroId($ownerId);
         }
     }
 
