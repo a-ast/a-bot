@@ -22,10 +22,15 @@ services:
         arguments:
             - '@App\PathFinder\FloydWarshallAlgorithm'
             -
-                'take gold': '@App\Strategy\WeightedTactic\TakeGoldTactic'
-                'take beer': '@App\Strategy\WeightedTactic\TakeBeerTactic'
-                'attack hero': '@App\Strategy\WeightedTactic\AttackWeakHeroTactic'
-                'avoid hero': '@App\Strategy\WeightedTactic\AvoidStrongHeroTactic'
+                'take near gold': '@App\Strategy\WeightedTactic\TakeNearGoldTactic'
+                'find gold':      '@App\Strategy\WeightedTactic\FindGoldTactic'
+
+                'take near beer': '@App\Strategy\WeightedTactic\TakeNearTavernTactic'
+                'find tavern':    '@App\Strategy\WeightedTactic\FindTavernTactic'
+
+                'attack hero':    '@App\Strategy\WeightedTactic\AttackWeakHeroTactic'
+                'find hero':      '@App\Strategy\WeightedTactic\FindWeakHeroTactic'
+                'avoid hero':     '@App\Strategy\WeightedTactic\AvoidStrongHeroTactic'
 
     App\Strategy\StrategyProvider:
         arguments:

@@ -8,6 +8,7 @@ use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RunArenaCommand extends Command
@@ -36,6 +37,7 @@ class RunArenaCommand extends Command
             ->setName('a-bot:arena')
             ->addArgument('api-key', InputArgument::REQUIRED)
             ->addArgument('strategy', InputArgument::REQUIRED)
+            ->addOption('dump', 'd', InputOption::VALUE_NONE)
         ;
     }
 
@@ -44,12 +46,15 @@ class RunArenaCommand extends Command
         $strategyAlias = $input->getArgument('strategy');
         $this->game->setStrategy($this->strategyProvider->getByAlias($strategyAlias));
 
-        try {
-            $this->game->executeArena($input->getArgument('api-key'));
-        } catch (Exception $exception) {
-            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
+//        try {
 
-            return $exception->getCode();
-        }
+            $dumpEnabled = $input->getOption('dump');
+
+            $this->game->executeArena($input->getArgument('api-key'), $dumpEnabled);
+//        } catch (Exception $exception) {
+//            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
+//
+//            return $exception->getCode();
+//        }
     }
 }

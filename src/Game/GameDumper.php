@@ -10,6 +10,9 @@ use Symfony\Component\Yaml\Yaml;
 
 class GameDumper
 {
+    const GAME_MODE_ARENA = 'arena';
+    const GAME_MODE_TRAINING = 'training';
+
     /**
      * @var string
      */
@@ -20,11 +23,21 @@ class GameDumper
      */
     private $time;
 
+    /**
+     * @var string
+     */
+    private $mode;
+
     public function __construct(string $gameFilesPath)
     {
         $this->basePath = $gameFilesPath;
 
         $this->time = new DateTimeImmutable();
+    }
+
+    public function setMode(string $mode)
+    {
+        $this->mode = $mode;
     }
 
     public function dumpInitialState(GameInterface $game)
@@ -158,6 +171,6 @@ class GameDumper
             $game->getId()
         );
 
-        return $this->basePath . $fileName . '.yaml';
+        return $this->basePath . $this->mode . '/' . $fileName . '.yaml';
     }
 }

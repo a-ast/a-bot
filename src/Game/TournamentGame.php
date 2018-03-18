@@ -56,38 +56,41 @@ class TournamentGame
      * @throws \App\Exceptions\GameException
      * @throws \Exception
      */
-    public function executeTraining(string $apiKey, int $turnCount = null, $mapName = null)
+    public function executeTraining(string $apiKey, int $turnCount = null, $mapName = null, bool $dumpGame = false)
     {
+        $this->gameDumper->setMode(GameDumper::GAME_MODE_TRAINING);
+
         $initialStateData = $this->apiClient->createTraining($apiKey, $turnCount, $mapName);
 
-        $this->execute($apiKey, $initialStateData);
+        $this->execute($apiKey, $initialStateData, $dumpGame);
     }
 
     /**
      * @throws \App\Exceptions\GameException
      * @throws \Exception
      */
-    public function executeArena(string $apiKey)
+    public function executeArena(string $apiKey, bool $dumpGame = false)
     {
+        $this->gameDumper->setMode(GameDumper::GAME_MODE_ARENA);
+
         $initialStateData = $this->apiClient->createArena($apiKey);
 
-        $this->execute($apiKey, $initialStateData);
+        $this->execute($apiKey, $initialStateData, $dumpGame);
     }
 
     /**
-     * @param string $apiKey
-     * @param $initialStateData
-     *
      * @throws \App\Exceptions\GameException
      * @throws \Exception
      */
-    private function execute(string $apiKey, $initialStateData): void
+    private function execute(string $apiKey, array $initialStateData, bool $dumpGame = false): void
     {
         $compass = new Compass();
 
         $game = $this->gameBuilder->buildGame($initialStateData);
 
-        $this->gameDumper->dumpInitialState($game);
+        if ($dumpGame) {
+            $this->gameDumper->dumpInitialState($game);
+        }
 
         $this->progressNotifier->notify($game->getViewUrl(), $this->gameDumper->getFilePath($game));
         $playUrl = $game->getPlayUrl();
@@ -104,7 +107,9 @@ class TournamentGame
                 'direction' => $direction,
             ]);
 
-            $this->gameDumper->dumpTurn($game, $strategyResults);
+            if ($dumpGame) {
+                $this->gameDumper->dumpTurn($game, $strategyResults);
+            }
 
             $newState = $this->apiClient->playMove($apiKey, $playUrl, $direction);
             $this->gameBuilder->updateGame($game, $newState);

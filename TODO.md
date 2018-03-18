@@ -1,8 +1,8 @@
 # TODO
 
 ### Plan
-1. GameRestorer - load any step
-1. PROBLEM: take god has same value as on hero position
+1. Check if algorithm faster if not building next steps array
+
 
 ### NEW Ideas
 

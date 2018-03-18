@@ -129,46 +129,32 @@ class GamePlay implements GamePlayInterface
         throw new GamePlayException(sprintf('No object at %s', $location));
     }
 
-    /**
-     * @throws GamePlayException
-     */
     public function isGoldMine(string $location): bool
     {
-        if (false === $this->isGameObjectAt($location)) {
+        return $this->game->getGoldMines()->exists($location);
+    }
+
+    public function isGoldMineOfHero(string $location): bool
+    {
+        if (false === $this->isGoldMine($location)) {
             return false;
         }
 
-        $goal = $this->getGameObjectAt($location);
+        $goal = $this->getGoldMines()->get($location);
 
-        return ($goal instanceof GoldMine);
+        return
+            ($goal instanceof GoldMine) &&
+            ($goal->getHeroId() === $this->getHero()->getId());
     }
 
-    /**
-     * @throws GamePlayException
-     */
     public function isTavern(string $location): bool
     {
-        if (false === $this->isGameObjectAt($location)) {
-            return false;
-        }
-
-        $goal = $this->getGameObjectAt($location);
-
-        return ($goal instanceof Tavern);
+        return $this->game->getTaverns()->exists($location);
     }
 
-    /**
-     * @throws GamePlayException
-     */
-    public function isHero(string $location): bool
+    public function isRivalHero(string $location): bool
     {
-        if (false === $this->isGameObjectAt($location)) {
-            return false;
-        }
-
-        $goal = $this->getGameObjectAt($location);
-
-        return ($goal instanceof Hero);
+        return $this->game->getRivalHeroes()->exists($location);
     }
 
     public function getBoardSize(): int

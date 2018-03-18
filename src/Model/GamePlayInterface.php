@@ -58,9 +58,11 @@ interface GamePlayInterface
 
     public function isGoldMine(string $location): bool;
 
+    public function isGoldMineOfHero(string $location): bool;
+
     public function isTavern(string $location): bool;
 
-    public function isHero(string $location): bool;
+    public function isRivalHero(string $location): bool;
 
     public function getBoardSize(): int;
 }

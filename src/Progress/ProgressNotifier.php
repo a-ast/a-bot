@@ -13,8 +13,8 @@ class ProgressNotifier
         $tailCommad = 'tab "tail -f '.$gameFilePath.'"';
         print $tailCommad. PHP_EOL;
 
-        $process = new Process('open '.$url);
-        $process->start();
+//        $process = new Process('open '.$url);
+//        $process->start();
 
         $process = new Process($tailCommad);
         $process->start();
