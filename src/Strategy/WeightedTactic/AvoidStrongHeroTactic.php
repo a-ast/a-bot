@@ -39,6 +39,10 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
 
         $weight = $totalWeight/$goalCount;
 
+        // @todo: if weight > 0, track it
+        // if zero, flush counter
+        // if 3-4 time avoiding, check if it makes sense and disable avoiding
+
         return $weight;
     }
 

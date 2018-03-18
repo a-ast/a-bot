@@ -13,7 +13,10 @@ class TakeNearGoldTactic extends AbstractWeightedTactic
 {
     public function getWeight(GamePlayInterface $game, string $location): int
     {
-        if ($game->getHero()->getLifePoints() <= 21) {
+        if ($game->isGoldMine($location) &&
+            $game->isGoldMineOfHero($location) &&
+            $game->getHero()->getLifePoints() <= 21) {
+
             return -1000;
         }
 

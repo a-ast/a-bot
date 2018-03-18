@@ -101,59 +101,18 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         foreach ($this->tactics as $tacticName => $tactic) {
 
+            $applicableLocation = $location;
+
             if (false === $tactic->isApplicableLocation($this->game, $location)) {
-                $location = $this->hero->getLocation();
+                $applicableLocation = $this->hero->getLocation();
             }
 
             $weights[$tacticName] =
                 $coefficients[$tacticName] *
-                $tactic->getWeight($this->game, $location);
+                $tactic->getWeight($this->game, $applicableLocation);
         }
 
         return $weights;
-    }
-
-    private function dumpWeights(array $weights)
-    {
-        $text = PHP_EOL;
-
-        foreach ($weights as $location => $tactics) {
-            $text .= $location .PHP_EOL;
-            foreach ($tactics as $tacticName => $weight) {
-                $text .= sprintf('    %s - %d', $tacticName, $weight).PHP_EOL;
-            }
-        }
-
-        print $text;
-    }
-
-    private function getPossibleNearLocations(array $nearLocations): array
-    {
-        $possibleNearLocations = [];
-
-        foreach ($nearLocations as $location) {
-
-            if (false === $this->game->isGameObjectAt($location)) {
-                $possibleNearLocations[] = $location;
-                continue;
-            }
-
-            $goal = $this->game->getGameObjectAt($location);
-
-            if ($goal instanceof GoldMine) {
-                if ($goal->getHeroId() === $this->hero->getId()) {
-                    continue;
-                }
-
-                if ($this->hero->getLifePoints() <= 21) {
-                    continue;
-                }
-            }
-
-            $possibleNearLocations[] = $location;
-        }
-
-        return $possibleNearLocations;
     }
 
     public function getCurrentAnalysis(): array

@@ -2,7 +2,9 @@
 
 ### Plan
 1. Check if algorithm faster if not building next steps array
-
+1. Optimize for symmetric maps
+1. VERY IMPORTANT: smarter avoiding in case you have no gold or iw weker than anybody
+1.1 Track iv avoiding wins? How for 3-4 steps and then disable it
 
 ### NEW Ideas
 
