@@ -8,29 +8,21 @@ use App\Model\Game\GoldMine;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 
-class TakeBeerTactic extends AbstractWeightedTactic
+class FindTavernTactic extends AbstractWeightedTactic
 {
-    /**
-     * @throws StrategyException
-     */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
-        if ($game->getHero()->getLifePoints() > 95) {
+        if ($game->getHero()->getLifePoints() > 80) {
             return 0;
         }
 
         $totalWeight = 0;
-
         $source = $location;
-
-//        if ($game->isTavern($source)) {
-//            $source = $game->getHero()->getLocation();
-//        }
 
         $goalCount = 0;
         foreach ($game->getTaverns() as $goal) {
             $distanceToGoal = $this->getDistanceToGoal($source, $goal);
-            $totalWeight += 1000 * (1/ $distanceToGoal);
+            $totalWeight += 1000 * (1 / ($distanceToGoal + 1));
             $goalCount++;
         }
 
@@ -45,8 +37,7 @@ class TakeBeerTactic extends AbstractWeightedTactic
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return
-            (false === $game->isGoldMine($location)) &&
-            (false === $game->isHero($location));
+        // only by the road
+        return (false === $game->isGameObjectAt($location));
     }
 }

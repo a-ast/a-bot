@@ -9,41 +9,24 @@ use App\Model\Game\Tavern;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 
-class TakeGoldTactic extends AbstractWeightedTactic
+class FindGoldTactic extends AbstractWeightedTactic
 {
-
-    /**
-     * @throws StrategyException
-     */
     public function getWeight(GamePlayInterface $game, string $location): int
     {
-
         $totalWeight = 0;
-
-        $source = $location;
-
-
-        // process state when you stay near goldmine
-
-        if ($game->isGoldMine($source)) {
-
-            $goal = $game->getGameObjectAt($source);
-
-            if ($goal->getHeroId() === $game->getHero()->getId()) {
-                $source = $game->getHero()->getLocation();
-            }
-        }
-
         $goalCount = 0;
+
         foreach ($game->getForeignGoldMines() as $goal) {
 
-            $distanceToGoal = $this->getDistanceToGoal($source, $goal);
+            $distanceToGoal = $this->getDistanceToGoal($location, $goal);
 
             if ($game->getHero()->getLifePoints() - $distanceToGoal <= 21) {
                 continue;
             }
 
-            $totalWeight += 1000 * (1/ $distanceToGoal);
+            // plus one to avoid dividing by zero
+            $totalWeight += 1000 * (1 / ($distanceToGoal + 1));
+
             $goalCount++;
         }
 
@@ -58,10 +41,6 @@ class TakeGoldTactic extends AbstractWeightedTactic
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return
-            //($game->getHero()->getLifePoints() >= 21) &&
-            (false === $game->isHero($location)) &&
-            (false === $game->isTavern($location))
-        ;
+        return (false === $game->isGameObjectAt($location));
     }
 }

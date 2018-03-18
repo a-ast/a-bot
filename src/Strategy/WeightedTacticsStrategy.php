@@ -56,9 +56,7 @@ class WeightedTacticsStrategy implements StrategyInterface
         $heroLocation = $this->hero->getLocation();
         $nearLocations = $this->game->getMap()->getNearLocations($heroLocation);
 
-        $possibleNearLocations = array_merge(
-            $this->getPossibleNearLocations($nearLocations),
-            [$heroLocation]);
+        $possibleNearLocations = array_merge($nearLocations, [$heroLocation]);
 
         $weightDebugger = [];
         $locationPrioritizer = new LocationPrioritizer();
@@ -90,10 +88,15 @@ class WeightedTacticsStrategy implements StrategyInterface
         $weights = [];
 
         $coefficients = [
-            'take gold' => 1001,
-            'take beer' => 1000,
-            'attack hero' => 999,
-            'avoid hero' => 1100,
+            'take near gold' => 1020,
+            'find gold' => 1010,
+
+            'take near beer' => 1000,
+            'find tavern' => 990,
+
+            'attack hero' => 980,
+            'find hero' => 970,
+            'avoid hero' => 965,
         ];
 
         foreach ($this->tactics as $tacticName => $tactic) {

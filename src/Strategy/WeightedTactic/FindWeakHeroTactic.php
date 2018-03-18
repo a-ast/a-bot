@@ -3,13 +3,10 @@
 namespace App\Strategy\WeightedTactic;
 
 use App\Exceptions\StrategyException;
-use App\Model\Exceptions\GamePlayException;
-use App\Model\Game\GoldMine;
-use App\Model\Game\Tavern;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 
-class AvoidStrongHeroTactic extends AbstractWeightedTactic
+class FindWeakHeroTactic extends AbstractWeightedTactic
 {
     public function getWeight(GamePlayInterface $game, string $location): int
     {
@@ -18,18 +15,17 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
 
         foreach ($game->getRivalHeroes() as $goal) {
 
-            if ($goal->getLifePoints() < $game->getHero()->getLifePoints()) {
+            if (0 === $game->getGoldMinesOf($goal->getId())->count()) {
+                continue;
+            }
+
+            if ($goal->getLifePoints() >= $game->getHero()->getLifePoints()) {
                 continue;
             }
 
             $distanceToGoal = $this->getDistanceToGoal($location, $goal);
 
-            if ($distanceToGoal > 4) {
-                continue;
-            }
-
-            $totalWeight += 1000 - 1000 * (1 / ($distanceToGoal + 1));
-
+            $totalWeight += 1000 * (1 / ($distanceToGoal + 1));
             $goalCount++;
         }
 
@@ -37,15 +33,14 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
             return 0;
         }
 
-        $weight = $totalWeight/$goalCount;
+        $weight = $totalWeight / $goalCount;
 
         return $weight;
+
     }
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return
-            (false === $game->isGoldMine($location)) &&
-            (false === $game->isTavern($location));
+        return (false === $game->isGameObjectAt($location));
     }
 }
