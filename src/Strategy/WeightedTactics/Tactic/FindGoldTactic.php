@@ -7,21 +7,33 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class FindGoldTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
     {
         $totalWeight = 0;
         $goalCount = 0;
+
 
         foreach ($game->getForeignGoldMines() as $goal) {
 
             $distanceToGoal = $this->getDistanceToGoal($location, $goal);
 
+            // this is that gold
+            if (1 === $distanceToGoal && $isFallbackToHeroLocation) {
+                // @todo: really exclude?
+                continue;
+            }
+
+            // if it is another object then distance will be one more step
+            if ($isFallbackToHeroLocation) {
+                $distanceToGoal++;
+            }
+
             if ($game->getHero()->getLifePoints() - $distanceToGoal <= 21) {
                 continue;
             }
 
-            // plus one to avoid dividing by zero
-            $totalWeight += 1000 * (1 / ($distanceToGoal + 1));
+            $k = 0.5;
+            $totalWeight += 1000 * (1 / ($k * ($distanceToGoal + 1)));
 
             $goalCount++;
         }
@@ -37,6 +49,6 @@ class FindGoldTactic extends AbstractWeightedTactic
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return (false === $game->isGameObjectAt($location));
+        return $game->isWalkableAt($location);
     }
 }

@@ -8,15 +8,10 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class AttackWeakHeroTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
     {
-        if (false === $game->isRivalHero($location)) {
-            return 0;
-        }
-
         /** @var Hero $rivalHero */
         $rivalHero = $game->getRivalHeroes()->get($location);
-
 
         if (
             // if this hero has some gold mines
@@ -24,7 +19,8 @@ class AttackWeakHeroTactic extends AbstractWeightedTactic
             // if he is weaker
             ($rivalHero->getLifePoints() >= $game->getHero()->getLifePoints())) {
 
-            return -1000;
+            // return -1000;
+            return 0;
         }
 
         return 1000;
@@ -33,8 +29,6 @@ class AttackWeakHeroTactic extends AbstractWeightedTactic
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return
-            (false === $game->isGoldMine($location)) &&
-            (false === $game->isTavern($location));
+        return $game->isRivalHero($location);
     }
 }

@@ -7,7 +7,7 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class AvoidStrongHeroTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
     {
         $totalWeight = 0;
         $goalCount = 0;
@@ -24,7 +24,13 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
                 continue;
             }
 
-            $totalWeight += 1000 - 1000 * (1 / ($distanceToGoal + 1));
+            // if it is another object then distance will be one more step
+            if ($isFallbackToHeroLocation) {
+                $distanceToGoal++;
+            }
+
+            $k = 0.5;
+            $totalWeight += 1000 - 1000 * (1 / ($k * ($distanceToGoal + 1)));
 
             $goalCount++;
         }
@@ -44,8 +50,6 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return
-            (false === $game->isGoldMine($location)) &&
-            (false === $game->isTavern($location));
+        return $game->isWalkableAt($location);
     }
 }

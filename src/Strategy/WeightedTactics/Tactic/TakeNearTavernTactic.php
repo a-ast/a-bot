@@ -7,21 +7,19 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class TakeNearTavernTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
     {
         if ($game->getHero()->getLifePoints() > 80) {
             return 0;
         }
 
-        $weight = $game->isTavern($location) ? 1000 : 0;
+        $weight = 1000;
 
         return $weight;
     }
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return
-            (false === $game->isGoldMine($location)) &&
-            (false === $game->isRivalHero($location));
+        return $game->isTavern($location);
     }
 }

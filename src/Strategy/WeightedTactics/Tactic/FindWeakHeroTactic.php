@@ -7,7 +7,7 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class FindWeakHeroTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
     {
         $totalWeight = 0;
         $goalCount = 0;
@@ -22,9 +22,23 @@ class FindWeakHeroTactic extends AbstractWeightedTactic
                 continue;
             }
 
+
+
             $distanceToGoal = $this->getDistanceToGoal($location, $goal);
 
-            $totalWeight += 1000 * (1 / ($distanceToGoal + 1));
+            // this is that hero
+            if (1 === $distanceToGoal && $isFallbackToHeroLocation) {
+                // @todo: really exclude?
+                continue;
+            }
+
+            // if it is another object then distance will be one more step
+            if ($isFallbackToHeroLocation) {
+                $distanceToGoal++;
+            }
+
+            $k = 0.5;
+            $totalWeight += 1000 * $k * (1 / ($distanceToGoal + 1));
             $goalCount++;
         }
 
@@ -40,6 +54,6 @@ class FindWeakHeroTactic extends AbstractWeightedTactic
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool
     {
-        return (false === $game->isGameObjectAt($location));
+        return $game->isWalkableAt($location);
     }
 }

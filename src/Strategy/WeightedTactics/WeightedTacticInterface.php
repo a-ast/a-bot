@@ -6,7 +6,7 @@ use App\Model\GamePlayInterface;
 
 interface WeightedTacticInterface
 {
-    public function getWeight(GamePlayInterface $game, string $location): int;
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int;
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool;
 

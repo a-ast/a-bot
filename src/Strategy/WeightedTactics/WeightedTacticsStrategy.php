@@ -61,7 +61,7 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         foreach ($possibleNearLocations as $nearLocation) {
 
-            $weights = $this->getLocationWeights($nearLocation);
+            $weights = $this->getTotalLocationWeights($nearLocation);
             $weightDebugger[$nearLocation] = $weights;
 
             $locationPrioritizer->add($nearLocation, array_sum($weights));
@@ -81,8 +81,9 @@ class WeightedTacticsStrategy implements StrategyInterface
     /**
      * @return int[]
      */
-    private function getLocationWeights(string $location): array
+    private function getTotalLocationWeights(string $location): array
     {
+
         $weights = [];
 
         $coefficients = [
@@ -99,15 +100,9 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         foreach ($this->tactics as $tacticName => $tactic) {
 
-            $applicableLocation = $location;
+            $weight = $this->getLocationWeight($tactic, $location);
 
-            if (false === $tactic->isApplicableLocation($this->game, $location)) {
-                $applicableLocation = $this->hero->getLocation();
-            }
-
-            $weights[$tacticName] =
-                $coefficients[$tacticName] *
-                $tactic->getWeight($this->game, $applicableLocation);
+            $weights[$tacticName] = $coefficients[$tacticName] * $weight;
         }
 
         return $weights;
@@ -116,5 +111,20 @@ class WeightedTacticsStrategy implements StrategyInterface
     public function getCurrentAnalysis(): array
     {
         return $this->analysis;
+    }
+
+    private function getLocationWeight(WeightedTacticInterface $tactic, string $location): int
+    {
+        if ($tactic->isApplicableLocation($this->game, $location)) {
+            return $tactic->getWeight($this->game, $location, false);
+        }
+
+        $heroLocation = $this->hero->getLocation();
+
+        if ($tactic->isApplicableLocation($this->game, $heroLocation)) {
+            return $tactic->getWeight($this->game, $heroLocation, true);
+        }
+
+        return 0;
     }
 }
