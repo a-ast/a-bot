@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Strategy\WeightedTactic;
+namespace App\Strategy\WeightedTactics;
 
 use App\Model\GamePlayInterface;
 

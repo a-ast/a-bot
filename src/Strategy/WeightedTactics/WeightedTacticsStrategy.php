@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Strategy;
+namespace App\Strategy\WeightedTactics;
 
-use App\Model\Exceptions\GamePlayException;
-use App\Model\Game\GoldMine;
-use App\Model\Game\Tavern;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 use App\Model\Location\LocationPrioritizer;
 use App\PathFinder\PathFinderInterface;
+use App\Strategy\StrategyInterface;
 
 class WeightedTacticsStrategy implements StrategyInterface
 {
@@ -28,7 +26,7 @@ class WeightedTacticsStrategy implements StrategyInterface
     private $pathFinder;
 
     /**
-     * @var WeightedTactic\WeightedTacticInterface[]
+     * @var WeightedTacticInterface[]
      */
     private $tactics;
 

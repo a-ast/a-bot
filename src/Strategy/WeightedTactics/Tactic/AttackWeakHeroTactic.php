@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Strategy\WeightedTactic;
+namespace App\Strategy\WeightedTactics\Tactic;
 
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
+use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class AttackWeakHeroTactic extends AbstractWeightedTactic
 {

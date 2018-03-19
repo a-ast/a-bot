@@ -4,7 +4,12 @@
 1. Check if algorithm faster if not building next steps array
 1. Optimize for symmetric maps
 1. VERY IMPORTANT: smarter avoiding in case you have no gold or iw weker than anybody
-1.1 Track iv avoiding wins? How for 3-4 steps and then disable it
+1.1 Track if avoiding wins? How for 3-4 steps and then disable it
+
+#### New tactics
+1. low coeff: find potential gold or tavern without caring about LP
+1. Counter for staying and repetitive movements: disable or change winning tactic
+1. Tracking traps? HOW?
 
 ### NEW Ideas
 

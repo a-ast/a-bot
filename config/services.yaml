@@ -14,27 +14,27 @@ services:
         exclude: '../src/{Model,Exceptions,Tests,Kernel.php}'
 
     # App\Strategy\StrategyInterface: '@App\Strategy\TacticSetStrategy'
-    App\Strategy\StrategyInterface: '@App\Strategy\WeightedTacticsStrategy'
+    App\Strategy\StrategyInterface: '@App\Strategy\WeightedTactics\WeightedTacticsStrategy'
 
     App\PathFinder\PathFinderInterface: '@App\PathFinder\FloydWarshallAlgorithm'
 
-    App\Strategy\WeightedTacticsStrategy:
+    App\Strategy\WeightedTactics\WeightedTacticsStrategy:
         arguments:
             - '@App\PathFinder\FloydWarshallAlgorithm'
             -
-                'take near gold': '@App\Strategy\WeightedTactic\TakeNearGoldTactic'
-                'find gold':      '@App\Strategy\WeightedTactic\FindGoldTactic'
+                'take near gold': '@App\Strategy\WeightedTactics\Tactic\TakeNearGoldTactic'
+                'find gold':      '@App\Strategy\WeightedTactics\Tactic\FindGoldTactic'
 
-                'take near beer': '@App\Strategy\WeightedTactic\TakeNearTavernTactic'
-                'find tavern':    '@App\Strategy\WeightedTactic\FindTavernTactic'
+                'take near beer': '@App\Strategy\WeightedTactics\Tactic\TakeNearTavernTactic'
+                'find tavern':    '@App\Strategy\WeightedTactics\Tactic\FindTavernTactic'
 
-                'attack hero':    '@App\Strategy\WeightedTactic\AttackWeakHeroTactic'
-                'find hero':      '@App\Strategy\WeightedTactic\FindWeakHeroTactic'
-                'avoid hero':     '@App\Strategy\WeightedTactic\AvoidStrongHeroTactic'
+                'attack hero':    '@App\Strategy\WeightedTactics\Tactic\AttackWeakHeroTactic'
+                'find hero':      '@App\Strategy\WeightedTactics\Tactic\FindWeakHeroTactic'
+                'avoid hero':     '@App\Strategy\WeightedTactics\Tactic\AvoidStrongHeroTactic'
 
     App\Strategy\StrategyProvider:
         arguments:
             -
                 t: '@App\Strategy\TacticSetStrategy'
-                w: '@App\Strategy\WeightedTacticsStrategy'
+                w: '@App\Strategy\WeightedTactics\WeightedTacticsStrategy'
 

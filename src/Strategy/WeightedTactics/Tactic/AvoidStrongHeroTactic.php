@@ -1,13 +1,9 @@
 <?php
 
-namespace App\Strategy\WeightedTactic;
+namespace App\Strategy\WeightedTactics\Tactic;
 
-use App\Exceptions\StrategyException;
-use App\Model\Exceptions\GamePlayException;
-use App\Model\Game\GoldMine;
-use App\Model\Game\Tavern;
 use App\Model\GamePlayInterface;
-use App\Model\Game\Hero;
+use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class AvoidStrongHeroTactic extends AbstractWeightedTactic
 {

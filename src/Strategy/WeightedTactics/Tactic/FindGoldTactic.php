@@ -1,31 +1,28 @@
 <?php
 
-namespace App\Strategy\WeightedTactic;
+namespace App\Strategy\WeightedTactics\Tactic;
 
-use App\Exceptions\StrategyException;
 use App\Model\GamePlayInterface;
-use App\Model\Game\Hero;
+use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
-class FindWeakHeroTactic extends AbstractWeightedTactic
+class FindGoldTactic extends AbstractWeightedTactic
 {
     public function getWeight(GamePlayInterface $game, string $location): int
     {
         $totalWeight = 0;
         $goalCount = 0;
 
-        foreach ($game->getRivalHeroes() as $goal) {
-
-            if (0 === $game->getGoldMinesOf($goal->getId())->count()) {
-                continue;
-            }
-
-            if ($goal->getLifePoints() >= $game->getHero()->getLifePoints()) {
-                continue;
-            }
+        foreach ($game->getForeignGoldMines() as $goal) {
 
             $distanceToGoal = $this->getDistanceToGoal($location, $goal);
 
+            if ($game->getHero()->getLifePoints() - $distanceToGoal <= 21) {
+                continue;
+            }
+
+            // plus one to avoid dividing by zero
             $totalWeight += 1000 * (1 / ($distanceToGoal + 1));
+
             $goalCount++;
         }
 
@@ -33,10 +30,9 @@ class FindWeakHeroTactic extends AbstractWeightedTactic
             return 0;
         }
 
-        $weight = $totalWeight / $goalCount;
+        $weight = $totalWeight/$goalCount;
 
         return $weight;
-
     }
 
     public function isApplicableLocation(GamePlayInterface $game, string $location): bool

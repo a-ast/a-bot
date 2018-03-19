@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Strategy\WeightedTactic;
+namespace App\Strategy\WeightedTactics\Tactic;
 
 use App\Model\GamePlayInterface;
+use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class TakeNearTavernTactic extends AbstractWeightedTactic
 {
