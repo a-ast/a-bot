@@ -64,5 +64,7 @@ interface GamePlayInterface
 
     public function isRivalHero(string $location): bool;
 
+    public function isWalkableAt(string $location): bool;
+
     public function getBoardSize(): int;
 }

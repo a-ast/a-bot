@@ -161,4 +161,9 @@ class GamePlay implements GamePlayInterface
     {
         return $this->game->getBoardSize();
     }
+
+    public function isWalkableAt(string $location): bool
+    {
+        return false === $this->isGameObjectAt($location);
+    }
 }
