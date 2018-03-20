@@ -12,28 +12,15 @@ class FindGoldTactic extends AbstractWeightedTactic
         $totalWeight = 0;
         $goalCount = 0;
 
-
         foreach ($game->getForeignGoldMines() as $goal) {
 
-            $distanceToGoal = $this->getDistanceToGoal($location, $goal);
-
-            // this is that gold
-            if (1 === $distanceToGoal && $isFallbackToHeroLocation) {
-                // @todo: really exclude?
-                continue;
-            }
-
-            // if it is another object then distance will be one more step
-            if ($isFallbackToHeroLocation) {
-                $distanceToGoal++;
-            }
+            $distanceToGoal = $this->getDistanceToGoal($location, $goal, $isFallbackToHeroLocation);
 
             if ($game->getHero()->getLifePoints() - $distanceToGoal <= 21) {
                 continue;
             }
 
-            $k = 0.5;
-            $totalWeight += 1000 * (1 / ($k * ($distanceToGoal + 1)));
+            $totalWeight += $this->getBalancedWeightFromDistance($distanceToGoal);
 
             $goalCount++;
         }

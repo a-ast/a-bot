@@ -22,23 +22,17 @@ class FindWeakHeroTactic extends AbstractWeightedTactic
                 continue;
             }
 
+            $distanceToGoal = $this->getDistanceToGoal($location, $goal, $isFallbackToHeroLocation);
 
+            /**
+             *
+             * Initial formula that allowed to win:
+             * $k = 0.5;
+             * $totalWeight += 1000 * $k * (1 / ($distanceToGoal + 1));
+             *
+             */
+            $totalWeight += $this->getBalancedWeightFromDistance($distanceToGoal);
 
-            $distanceToGoal = $this->getDistanceToGoal($location, $goal);
-
-            // this is that hero
-            if (1 === $distanceToGoal && $isFallbackToHeroLocation) {
-                // @todo: really exclude?
-                continue;
-            }
-
-            // if it is another object then distance will be one more step
-            if ($isFallbackToHeroLocation) {
-                $distanceToGoal++;
-            }
-
-            $k = 0.5;
-            $totalWeight += 1000 * $k * (1 / ($distanceToGoal + 1));
             $goalCount++;
         }
 

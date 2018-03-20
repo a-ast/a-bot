@@ -44,8 +44,31 @@ abstract class AbstractWeightedTactic implements WeightedTacticInterface
         return $pair;
     }
 
-    protected function getDistanceToGoal(string $from, LocationAwareInterface $goal): int
+    protected function getDistanceToGoal(string $from, LocationAwareInterface $goal, bool $isFallbackToHeroLocation): int
     {
-        return $this->pathFinder->getDistance($from, $goal->getLocation());
+        $distance = $this->pathFinder->getDistance($from, $goal->getLocation());
+
+        // if it fall backs and distance is 1,
+        // then the actual distance is 0
+        if (1 === $distance && $isFallbackToHeroLocation) {
+            return 0;
+        }
+
+        // if it is another object,
+        // then distance will take one more step
+        if ($isFallbackToHeroLocation) {
+            $distance++;
+        }
+
+        return $distance;
+    }
+
+    protected function getBalancedWeightFromDistance(int $distance): float
+    {
+        // this is experimental value
+        $k = 0.5;
+
+        return 1000 * (1 / ($k * ($distance + 1)));
+        // from finding week heroes is 1000 * $k * (1 / ($distanceToGoal + 1));
     }
 }

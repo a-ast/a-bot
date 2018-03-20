@@ -18,19 +18,13 @@ class AvoidStrongHeroTactic extends AbstractWeightedTactic
                 continue;
             }
 
-            $distanceToGoal = $this->getDistanceToGoal($location, $goal);
+            $distanceToGoal = $this->getDistanceToGoal($location, $goal, $isFallbackToHeroLocation);
 
             if ($distanceToGoal > 4) {
                 continue;
             }
 
-            // if it is another object then distance will be one more step
-            if ($isFallbackToHeroLocation) {
-                $distanceToGoal++;
-            }
-
-            $k = 0.5;
-            $totalWeight += 1000 - 1000 * (1 / ($k * ($distanceToGoal + 1)));
+            $totalWeight += 1000 - $this->getBalancedWeightFromDistance($distanceToGoal);
 
             $goalCount++;
         }

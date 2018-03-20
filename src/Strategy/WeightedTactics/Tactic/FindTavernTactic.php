@@ -14,26 +14,13 @@ class FindTavernTactic extends AbstractWeightedTactic
         }
 
         $totalWeight = 0;
-        $source = $location;
-
         $goalCount = 0;
+
         foreach ($game->getTaverns() as $goal) {
 
-            $distanceToGoal = $this->getDistanceToGoal($source, $goal);
+            $distanceToGoal = $this->getDistanceToGoal($location, $goal, $isFallbackToHeroLocation);
+            $totalWeight += $this->getBalancedWeightFromDistance($distanceToGoal);
 
-            // this is that tavern
-            if (1 === $distanceToGoal && $isFallbackToHeroLocation) {
-                // @todo: really exclude?
-                continue;
-            }
-
-            // if it is another object then distance will be one more step
-            if ($isFallbackToHeroLocation) {
-                $distanceToGoal++;
-            }
-
-            $k = 0.5;
-            $totalWeight += 1000 * (1 / ($k * ($distanceToGoal + 1)));
             $goalCount++;
         }
 
