@@ -51,9 +51,7 @@ class WeightedTacticsStrategy implements StrategyInterface
 
     public function getNextLocation(): string
     {
-        $heroLocation = $this->hero->getLocation();
-        $nearLocations = $this->game->getMap()->getNearLocations($heroLocation);
-        $possibleNearLocations = array_merge($nearLocations, [$heroLocation]);
+        $possibleNearLocations = $this->getNearLocations();
 
         $weightPerLocation = [];
         $locationPrioritizer = new LocationPrioritizer();
@@ -67,11 +65,12 @@ class WeightedTacticsStrategy implements StrategyInterface
         }
 
         $selectedLocation = $locationPrioritizer->getWithMaxPriority()->getLocation();
-        $nextLocation = $this->pathFinder->getNextLocation($heroLocation, $selectedLocation);
+
+        // calculate if there are repetitive steps
 
         $this->aggregateStats($weightPerLocation, $locationPrioritizer);
 
-        return $nextLocation;
+        return $selectedLocation;
     }
 
     /**
@@ -133,5 +132,15 @@ class WeightedTacticsStrategy implements StrategyInterface
             'weights' => $weightPerLocation,
             'locations' => $locationPrioritizer->toArray(),
         ];
+    }
+
+    private function getNearLocations(): array
+    {
+        $heroLocation = $this->hero->getLocation();
+        $nearLocations = $this->game->getMap()->getNearLocations($heroLocation);
+
+        $possibleNearLocations = array_merge($nearLocations, [$heroLocation]);
+
+        return $possibleNearLocations;
     }
 }

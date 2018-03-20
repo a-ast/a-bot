@@ -14,6 +14,7 @@
 1.1 Track if avoiding wins? How for 3-4 steps and then disable it
 
 #### New tactics
+1. IMPORTANT: do not attck heroes NEAR their spawn locations
 1. low coeff: find potential gold or tavern without caring about LP
 1. Counter for staying and repetitive movements: 
   * Idea 1: take not best but second rom top
