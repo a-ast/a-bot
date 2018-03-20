@@ -1,10 +1,8 @@
 # TODO
 
-## clear tactic applicability
-1. refactor formulas
-
 ### Super Plan
 1. Implement simualtor and muatate weights to find optimum.
+2. Write stats to postgres.
 
 ### Plan
 

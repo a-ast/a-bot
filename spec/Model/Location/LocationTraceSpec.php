@@ -16,6 +16,8 @@ class LocationTraceSpec extends ObjectBehavior
     function it_adds_new_locations()
     {
         $this->add('1:1');
+
+        $this->getLast()->shouldBe('1:1');
     }
 
     function it_returns_true_if_trace_is_repetitive()
@@ -54,5 +56,16 @@ class LocationTraceSpec extends ObjectBehavior
         $this->add('6:6');
 
         $this->isRepetitive(6, 2)->shouldBe(false);
+    }
+
+    function it_replaces_last_location()
+    {
+        $this->add('0:0');
+        $this->add('0:1');
+        $this->add('1:1');
+
+        $this->replaceLast('2:2');
+
+        $this->getLast()->shouldBe('2:2');
     }
 }

@@ -10,5 +10,5 @@ interface StrategyInterface
 
     public function getNextLocation(): string;
 
-    public function getCurrentAnalysis(): array;
+    public function getTacticStatistics(): array;
 }

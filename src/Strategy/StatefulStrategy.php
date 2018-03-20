@@ -200,7 +200,7 @@ class StatefulStrategy implements StrategyInterface
         $this->state = $finalState;
     }
 
-    public function getCurrentAnalysis(): array
+    public function getTacticStatistics(): array
     {
         return [];
     }

@@ -102,7 +102,7 @@ class TournamentGame
             $nextLocation = $this->strategy->getNextLocation();
             $direction = $compass->getDirectionTo($game->getHero()->getLocation(), $nextLocation);
 
-            $strategyResults = array_merge($this->strategy->getCurrentAnalysis() ,[
+            $strategyResults = array_merge($this->strategy->getTacticStatistics() ,[
                 'nextLocation' => $nextLocation,
                 'direction' => $direction,
             ]);

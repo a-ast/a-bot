@@ -5,6 +5,7 @@ namespace App\Strategy\WeightedTactics;
 use App\Model\GamePlayInterface;
 use App\Model\Game\Hero;
 use App\Model\Location\LocationPrioritizer;
+use App\Model\Location\LocationTrace;
 use App\PathFinder\PathFinderInterface;
 use App\Strategy\StrategyInterface;
 
@@ -35,10 +36,16 @@ class WeightedTacticsStrategy implements StrategyInterface
      */
     private $analysis;
 
-    public function __construct(PathFinderInterface $pathFinder, array $tactics)
+    /**
+     * @var LocationTrace
+     */
+    private $locationTrace;
+
+    public function __construct(PathFinderInterface $pathFinder, LocationTrace $locationTrace, array $tactics)
     {
         $this->pathFinder = $pathFinder;
         $this->tactics = $tactics;
+        $this->locationTrace = $locationTrace;
     }
 
     public function initialize(GamePlayInterface $game)
@@ -51,12 +58,12 @@ class WeightedTacticsStrategy implements StrategyInterface
 
     public function getNextLocation(): string
     {
-        $possibleNearLocations = $this->getNearLocations();
+        $possibleLocations = $this->getNearLocations();
 
         $weightPerLocation = [];
         $locationPrioritizer = new LocationPrioritizer();
 
-        foreach ($possibleNearLocations as $nearLocation) {
+        foreach ($possibleLocations as $nearLocation) {
 
             $weights = $this->getTotalLocationWeights($nearLocation);
             $weightPerLocation[$nearLocation] = $weights;
@@ -66,7 +73,19 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         $selectedLocation = $locationPrioritizer->getWithMaxPriority()->getLocation();
 
-        // calculate if there are repetitive steps
+        $this->locationTrace->add($selectedLocation);
+
+        if (count($possibleLocations) > 1) {
+            if ($this->locationTrace->isRepetitive(6, 2)) {
+                $selectedLocation = $locationPrioritizer->getNextAfterMax()->getLocation();
+            }
+
+            if ($this->locationTrace->isRepetitive(9, 3)) {
+                $selectedLocation = $locationPrioritizer->getNextAfterMax()->getLocation();
+            }
+
+            $this->locationTrace->replaceLast($selectedLocation);
+        }
 
         $this->aggregateStats($weightPerLocation, $locationPrioritizer);
 
@@ -96,21 +115,15 @@ class WeightedTacticsStrategy implements StrategyInterface
         foreach ($this->tactics as $tacticName => $tactic) {
 
             $weight = $this->getLocationWeight($tactic, $location);
-
             $weights[$tacticName] = $coefficients[$tacticName] * $weight;
         }
 
         return $weights;
     }
 
-    public function getCurrentAnalysis(): array
-    {
-        return $this->analysis;
-    }
-
     private function getLocationWeight(WeightedTacticInterface $tactic, string $location): int
     {
-        // if a tactic can process this location
+        // if a tactic is able to process this location
         if ($tactic->isApplicableLocation($this->game, $location)) {
             return $tactic->getWeight($this->game, $location, false);
         }
@@ -132,6 +145,11 @@ class WeightedTacticsStrategy implements StrategyInterface
             'weights' => $weightPerLocation,
             'locations' => $locationPrioritizer->toArray(),
         ];
+    }
+
+    public function getTacticStatistics(): array
+    {
+        return $this->analysis;
     }
 
     private function getNearLocations(): array

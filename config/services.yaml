@@ -18,9 +18,12 @@ services:
 
     App\PathFinder\PathFinderInterface: '@App\PathFinder\FloydWarshallAlgorithm'
 
+    App\Model\Location\LocationTrace:
+
     App\Strategy\WeightedTactics\WeightedTacticsStrategy:
         arguments:
             - '@App\PathFinder\FloydWarshallAlgorithm'
+            - '@App\Model\Location\LocationTrace'
             -
                 'take near gold': '@App\Strategy\WeightedTactics\Tactic\TakeNearGoldTactic'
                 'find gold':      '@App\Strategy\WeightedTactics\Tactic\FindGoldTactic'
