@@ -8,7 +8,7 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class AttackWeakHeroTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): float
     {
         /** @var Hero $rivalHero */
         $rivalHero = $game->getRivalHeroes()->get($location);

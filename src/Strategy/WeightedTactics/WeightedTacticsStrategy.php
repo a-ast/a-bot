@@ -53,16 +53,15 @@ class WeightedTacticsStrategy implements StrategyInterface
     {
         $heroLocation = $this->hero->getLocation();
         $nearLocations = $this->game->getMap()->getNearLocations($heroLocation);
-
         $possibleNearLocations = array_merge($nearLocations, [$heroLocation]);
 
-        $weightDebugger = [];
+        $weightPerLocation = [];
         $locationPrioritizer = new LocationPrioritizer();
 
         foreach ($possibleNearLocations as $nearLocation) {
 
             $weights = $this->getTotalLocationWeights($nearLocation);
-            $weightDebugger[$nearLocation] = $weights;
+            $weightPerLocation[$nearLocation] = $weights;
 
             $locationPrioritizer->add($nearLocation, array_sum($weights));
         }
@@ -70,10 +69,7 @@ class WeightedTacticsStrategy implements StrategyInterface
         $selectedLocation = $locationPrioritizer->getWithMaxPriority()->getLocation();
         $nextLocation = $this->pathFinder->getNextLocation($heroLocation, $selectedLocation);
 
-        $this->analysis = [
-            'weights' => $weightDebugger,
-            'locations' => $locationPrioritizer->toArray(),
-        ];
+        $this->aggregateStats($weightPerLocation, $locationPrioritizer);
 
         return $nextLocation;
     }
@@ -115,16 +111,27 @@ class WeightedTacticsStrategy implements StrategyInterface
 
     private function getLocationWeight(WeightedTacticInterface $tactic, string $location): int
     {
+        // if a tactic can process this location
         if ($tactic->isApplicableLocation($this->game, $location)) {
             return $tactic->getWeight($this->game, $location, false);
         }
 
         $heroLocation = $this->hero->getLocation();
 
+        // if not, try to process a hero location
         if ($tactic->isApplicableLocation($this->game, $heroLocation)) {
             return $tactic->getWeight($this->game, $heroLocation, true);
         }
 
+        // otherwise this tactic don't work in this case
         return 0;
+    }
+
+    private function aggregateStats(array $weightPerLocation, LocationPrioritizer $locationPrioritizer)
+    {
+        $this->analysis = [
+            'weights' => $weightPerLocation,
+            'locations' => $locationPrioritizer->toArray(),
+        ];
     }
 }

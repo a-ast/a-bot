@@ -7,7 +7,7 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class TakeNearGoldTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): float
     {
         if ($game->getHero()->getLifePoints() <= 21) {
             //return -1000;

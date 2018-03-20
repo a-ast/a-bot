@@ -7,7 +7,7 @@ use App\Strategy\WeightedTactics\AbstractWeightedTactic;
 
 class FindWeakHeroTactic extends AbstractWeightedTactic
 {
-    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): int
+    public function getWeight(GamePlayInterface $game, string $location, bool $isFallbackToHeroLocation): float
     {
         $totalWeight = 0;
         $goalCount = 0;
