@@ -217,8 +217,8 @@ class TacticSetStrategy implements StrategyInterface
         return $nextLocation;
     }
 
-    public function getTacticStatistics(): array
+    public function getTacticStatistics(): TacticStatistics
     {
-        return [];
+        return new TacticStatistics();
     }
 }

@@ -8,6 +8,7 @@ use App\Model\Location\LocationPrioritizer;
 use App\Model\Location\LocationTrace;
 use App\PathFinder\PathFinderInterface;
 use App\Strategy\StrategyInterface;
+use App\Strategy\TacticStatistics;
 
 class WeightedTacticsStrategy implements StrategyInterface
 {
@@ -32,9 +33,9 @@ class WeightedTacticsStrategy implements StrategyInterface
     private $tactics;
 
     /**
-     * @var array
+     * @var TacticStatistics
      */
-    private $analysis;
+    private $statistics;
 
     /**
      * @var LocationTrace
@@ -46,6 +47,8 @@ class WeightedTacticsStrategy implements StrategyInterface
         $this->pathFinder = $pathFinder;
         $this->tactics = $tactics;
         $this->locationTrace = $locationTrace;
+
+        $this->statistics = new TacticStatistics();
     }
 
     public function initialize(GamePlayInterface $game)
@@ -75,21 +78,30 @@ class WeightedTacticsStrategy implements StrategyInterface
 
         $this->locationTrace->add($selectedLocation);
 
+        // @todo: replace magic numbers
+        // think how to extract to a method
         if (count($possibleLocations) > 1) {
             if ($this->locationTrace->isRepetitive(6, 2)) {
                 $selectedLocation = $locationPrioritizer->getNextAfterMax()->getLocation();
+                $this->statistics->add('Repetition', '2 from 4');
             }
 
             if ($this->locationTrace->isRepetitive(9, 3)) {
                 $selectedLocation = $locationPrioritizer->getNextAfterMax()->getLocation();
+                $this->statistics->add('Repetition', '3 from 9');
             }
 
             $this->locationTrace->replaceLast($selectedLocation);
         }
 
-        $this->aggregateStats($weightPerLocation, $locationPrioritizer);
+        $this->addStatistics($weightPerLocation, $locationPrioritizer);
 
         return $selectedLocation;
+    }
+
+    public function getTacticStatistics(): TacticStatistics
+    {
+        return $this->statistics;
     }
 
     /**
@@ -139,19 +151,6 @@ class WeightedTacticsStrategy implements StrategyInterface
         return 0;
     }
 
-    private function aggregateStats(array $weightPerLocation, LocationPrioritizer $locationPrioritizer)
-    {
-        $this->analysis = [
-            'weights' => $weightPerLocation,
-            'locations' => $locationPrioritizer->toArray(),
-        ];
-    }
-
-    public function getTacticStatistics(): array
-    {
-        return $this->analysis;
-    }
-
     private function getNearLocations(): array
     {
         $heroLocation = $this->hero->getLocation();
@@ -160,5 +159,11 @@ class WeightedTacticsStrategy implements StrategyInterface
         $possibleNearLocations = array_merge($nearLocations, [$heroLocation]);
 
         return $possibleNearLocations;
+    }
+
+    private function addStatistics(array $weightPerLocation, LocationPrioritizer $locationPrioritizer)
+    {
+        $this->statistics->add('weights', $weightPerLocation);
+        $this->statistics->add('locations', $locationPrioritizer->toArray());
     }
 }

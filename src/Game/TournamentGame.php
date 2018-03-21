@@ -5,6 +5,7 @@ namespace App\Game;
 use App\Api\VindiniumApiClient;
 use App\Model\Game\Compass;
 use App\Model\Game\Game;
+use App\Model\GameInterface;
 use App\Progress\ProgressNotifier;
 use App\Strategy\StrategyInterface;
 
@@ -102,17 +103,27 @@ class TournamentGame
             $nextLocation = $this->strategy->getNextLocation();
             $direction = $compass->getDirectionTo($game->getHero()->getLocation(), $nextLocation);
 
-            $strategyResults = array_merge($this->strategy->getTacticStatistics() ,[
-                'nextLocation' => $nextLocation,
-                'direction' => $direction,
-            ]);
-
-            if ($dumpGame) {
-                $this->gameDumper->dumpTurn($game, $strategyResults);
-            }
+            $this->dumpTurn($dumpGame, $game, $direction, $nextLocation);
 
             $newState = $this->apiClient->playMove($apiKey, $playUrl, $direction);
             $this->gameBuilder->updateGame($game, $newState);
         }
+    }
+
+    private function dumpTurn(bool $dumpGame, GameInterface $game, string $direction, string $nextLocation): void
+    {
+        if (false === $dumpGame) {
+            return;
+        }
+
+        $strategyResults = array_merge(
+            $this->strategy->getTacticStatistics()->toArray(),
+            [
+                'nextLocation' => $nextLocation,
+                'direction' => $direction,
+            ]
+        );
+
+        $this->gameDumper->dumpTurn($game, $strategyResults);
     }
 }
